@@ -1,0 +1,10 @@
+---
+alwaysApply: true
+---
+
+# Project rules (always)
+- Keep responses short. One step at a time.
+- Always end with: "Next step: <one bullet>".
+- Prefer Python + standard ML libs. No absolute paths.
+- Add/maintain: README.md + reproducible run commands.
+- Track AI usage notes in docs/ai_tool_log.md (for final disclosure).
