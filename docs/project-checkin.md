@@ -4,119 +4,105 @@
 
 In you writeup, please address the following TEN questions.
 
-1. **Project Title**
+### 1. **Project Title**
 
 Provide a clear and concise project title.
 
-2. **Team Information**
+### 2. **Team Information**
 
--   Team Name:
--   Team Members:
+- Team Name:
+- Team Members:
 
-3.  **Abstract (100–300 words)**
+### 3. **Abstract (100–300 words)**
 
-Clearly describe:
+**Clearly describe:**
+- What problem are you solving?
+- Why is it important?
+- What technical approach are you using?
+- What makes your solution interesting or novel?
 
--   What problem are you solving?
--   Why is it important?
--   What technical approach are you using?
--   What makes your solution interesting or novel?
+### 4. **Problem Definition**
 
-4. **Problem Definition**
+**Be precise:**
+- Input:
+- Output:
+- Task type:
+  - Machine Learning
+  - Search
+  - Computer Vision
+  - etc.
 
-Be precise:
+### 5. **Dataset to Use**
 
--   Input:
--   Output:
--   Task type:
+**Specify:**
+- Dataset name:
+- Source (URL if public):
+- Size (# samples):
+- Modality:
+  - Image
+  - Text
+  - Audio
+  - Video
+  - Multimodal
+- Preprocessing plan:
 
--   Machine Learning
--   Search
--   Computer Vision
--   etc
+**If collecting your own dataset:**
+- Collection method
+- Annotation plan
+- Ethical considerations
 
-5\. **Dataset to Use**
+### 6. **Models to Use**
 
-Specify:
+**List:**
+- Baseline model(s)
+- Pretrained backbone?
+- Fine-tuning strategy?
 
--   Dataset name:
--   Source (URL if public):
--   Size (# samples):
--   Modality:
+**Explain WHY these models are appropriate.**
 
--   Image
--   Text
--   Audio
--   Video
--   Multimodal
+### 7. **Target Customers / Users**
 
--   Preprocessing plan:
+**Who benefits?**
+- Industry?
+- Researchers?
+- End users?
+- Businesses?
+- Healthcare?
+- Robotics?
+- Environmental monitoring?
 
-If collecting your own dataset:
+**Explain:**
+- Real-world impact
+- Market need
+- Practical deployment scenario
 
--   Collection method
--   Annotation plan
--   Ethical considerations
+### 8. **Technical Plan**
 
-6\. **Models to Use**
+**Include:**
+- Training pipeline
+- Evaluation metrics
+- Hardware needed 
+- Timeline (Week-by-week)
 
-List:
+### 9. **Progress So Far**
 
--   Baseline model(s)
--   Pretrained backbone?
--   Fine-tuning strategy?
+**Be specific:**
+- Dataset downloaded? ✔
+- Preprocessing done? ✔
+- Baseline implemented?
+- Initial results?
+- Any failure cases?
 
-Explain WHY these models are appropriate.
+**Include:**
+- Screenshots
+- Training curves
+- Example outputs
 
-7 **Target Customers / Users**
+### 10. **Challenges Encountered**
+- Data imbalance?
+- Overfitting?
+- GPU memory?
+- Label noise?
+- Model instability?
 
-Who benefits?
-
--   Industry?
--   Researchers?
--   End users?
--   Businesses?
--   Healthcare?
--   Robotics?
--   Environmental monitoring?
-
-Explain:
-
--   Real-world impact
--   Market need
--   Practical deployment scenario
-
-8 **Technical Plan**
-
-Include:
-
--   Training pipeline
--   Evaluation metrics
--   Hardware needed 
--   Timeline (Week-by-week)
-
-9 **Progress So Far**
-
-Be specific:
-
--   Dataset downloaded? ✔
--   Preprocessing done? ✔
--   Baseline implemented?
--   Initial results?
--   Any failure cases?
-
-Include:
-
--   Screenshots
--   Training curves
--   Example outputs
-
-10 **Challenges Encountered**
-
--   Data imbalance?
--   Overfitting?
--   GPU memory?
--   Label noise?
--   Model instability?
-
-Explain how you plan to address them.
+**Explain how you plan to address them.**
