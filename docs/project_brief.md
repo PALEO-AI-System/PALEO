@@ -16,6 +16,10 @@ Core AI function (ML/CV/NLP/Search/Opt):
 - Letta-based agentic orchestration for perceive → decide → act → remember loops.
 - Optional natural-language generation of thought logs for interpretability.
 
+Core concepts (agents):
+- Instinct Agent: per-dinosaur control agent that perceives state, uses trained instinct models plus rules/RL, and outputs high-level actions or behavior modes.
+- Primal Mind: the structured memory inside an Instinct Agent (personality, identity, goals, and recent experiences), implemented via Letta memory blocks plus short-term buffers. See `docs/lexicon.md` for canonical definitions.
+
 Baseline model:
 - Rule-based OpenCV script using simple motion/region heuristics as a fully transparent baseline.
 - Learned baseline: ResNet-18 backbone with a fine-tuned behavior-intent classification head.

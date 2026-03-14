@@ -25,3 +25,5 @@
 - Added `src/baselines.py` with stubbed OpenCV and ResNet-18 baseline interfaces and surfaced an OpenCV baseline descriptor via `run_pipeline()`.
 - Added `src/training.py` with a stub `TrainingConfig` and dummy convergence curves; extended `run_pipeline()` and tests to surface summary training stats without any real model code.
 - Added `src/agent.py` with an `AgentState`, stub decision rule, and formatted thought log, then surfaced `agent_action` and `thought_log` summaries from `run_pipeline()`.
+- Created `docs/lexicon.md` and defined canonical terminology for Instinct Agent and Primal Mind, referenced from `docs/project_brief.md` and enforced via `.cursor/rules/00-project.mdc`.
+- Updated `.cursor/rules/00-project.mdc`: reinforced short/simple replies and one-action-at-a-time when user leads development; avoid task dumps.

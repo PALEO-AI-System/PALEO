@@ -33,3 +33,5 @@ Agentic Personality:
 - Friendliness
 - Curiosity
 - Braveness
+
+We will refer to the per-dinosaur controller as the *Instinct Agent* with a *Primal Mind* for its structured memory; see `docs/lexicon.md` for canonical definitions.

@@ -3,8 +3,10 @@ alwaysApply: true
 ---
 
 # Project rules (always)
-- Keep responses short. One step at a time.
+- Keep responses short and simple. One step at a time.
+- When the user is leading development: give one action/task at a time; avoid long blocks or lists of tasks.
 - Always end with: "Next step: <one bullet>".
 - Prefer Python + standard ML libs. No absolute paths.
 - Add/maintain: README.md + reproducible run commands.
 - Track AI usage notes in docs/ai_tool_log.md (for final disclosure).
+- Use the terms Instinct Agent and Primal Mind consistently as defined in docs/lexicon.md.
