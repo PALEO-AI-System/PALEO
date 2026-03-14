@@ -187,3 +187,54 @@ These are intentionally rough and can be swapped for your actual favorite specie
     - Frequently uses Friendly calls when in a herd to maintain cohesion.
     - Uses Danger/Help calls early when predators enter visible range, even before being directly threatened, to reflect skittish prey behavior.
 
+---
+
+### 8. Handling modded species (KTO-focused for now)
+
+Modded dinosaurs can differ significantly in stats, abilities, and roles (e.g., KTO, Primordial Tyrants, Divine Beasts). The Instinct Agent should treat them as **first-class citizens** but with some extra care:
+
+- **General approach**
+  - Rely on the same tools as vanilla species:
+    - Wiki RAG over modded-creature pages (stats, roles, abilities).
+    - Fast-facts table entries for notable modded dinos when you care about them (especially KTO playables).
+  - Avoid hard-coding any one patch’s balance; instead, focus on:
+    - Relative size, armor, speed, and damage roles.
+    - Ability tags (mobility, bleed, armor, group buff, etc.).
+
+- **KTO Pachyrhinosaurus–style tanky herbivore**
+  - **Role & instincts**
+    - Heavily built front-line herbivore that can soak damage and body-block for smaller herd members.
+  - **Engagement rules**
+    - In a herd:
+      - Willing to interpose itself between predators and juveniles/softer herd mates.
+      - Holds ground near choke points (narrow paths, cave mouths) while others retreat.
+    - Solo:
+      - Still prefers avoidance, but more willing than lighter herbivores to stand and threaten if a predator gets too close.
+  - **Ability preferences**
+    - Prioritizes armor, damage mitigation, and knockback-style abilities for peeling predators off allies.
+  - **Non-verbal flavor**
+    - Uses Threaten calls and head-lowering/charge-posture emotes aggressively when defending herd members or key resources.
+
+- **KTO Yangchuanosaurus–style aggressive mid-large carnivore**
+  - **Role & instincts**
+    - High-threat predator that can pressure most mid-sized prey but should still respect true apexes and large herds.
+  - **Engagement rules**
+    - Prefers:
+      - Catching prey in open spaces where its movement and reach matter.
+      - Focusing isolated targets rather than brawling whole herds.
+    - Avoids:
+      - Getting kited around rocks/trees by nimble prey when low on stamina.
+      - Prolonged trades with multiple tanky herbivores at once.
+  - **Ability preferences**
+    - Leans into burst-damage and mobility options, accepting some stamina cost, while maintaining at least one defensive or disengage tool.
+  - **Non-verbal flavor**
+    - Uses Broadcast calls to announce dominance when entering contested hunting grounds, and Threaten calls before committing to a chase.
+
+- **Stubs for favorite base-game species**
+  - **Tylosaurus**: aquatic ambush predator; Instinct Agent emphasizes 3D positioning in water, oxygen management, and burst-from-cover attacks rather than long chases.
+  - **Allosaurus**: classic mid/upper-mid carnivore; favors flanking and hit-and-run tactics, avoiding straight-up trades with the tankiest opponents.
+  - **Styracosaurus**: spiky defensive herbivore; anchors front-lines for herds, using its bulk and horn attacks to deter close-range carnivores.
+  - **Achillobator**: agile raptor; relies on speed, bleed, and opportunism, avoiding face-tanking and preferring to harass and pick off weakened or distracted targets.
+
+You can flesh these stubs out over time and add entries for **all KTO playables** as you decide which ones matter most for PALEO.
+
