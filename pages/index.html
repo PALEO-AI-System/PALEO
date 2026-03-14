@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PALEO | Home</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #22d3ee;
+      --border: #1f2937;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, var(--bg), #020617);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 52px;
+    }
+    .panel {
+      background: rgba(17, 24, 39, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    h1, h2 { margin: 0 0 10px; }
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.15rem; color: var(--accent); }
+    p, li { color: var(--text); }
+    .muted { color: var(--muted); }
+    code {
+      background: #0b1220;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 2px 6px;
+    }
+    .todo {
+      margin-top: 10px;
+      padding: 12px;
+      border: 1px dashed #334155;
+      border-radius: 8px;
+      background: rgba(2, 6, 23, 0.6);
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="panel">
+      <h1>PALEO</h1>
+      <p>
+        PALEO is an AI system that uses computer vision and trained animal behavior
+        models to power realistic, instinct-driven dinosaur agents in a survival game environment.
+      </p>
+      <p class="muted">
+        Placeholder page for future GitHub Pages site.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>Planned System Direction</h2>
+      <ul>
+        <li>Game context: Path of Titans style survival mechanics and species interactions.</li>
+        <li>Agent architecture: one Letta agent per dinosaur individual.</li>
+        <li>Letta role: memory blocks for each dinosaur state (identity, needs, threat memory, recent actions).</li>
+        <li>Data direction: Snapshot Serengeti + Kaggle predator/prey dataset for behavior priors.</li>
+        <li>Core model plan: ResNet-18 transfer learning + OpenCV rule baseline.</li>
+      </ul>
+      <div class="todo">
+        <strong>Build Later:</strong> Add screenshots, live demos, architecture diagram, and setup instructions.
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Repo Status (Current)</h2>
+      <ul>
+        <li>Scaffold complete: <code>src/</code>, <code>scripts/</code>, <code>tests/</code>, <code>docs/</code>.</li>
+        <li>Minimal runnable pipeline exists; model training not implemented yet.</li>
+        <li>README includes reproducible run commands.</li>
+      </ul>
+      <p class="muted">
+        Note: If this becomes the GitHub Pages homepage, this file can be moved or copied to repository root as <code>index.html</code>.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    // Placeholder script for future interactivity.
+    window.PALEO_SITE_READY = false;
+    console.log("PALEO homepage placeholder loaded.");
+  </script>
+</body>
+</html>

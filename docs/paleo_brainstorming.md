@@ -23,3 +23,13 @@ The game I would like to focus on is a dinosaur survival game called **Path of T
        4. [PATH.ai](http://PATH.ai) **DOMAIN USED**  
        5. [TITAN.ai](http://TITAN.ai) **DOMAIN USED**  
        6. [HATCH.ai](http://HATCH.ai) **DOMAIN USED**
+
+**Additional Ideas:**
+
+Agentic Personality:
+- Mood
+- Morality
+- Agressiveness
+- Friendliness
+- Curiosity
+- Braveness

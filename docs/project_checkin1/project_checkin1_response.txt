@@ -1,0 +1,182 @@
+Project-Checkin-1/2
+
+NOTE FOR LATER UPDATES:
+When the markdown version is finalized, copy any final wording changes here and keep this file plain text for Canvas submission.
+
+1. Project Title
+PALEO (with Primal Mind)
+
+2. Team Information
+Team Name: World's Finest
+Team Members: Laura Wetherhold, Alexus Aguirre Arias
+
+3. Abstract (100-300 words)
+PALEO is an agentic AI system for dinosaur-themed survival gameplay. The project addresses a key problem in game AI: many non-player behaviors are predictable, reactive, and disconnected from an interpretable internal state. We aim to build a dinosaur behavior agent that reads gameplay frames, infers high-level behavioral state (for example threat awareness, resource urgency, and risk posture), generates natural-language thought logs, and proposes or executes actions aligned with those inferred needs.
+
+This is important for both game design and accessibility. For developers, it offers a stress-testing tool to evaluate map balance and resource placement using less-scripted behavior patterns. For players, especially those who struggle with high-input micromanagement, it can assist with survival loops and improve playability.
+
+Our technical approach combines computer vision, a trained behavior classifier, and Letta-based agent orchestration. Based on our planning notes, we will use public wildlife behavior datasets (Snapshot Serengeti plus a Kaggle predator/prey dataset) to train a lightweight classifier that maps visual cues to behavioral intent classes. In deployment, each dinosaur is represented by its own Letta agent instance with memory blocks for individual state (identity, current needs, recent events, risk history), while shared game knowledge is retrieved separately. The novel element is combining interpretable thought logs with behavior-conditioned action decisions, so outputs are both actionable and explainable.
+
+4. Problem Definition
+Input:
+Real-time screen captures of a dinosaur-themed game.
+
+Output:
+- Natural-language thought logs explaining the dinosaur's current internal state.
+- Simulated keyboard and mouse inputs.
+- Per-dinosaur agent state updates stored in Letta memory blocks.
+
+Task type:
+- Machine Learning
+- Computer Vision
+- Agentic Automation
+
+5. Dataset to Use
+Dataset name:
+- Snapshot Serengeti
+- Kaggle Predator vs Prey Animals Image Dataset
+
+Source (URL if public):
+- https://lila.science/datasets/snapshot-serengeti
+- https://www.kaggle.com/datasets?search=predator+prey+animals
+
+Size (# samples):
+- Snapshot Serengeti: millions of camera-trap images (subset will be used for training)
+- Kaggle predator/prey set: size varies by selected version; final count will be recorded in preprocessing logs
+
+Modality:
+- Image
+- Text
+- Video
+- Multimodal
+
+Preprocessing plan:
+- Select a consistent subset of species/behavior classes (predator, prey, neutral or aggressive/passive).
+- Standardize labels across datasets to a shared schema.
+- Resize/normalize images and apply train/val/test split (60/20/20).
+- Add augmentation (flip, crop, color jitter) and class balancing.
+- Map classifier outputs to PALEO behavior-state labels used by the agent loop.
+
+If collecting your own dataset:
+Collection method:
+- Optional later phase only, using self-recorded gameplay clips for domain adaptation.
+
+Annotation plan:
+- Minimal manual labels for game-specific states if transfer from wildlife datasets is insufficient.
+
+Ethical considerations:
+- Use only permitted/public data and self-generated captures.
+- Avoid personal data in captures.
+- Disclose AI-generated outputs in reporting.
+
+6. Models to Use
+Baseline model(s):
+- Rule-based script using OpenCV.
+
+Pretrained backbone:
+- ResNet-18 (single final backbone).
+
+Fine-tuning strategy:
+- Fine-tune final classification head on selected animal behavior classes.
+- Evaluate class-weighted loss and augmentation variants for imbalance handling.
+- Feed classifier predictions into a Letta-hosted agent decision policy that writes thought logs and actions.
+
+Why these models are appropriate:
+The OpenCV baseline provides a transparent control reference, ResNet-18 is lightweight and stable for transfer learning on limited hardware, and Letta provides memory plus a stateful multi-agent interface needed for one-agent-per-dinosaur behavior.
+
+7. Target Customers / Users
+Who benefits:
+- Game Developers: especially developers of survival games such as ARK who need behavioral stress testing for level design and resource routing.
+- End Users (Players): players who want assistance with complex survival micromanagement, including those with accessibility needs.
+
+Real-world impact:
+The project tests how effectively vision-language style reasoning can translate visual pixels into physical actions in real time while keeping behavior interpretable.
+
+Market need:
+Survival games often suffer from predictable NPC behavior; there is demand for emergent, less-scripted agents that feel more alive.
+
+Practical deployment scenario:
+A developer runs the agent across map regions; if a hunger-driven dinosaur repeatedly fails to reach water or food, the map flow and resource distribution can be improved.
+
+8. Technical Plan
+Training pipeline:
+1) Select and download public wildlife behavior datasets.
+2) Build preprocessing and unified label pipeline.
+3) Train baseline OpenCV/rule policy and supervised ResNet-18 classifier.
+4) Integrate model outputs with PALEO agent loop in Letta (perceive -> decide -> act -> remember).
+5) Run controlled evaluation and document failure modes.
+
+Evaluation metrics:
+- Classification metrics: accuracy, macro-F1, confusion matrix.
+- Agent-level metrics: action success rate, decision latency, and qualitative behavior realism.
+- Robustness: performance under class imbalance and visual noise.
+
+Required experiment outputs:
+- Convergence curves (training/validation loss and accuracy over epochs).
+- Hyperparameter sensitivity (learning rate, augmentation strength, model backbone).
+- Baseline comparison table (OpenCV rule baseline vs trained classifier variants).
+- Qualitative examples (success and failure cases with short analysis).
+
+Hardware needed:
+- Development PC with modern CPU/GPU.
+- Sufficient RAM for preprocessing, training, and local inference.
+- Optional GPU acceleration for faster fine-tuning.
+- Letta runtime for stateful per-dinosaur agents.
+
+Timeline (Week-by-week):
+- Week 1: Finalize datasets and preprocessing scripts.
+- Week 2: Train first supervised baseline and OpenCV baseline.
+- Week 3: Hyperparameter sweep + sensitivity analysis.
+- Week 4: Agent loop integration and qualitative testing.
+- Week 5: Final figures/tables and report polishing.
+
+9. Progress So Far
+Dataset downloaded?
+- Not yet (dataset candidates selected; download/selection step pending)
+
+Preprocessing done?
+- Not yet (pipeline design drafted, not finalized)
+
+Baseline implemented?
+- Not yet (only project scaffold and hello pipeline currently implemented)
+
+Initial results?
+- No model results yet.
+
+Any failure cases?
+- N/A at this stage.
+
+Included artifacts:
+- Screenshots: planned for upcoming integration tests.
+- Training curves: not available yet (training has not started).
+- Example outputs: not available yet.
+
+Current repo setup note:
+GitHub repository is initialized with core project structure (src, scripts, tests, docs), project rules, TODO tracking, and reproducible run commands in README.md; current history shows initial scaffold-focused commits.
+
+Development tooling note:
+Active development is in Cursor with GPT-5.3 Codex; ChatGPT was used earlier for initial idea validation only.
+
+Documentation progress in repo:
+- docs/context_dump.md created and populated with planning conversations and requirement mapping.
+- docs/paleo_brainstorming.md drafted with core system vision and behavior design goals.
+- docs/project_brief.md scaffolded to track problem definition, methods, and required experiment outputs.
+- docs/project_checkin1/project_checkin1.md copied as the check-in prompt/template reference.
+- docs/project_450_powerpoint.pdf reviewed and aligned to required rubric elements.
+- docs/IEEE_paper_template/ reviewed as report-format reference material for final paper preparation.
+- .cursor/rules/00-project.mdc configured to enforce workflow constraints and reproducibility habits.
+- docs/ai_tool_log.md maintained for AI usage disclosure tracking.
+
+10. Challenges Encountered
+- Data imbalance: public wildlife data is long-tailed across species/behaviors.
+- Overfitting: transfer from wildlife imagery to game scenarios may overfit to source-domain cues.
+- GPU/compute constraints: training and real-time inference must fit student hardware limits.
+- Label noise: public dataset labels may be inconsistent across sources.
+- Model instability: action policy may oscillate when confidence is low.
+
+How we plan to address them:
+- Use class balancing, weighted loss, and targeted sampling.
+- Add simple domain adaptation with optional self-recorded gameplay examples.
+- Use confidence thresholds and fallback safe actions in the agent loop.
+- Restrict full automation to private/testing environments and keep an advisor-only mode for safer deployment.
+- Document ethics and platform constraints (no unfair online play or anti-cheat evasion).
