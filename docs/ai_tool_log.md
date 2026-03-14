@@ -16,3 +16,12 @@
 - Added GitHub Actions workflow at `.github/workflows/deploy-pages.yml` to deploy GitHub Pages from the `pages/` directory.
 - Upgraded `pages/index.html` into a full themed PALEO dashboard homepage with navigation, repo link, roadmap, and planned-feature placeholders.
 - Upgraded `pages/project-checkin-1.html` from placeholder to a complete check-in site with structured sections, planning notes, and experiment artifact placeholders.
+
+## 2026-03-14
+- Filled out `docs/project_brief.md` using project-checkin details (problem, datasets, models, metrics, experiments, deliverables).
+- Added scaffold modules `src/config.py` and `src/data.py` with non-I/O stubs for data configuration and dataset/batch placeholders.
+- Updated `src/pipeline.py` to call the new config/data stubs while keeping behavior as a non-model "hello pipeline".
+- Extended `tests/test_pipeline.py` to assert presence of new pipeline summary fields.
+- Added `src/baselines.py` with stubbed OpenCV and ResNet-18 baseline interfaces and surfaced an OpenCV baseline descriptor via `run_pipeline()`.
+- Added `src/training.py` with a stub `TrainingConfig` and dummy convergence curves; extended `run_pipeline()` and tests to surface summary training stats without any real model code.
+- Added `src/agent.py` with an `AgentState`, stub decision rule, and formatted thought log, then surfaced `agent_action` and `thought_log` summaries from `run_pipeline()`.
