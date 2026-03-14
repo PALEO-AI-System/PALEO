@@ -14,3 +14,5 @@
 - Verified moved check-in file under `docs/project_checkin1/` and generated a Canvas-ready plain-text submission draft at `docs/project_checkin1/project_checkin1_response.txt`.
 - Expanded "Progress So Far" in both check-in response files to explicitly credit documentation/setup artifacts (`context_dump`, brainstorming, project brief, check-in template, course slide deck review, Cursor rules, AI log).
 - Added GitHub Actions workflow at `.github/workflows/deploy-pages.yml` to deploy GitHub Pages from the `pages/` directory.
+- Upgraded `pages/index.html` into a full themed PALEO dashboard homepage with navigation, repo link, roadmap, and planned-feature placeholders.
+- Upgraded `pages/project-checkin-1.html` from placeholder to a complete check-in site with structured sections, planning notes, and experiment artifact placeholders.

@@ -6,89 +6,328 @@
   <title>PALEO | Project Check-in 1</title>
   <style>
     :root {
-      --bg: #0b1020;
-      --panel: #121a2b;
-      --text: #e2e8f0;
-      --sub: #94a3b8;
-      --accent: #38bdf8;
-      --line: #233149;
+      --bg: #f3f9f1;
+      --panel: #fffef8;
+      --ink: #1f3a2f;
+      --ink-soft: #547164;
+      --line: #c7ddca;
+      --accent: #4f9d8f;
+      --accent-soft: #deefeb;
+      --cream: #fbf3df;
+      --warn: #d29f50;
+      --ok: #5ca579;
+      --shadow: rgba(29, 61, 47, 0.11);
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 7% 3%, rgba(92, 165, 121, 0.18), transparent 33%),
+        radial-gradient(circle at 90% 5%, rgba(79, 157, 143, 0.16), transparent 31%),
+        var(--bg);
     }
+
     .wrap {
-      max-width: 980px;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 24px 16px 48px;
+      padding: 20px 18px 54px;
     }
+
+    .nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .btn {
+      text-decoration: none;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 600;
+      background: #ffffffd0;
+    }
+
+    .btn:hover {
+      border-color: #8fb89a;
+      box-shadow: 0 3px 10px var(--shadow);
+    }
+
+    .hero,
     .card {
       background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: 14px;
+      box-shadow: 0 5px 14px var(--shadow);
       padding: 16px;
       margin-bottom: 12px;
     }
-    h1, h2 { margin: 0 0 8px; }
-    h1 { font-size: 1.8rem; }
-    h2 { color: var(--accent); font-size: 1.1rem; }
-    p, li { margin-top: 0; }
-    .sub { color: var(--sub); }
-    pre {
-      white-space: pre-wrap;
-      background: #0a1324;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 12px;
-      margin: 0;
+
+    .hero {
+      background: linear-gradient(130deg, #f8fcf6, #eef7ef 52%, #f8f1e3);
+    }
+
+    h1, h2, h3 { margin: 0 0 8px; }
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.2rem; color: #2b6a57; }
+    h3 { font-size: 1rem; color: #2a5d4d; }
+
+    .muted { color: var(--ink-soft); }
+    p { margin-top: 0; }
+    ul { margin: 0; padding-left: 18px; }
+    li { margin-bottom: 6px; }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    .status {
+      display: inline-block;
+      font-size: 0.76rem;
+      font-weight: 700;
+      border: 1px solid;
+      border-radius: 999px;
+      padding: 2px 8px;
+      margin-right: 8px;
+      letter-spacing: 0.2px;
+    }
+
+    .done { background: #eaf6ee; border-color: #9ec8ad; color: #275a40; }
+    .planned { background: #fff4df; border-color: #d8bb84; color: #7e5920; }
+    .in-progress { background: #ebf6f3; border-color: #9dc8bf; color: #245f53; }
+
+    .qa-item {
+      border: 1px solid #d4e7d7;
+      border-radius: 10px;
+      background: #fcfffb;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .qa-item summary {
+      list-style: none;
+      cursor: pointer;
+      font-weight: 700;
+      color: #245946;
+      padding: 10px 12px;
+      background: #eff8f0;
+      border-bottom: 1px solid #d7eadb;
+    }
+
+    .qa-item[open] summary { background: #e5f3e9; }
+    .qa-content { padding: 12px; }
+
+    .placeholder-board {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .placeholder {
+      border: 1px dashed #c5b07f;
+      border-radius: 10px;
+      background: var(--cream);
+      padding: 10px;
+      color: #5c4a25;
+      min-height: 108px;
+    }
+
+    code {
+      background: #f0f7f0;
+      border: 1px solid #d1e4d2;
+      border-radius: 6px;
+      padding: 1px 6px;
+    }
+
+    .tiny {
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
   <main class="wrap">
-    <section class="card">
-      <h1>PALEO - Project Check-in 1 (Website Placeholder)</h1>
-      <p class="sub">
-        This page is a prepopulated scaffold based on your latest planning notes.
+    <nav class="nav" aria-label="Project pages">
+      <a class="btn" href="index.html">Dashboard Home</a>
+      <a class="btn" href="project-checkin-1.html">Project Check-in 1</a>
+      <a class="btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+    </nav>
+
+    <section class="hero">
+      <h1>PALEO - Project Check-in 1</h1>
+      <p class="muted">
+        Complete web version of your check-in response, with explicit placeholders for planned experiment
+        artifacts, dashboard modules, and upcoming technical deliverables.
+      </p>
+      <p>
+        <span class="status done">COMPLETE</span>
+        Core written check-in content is now published here.
       </p>
     </section>
 
-    <section class="card">
-      <h2>What To Include Here Later</h2>
-      <ul>
-        <li>Plain-text-ready version of the check-in submission for Canvas text box.</li>
-        <li>Updated abstract and problem definition with Letta per-dinosaur architecture.</li>
-        <li>Dataset and model decisions (Snapshot Serengeti + Kaggle predator/prey, ResNet-18 backbone).</li>
-        <li>Explicit experiments section (curves, sensitivity, baseline table, qualitative cases).</li>
-        <li>Current repo setup/progress summary and next milestones.</li>
-      </ul>
+    <section class="grid">
+      <article class="card">
+        <h2>Project Snapshot</h2>
+        <ul>
+          <li><strong>Title:</strong> PALEO (with Primal Mind)</li>
+          <li><strong>Team:</strong> World's Finest</li>
+          <li><strong>Members:</strong> Laura Wetherhold, Alexus Aguirre Arias</li>
+          <li><strong>Target:</strong> Dinosaur survival agent with interpretable thought/action loops.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>Current Status</h2>
+        <p><span class="status in-progress">IN PROGRESS</span>Scaffold, docs, and deployment are ready.</p>
+        <p><span class="status planned">PLANNED</span>Dataset download, training, and quantitative evaluation next.</p>
+        <p class="muted tiny">No model results yet; this reflects honest current progress.</p>
+      </article>
     </section>
 
     <section class="card">
-      <h2>Direct Notes Captured From Your Request</h2>
-      <pre id="notes"></pre>
+      <h2>Check-in Questions (1-10)</h2>
+
+      <details class="qa-item" open>
+        <summary>1) Project title and team</summary>
+        <div class="qa-content">
+          <p><strong>Project title:</strong> PALEO (with Primal Mind)</p>
+          <p><strong>Team:</strong> World's Finest (Laura Wetherhold, Alexus Aguirre Arias)</p>
+        </div>
+      </details>
+
+      <details class="qa-item" open>
+        <summary>2-4) Abstract and problem definition</summary>
+        <div class="qa-content">
+          <p>
+            PALEO addresses a common issue in game AI: predictable and non-interpretable NPC behavior. The system
+            uses computer vision plus behavior modeling to infer high-level state (threat, urgency, risk posture),
+            then generates explainable thought logs and aligned actions.
+          </p>
+          <ul>
+            <li><strong>Input:</strong> real-time game screen captures.</li>
+            <li><strong>Output:</strong> thought logs, simulated controls, and updated per-dinosaur memory state.</li>
+            <li><strong>Task types:</strong> machine learning, computer vision, and agentic automation.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="qa-item" open>
+        <summary>5-6) Dataset and model choices</summary>
+        <div class="qa-content">
+          <ul>
+            <li><strong>Datasets:</strong> Snapshot Serengeti + Kaggle predator/prey image dataset.</li>
+            <li><strong>Preprocessing:</strong> unified label schema, augmentation, balancing, and train/val/test split.</li>
+            <li><strong>Baseline:</strong> OpenCV rule-based policy.</li>
+            <li><strong>Main model:</strong> ResNet-18 transfer learning for behavior intent classification.</li>
+            <li><strong>Agent orchestration:</strong> one Letta agent per dinosaur with memory blocks for needs/events/risk.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="qa-item" open>
+        <summary>7) Target users and impact</summary>
+        <div class="qa-content">
+          <ul>
+            <li><strong>Game developers:</strong> behavior stress-testing for map/resource balancing.</li>
+            <li><strong>Players:</strong> survival-loop assistance and better accessibility support.</li>
+            <li><strong>Impact:</strong> less scripted, more interpretable and lifelike agent behavior.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="qa-item" open>
+        <summary>8) Technical plan and timeline</summary>
+        <div class="qa-content">
+          <ul>
+            <li>Week 1: finalize dataset selection and preprocessing scripts.</li>
+            <li>Week 2: implement OpenCV baseline + first ResNet-18 training run.</li>
+            <li>Week 3: sensitivity and hyperparameter sweep.</li>
+            <li>Week 4: integrate classifier into Letta agent loop.</li>
+            <li>Week 5: produce final figures/tables and polish report.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="qa-item" open>
+        <summary>9-10) Progress and challenges</summary>
+        <div class="qa-content">
+          <p>
+            Current repo status is scaffold-first: <code>src/</code>, <code>scripts/</code>, <code>tests/</code>,
+            <code>docs/</code>, reproducible commands in README, and now Pages deployment.
+          </p>
+          <ul>
+            <li><strong>Progress honesty:</strong> no downloaded final dataset subset, no trained model results yet.</li>
+            <li><strong>Challenges:</strong> class imbalance, domain shift, hardware limits, label noise, low-confidence oscillations.</li>
+            <li><strong>Mitigations:</strong> weighted loss, balancing, confidence thresholds, and safe-action fallback logic.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>Planned Artifact Placeholders</h2>
+      <p class="muted">These correspond to items already described in your check-in and previous notes.</p>
+      <div class="placeholder-board">
+        <article class="placeholder">
+          <h3>Training Curves Panel</h3>
+          <p>Placeholder for loss/accuracy over epochs and convergence snapshots.</p>
+        </article>
+        <article class="placeholder">
+          <h3>Sensitivity Analysis Table</h3>
+          <p>Placeholder for learning-rate, augmentation, and backbone variation outcomes.</p>
+        </article>
+        <article class="placeholder">
+          <h3>Baseline Comparison</h3>
+          <p>Placeholder for OpenCV rule baseline vs ResNet-18 model variants.</p>
+        </article>
+        <article class="placeholder">
+          <h3>Qualitative Case Gallery</h3>
+          <p>Placeholder for success/failure behavior examples and short analyses.</p>
+        </article>
+        <article class="placeholder">
+          <h3>Memory Block Visualizer</h3>
+          <p>Placeholder for per-dinosaur memory state view (needs, threat memory, actions).</p>
+        </article>
+        <article class="placeholder">
+          <h3>Demo Clip Embed</h3>
+          <p>Placeholder for in-engine clips showing perceive-decide-act behavior loop.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Notes Captured from Planning</h2>
+      <ul id="notesList"></ul>
     </section>
   </main>
 
   <script>
-    const requestNotes = [
-      "Deeper dive from docs/context_dump.md and docs/paleo_brainstorming.md.",
-      "Apply details directly to check-in response.",
-      "Include Letta system: one agent per dinosaur individual.",
-      "Mention Letta memory blocks as key functionality.",
-      "Choose dataset/model direction since final pick was uncertain.",
-      "Describe current setup progress of https://github.com/PALEO-AI-System/PALEO.",
-      "Later task: produce non-Markdown/plain-text submission for Canvas.",
-      "Website plan: have PALEO homepage and check-in page with HTML/CSS/JS."
-    ];
+    (function () {
+      const notes = [
+        "One agent per dinosaur individual (Letta-based architecture).",
+        "Memory blocks track identity, needs, risk history, and recent actions.",
+        "Dataset direction chosen: Snapshot Serengeti + Kaggle predator/prey.",
+        "Baseline selected: OpenCV rules before learned behavior policy.",
+        "Backbone selected for initial training: ResNet-18.",
+        "Canvas-ready plain-text submission and web page versions maintained.",
+        "Repository status is scaffold-complete with reproducible run commands.",
+        "Future website modules planned for architecture, results, and demos."
+      ];
 
-    document.getElementById("notes").textContent = requestNotes
-      .map((item, i) => `${i + 1}. ${item}`)
-      .join("\n");
+      const list = document.getElementById("notesList");
+      notes.forEach(function (text) {
+        const item = document.createElement("li");
+        item.textContent = text;
+        list.appendChild(item);
+      });
+    })();
   </script>
 </body>
 </html>

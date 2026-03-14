@@ -3,100 +3,422 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PALEO | Home</title>
+  <title>PALEO | Dashboard</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --panel: #111827;
-      --text: #e5e7eb;
-      --muted: #9ca3af;
-      --accent: #22d3ee;
-      --border: #1f2937;
+      --bg: #f3f9f1;
+      --bg-fern: #e9f4e4;
+      --panel: #fffef7;
+      --ink: #1f3a2f;
+      --ink-soft: #4f6e60;
+      --accent: #6eb88f;
+      --accent-strong: #4b9b8e;
+      --line: #c9decd;
+      --cream: #f7efd9;
+      --teal-mist: #deefec;
+      --shadow: rgba(27, 58, 47, 0.12);
+      --ok: #5aa876;
+      --todo: #d19a45;
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(180deg, var(--bg), #020617);
-      color: var(--text);
-      line-height: 1.5;
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 10% 5%, rgba(110, 184, 143, 0.22), transparent 36%),
+        radial-gradient(circle at 88% 12%, rgba(75, 155, 142, 0.16), transparent 30%),
+        repeating-linear-gradient(160deg, rgba(255, 255, 255, 0.0) 0, rgba(255, 255, 255, 0.0) 24px, rgba(110, 184, 143, 0.06) 24px, rgba(110, 184, 143, 0.06) 30px),
+        var(--bg);
     }
+
+    .fern-band {
+      height: 86px;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(ellipse at 15% 100%, rgba(110, 184, 143, 0.45), transparent 45%),
+        radial-gradient(ellipse at 30% 100%, rgba(75, 155, 142, 0.35), transparent 40%),
+        radial-gradient(ellipse at 45% 100%, rgba(110, 184, 143, 0.36), transparent 42%),
+        radial-gradient(ellipse at 60% 100%, rgba(75, 155, 142, 0.28), transparent 40%),
+        radial-gradient(ellipse at 76% 100%, rgba(110, 184, 143, 0.32), transparent 42%),
+        radial-gradient(ellipse at 90% 100%, rgba(75, 155, 142, 0.34), transparent 40%),
+        var(--bg-fern);
+      opacity: 0.9;
+    }
+
     .wrap {
-      max-width: 980px;
+      max-width: 1140px;
       margin: 0 auto;
-      padding: 28px 18px 52px;
+      padding: 20px 18px 56px;
     }
-    .panel {
-      background: rgba(17, 24, 39, 0.92);
-      border: 1px solid var(--border);
+
+    .site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      background: #ffffffc7;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 600;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px var(--shadow); }
+    .btn.active { background: var(--accent); color: #123527; border-color: #5ca57d; }
+
+    .hero {
+      background: linear-gradient(130deg, #f6fbf4, #edf6ef 52%, #f8f0df);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 8px 22px var(--shadow);
+      padding: 24px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      width: 210px;
+      height: 210px;
+      right: -64px;
+      top: -82px;
+      background: rgba(110, 184, 143, 0.17);
+    }
+
+    .hero::after {
+      width: 170px;
+      height: 170px;
+      left: -60px;
+      bottom: -65px;
+      background: rgba(75, 155, 142, 0.16);
+    }
+
+    h1, h2, h3 { margin: 0 0 10px; }
+    h1 { font-size: 2.2rem; letter-spacing: 0.2px; }
+    h2 { font-size: 1.3rem; color: #2f6d58; }
+    h3 { font-size: 1rem; color: #2e5f50; }
+
+    .subhead {
+      margin: 0;
+      color: var(--ink-soft);
+      max-width: 850px;
+    }
+
+    .egg-note {
+      margin-top: 14px;
+      padding: 10px 12px;
       border-radius: 12px;
-      padding: 18px;
-      margin-bottom: 14px;
+      background: #fff8ea;
+      border: 1px dashed #d8be8a;
+      color: #6d5529;
+      display: inline-block;
+      font-size: 0.94rem;
     }
-    h1, h2 { margin: 0 0 10px; }
-    h1 { font-size: 2rem; }
-    h2 { font-size: 1.15rem; color: var(--accent); }
-    p, li { color: var(--text); }
-    .muted { color: var(--muted); }
-    code {
-      background: #0b1220;
-      border: 1px solid #1e293b;
-      border-radius: 6px;
-      padding: 2px 6px;
+
+    .grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      margin-bottom: 16px;
     }
-    .todo {
-      margin-top: 10px;
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .metric {
+      font-size: 1.68rem;
+      font-weight: 700;
+      color: #245745;
+      margin: 2px 0 4px;
+    }
+
+    .muted { color: var(--ink-soft); }
+    ul { margin: 0; padding-left: 18px; }
+    li { margin-bottom: 6px; }
+
+    .status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      letter-spacing: 0.2px;
+      margin-right: 8px;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .status.done { background: #eaf7ee; color: #275f3f; border-color: #9ac8aa; }
+    .status.in-progress { background: #eef8f5; color: #2b6c5d; border-color: #9bc8be; }
+    .status.planned { background: #fff5e2; color: #7e5922; border-color: #d7bb84; }
+
+    .dash-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .dash-link {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid var(--line);
+      border-radius: 12px;
       padding: 12px;
-      border: 1px dashed #334155;
-      border-radius: 8px;
-      background: rgba(2, 6, 23, 0.6);
+      background: #fbfff8;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .dash-link:hover { border-color: #8dbca4; transform: translateY(-1px); }
+
+    .link-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #2b6654;
+    }
+
+    .feature-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: #dff1e5;
+      border-color: #85b697;
+      color: #1f503b;
+    }
+
+    .feature {
+      margin-bottom: 8px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #d6e8d8;
+      background: #fbfff8;
+    }
+
+    code {
+      border-radius: 6px;
+      padding: 1px 6px;
+      background: #f0f7f1;
+      border: 1px solid #d3e6d5;
+    }
+
+    .footer {
+      margin-top: 18px;
+      font-size: 0.9rem;
+      color: #5d7d6f;
+      text-align: center;
     }
   </style>
 </head>
 <body>
+  <div class="fern-band"></div>
   <main class="wrap">
-    <section class="panel">
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a class="btn active" href="index.html">Dashboard Home</a>
+      <a class="btn" href="project-checkin-1.html">Project Check-in 1</a>
+      <a class="btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+    </nav>
+
+    <section class="hero">
       <h1>PALEO</h1>
-      <p>
-        PALEO is an AI system that uses computer vision and trained animal behavior
-        models to power realistic, instinct-driven dinosaur agents in a survival game environment.
+      <p class="subhead">
+        PALEO is an AI system for dinosaur-themed survival gameplay. It combines computer vision,
+        behavior modeling, and per-dinosaur Letta agents to produce instinct-driven actions and
+        interpretable thought logs.
       </p>
-      <p class="muted">
-        Placeholder page for future GitHub Pages site.
-      </p>
+      <p class="egg-note">Current phase: foundation build and check-in documentation complete; model training and game integration are next.</p>
     </section>
 
-    <section class="panel">
-      <h2>Planned System Direction</h2>
-      <ul>
-        <li>Game context: Path of Titans style survival mechanics and species interactions.</li>
-        <li>Agent architecture: one Letta agent per dinosaur individual.</li>
-        <li>Letta role: memory blocks for each dinosaur state (identity, needs, threat memory, recent actions).</li>
-        <li>Data direction: Snapshot Serengeti + Kaggle predator/prey dataset for behavior priors.</li>
-        <li>Core model plan: ResNet-18 transfer learning + OpenCV rule baseline.</li>
-      </ul>
-      <div class="todo">
-        <strong>Build Later:</strong> Add screenshots, live demos, architecture diagram, and setup instructions.
+    <section class="grid" aria-label="Project metrics">
+      <article class="card">
+        <h3>Current Milestone</h3>
+        <p class="metric">Check-in 1</p>
+        <p class="muted">Prompt response drafted and published to project pages.</p>
+      </article>
+      <article class="card">
+        <h3>Primary Approach</h3>
+        <p class="metric">CV + Agentic AI</p>
+        <p class="muted">ResNet-18 behavior classification + Letta memory-driven agent loop.</p>
+      </article>
+      <article class="card">
+        <h3>Repository State</h3>
+        <p class="metric">Scaffold Ready</p>
+        <p class="muted"><code>src/</code>, <code>scripts/</code>, <code>tests/</code>, <code>docs/</code> plus Pages site deployed.</p>
+      </article>
+      <article class="card">
+        <h3>Planned Agent Scale</h3>
+        <p class="metric">1 Agent / Dinosaur</p>
+        <p class="muted">Each dinosaur keeps identity, needs, risks, and recent action memory blocks.</p>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>Dashboard Navigation</h2>
+      <p class="muted">Use this page as the central hub for all project pages and future dashboards.</p>
+      <div class="dash-links">
+        <a class="dash-link" href="project-checkin-1.html">
+          <div class="link-title">Project Check-in 1</div>
+          <div>Completed check-in site with abstract, model plan, timeline, challenges, and placeholders for future experiment visuals.</div>
+        </a>
+        <a class="dash-link" href="#" aria-disabled="true">
+          <div class="link-title">Model Results Dashboard (Placeholder)</div>
+          <div>Will include loss/accuracy curves, confusion matrix, baseline table, and run-to-run comparisons.</div>
+        </a>
+        <a class="dash-link" href="#" aria-disabled="true">
+          <div class="link-title">Agent Demo Gallery (Placeholder)</div>
+          <div>Will include short clips, thought logs, and behavior snapshots from in-game scenarios.</div>
+        </a>
+        <a class="dash-link" href="#" aria-disabled="true">
+          <div class="link-title">System Architecture Viewer (Placeholder)</div>
+          <div>Will show perceive - decide - act - remember flow and memory block schema per dinosaur.</div>
+        </a>
       </div>
     </section>
 
-    <section class="panel">
-      <h2>Repo Status (Current)</h2>
-      <ul>
-        <li>Scaffold complete: <code>src/</code>, <code>scripts/</code>, <code>tests/</code>, <code>docs/</code>.</li>
-        <li>Minimal runnable pipeline exists; model training not implemented yet.</li>
-        <li>README includes reproducible run commands.</li>
-      </ul>
-      <p class="muted">
-        Note: If this becomes the GitHub Pages homepage, this file can be moved or copied to repository root as <code>index.html</code>.
-      </p>
+    <section class="grid">
+      <article class="card">
+        <h2>Technical Direction</h2>
+        <ul>
+          <li>Game context: survival-style species interactions inspired by Path of Titans.</li>
+          <li>Data direction: Snapshot Serengeti + Kaggle predator/prey image sources.</li>
+          <li>Baseline: OpenCV rule policy for transparent first benchmark.</li>
+          <li>Main model: ResNet-18 transfer learning for behavior state prediction.</li>
+          <li>Agent orchestration: one Letta agent per dinosaur individual.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>Reproducible Commands</h2>
+        <ul>
+          <li><code>python scripts/run_pipeline.py</code></li>
+          <li><code>python -m unittest discover -s tests -p "test_*.py"</code></li>
+        </ul>
+        <p class="muted">
+          Training and evaluation commands will be added once the behavior classifier pipeline is implemented.
+        </p>
+      </article>
     </section>
+
+    <section class="card">
+      <h2>Planned Features</h2>
+      <p class="muted">Filter by status to preview what is complete now vs planned next.</p>
+      <div class="feature-controls" role="tablist" aria-label="Feature filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="done">Done</button>
+        <button class="filter-btn" data-filter="in-progress">In Progress</button>
+        <button class="filter-btn" data-filter="planned">Planned</button>
+      </div>
+      <div id="featureList">
+        <article class="feature" data-status="done">
+          <span class="status done">DONE</span>
+          GitHub Pages deployment from <code>pages/</code> via GitHub Actions.
+        </article>
+        <article class="feature" data-status="done">
+          <span class="status done">DONE</span>
+          Homepage dashboard and project check-in navigation interface.
+        </article>
+        <article class="feature" data-status="in-progress">
+          <span class="status in-progress">IN PROGRESS</span>
+          Project documentation alignment (brief, check-ins, AI disclosure log updates).
+        </article>
+        <article class="feature" data-status="planned">
+          <span class="status planned">PLANNED</span>
+          Dataset ingestion pipeline for Snapshot Serengeti and selected Kaggle predator/prey subset.
+        </article>
+        <article class="feature" data-status="planned">
+          <span class="status planned">PLANNED</span>
+          Supervised behavior classifier training with convergence tracking and sensitivity sweeps.
+        </article>
+        <article class="feature" data-status="planned">
+          <span class="status planned">PLANNED</span>
+          Integrated agent loop with per-dinosaur memory updates and fallback safe actions.
+        </article>
+        <article class="feature" data-status="planned">
+          <span class="status planned">PLANNED</span>
+          Demo page with qualitative behavior examples, failure cases, and interpretation notes.
+        </article>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Roadmap Snapshot</h2>
+      <ul>
+        <li><strong>Week 1:</strong> finalize dataset selection, download plan, and preprocessing scripts.</li>
+        <li><strong>Week 2:</strong> implement OpenCV baseline and first ResNet-18 training pass.</li>
+        <li><strong>Week 3:</strong> run hyperparameter and augmentation sensitivity analysis.</li>
+        <li><strong>Week 4:</strong> integrate classifier with Letta agent loop and test behavior outcomes.</li>
+        <li><strong>Week 5:</strong> prepare figures/tables and polish report-ready outputs.</li>
+      </ul>
+    </section>
+
+    <footer class="footer">
+      <div>PALEO project dashboard - prehistoric-themed interface with fern/cream/teal visual palette.</div>
+      <div id="stamp"></div>
+    </footer>
   </main>
 
   <script>
-    // Placeholder script for future interactivity.
-    window.PALEO_SITE_READY = false;
-    console.log("PALEO homepage placeholder loaded.");
+    (function () {
+      const buttons = Array.from(document.querySelectorAll(".filter-btn"));
+      const features = Array.from(document.querySelectorAll(".feature"));
+
+      function applyFilter(filter) {
+        features.forEach(function (feature) {
+          const isVisible = filter === "all" || feature.dataset.status === filter;
+          feature.style.display = isVisible ? "block" : "none";
+        });
+        buttons.forEach(function (btn) {
+          btn.classList.toggle("active", btn.dataset.filter === filter);
+        });
+      }
+
+      buttons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          applyFilter(btn.dataset.filter);
+        });
+      });
+
+      document.getElementById("stamp").textContent =
+        "Last updated: " + new Date().toLocaleDateString();
+      applyFilter("all");
+      window.PALEO_SITE_READY = true;
+    })();
   </script>
 </body>
 </html>
