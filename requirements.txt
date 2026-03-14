@@ -1,0 +1,16 @@
+numpy
+pandas
+requests
+tqdm
+opencv-python
+torch
+torchvision
+scikit-learn
+matplotlib
+seaborn
+pyarrow
+fastapi
+uvicorn
+mss
+keyboard
+mouse

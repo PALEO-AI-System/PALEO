@@ -125,8 +125,9 @@ flowchart LR
   - Input: outputs from the Serengeti-trained vision models (predator presence probability, prey/herd density proxies, coarse behavior cues) + basic PoT state (HUD signals such as health, stamina, hunger/thirst, debuffs/buffs parsed via CV, and nearby dino silhouettes/species).
   - Representation: a small `Observation` struct that can be serialized and fed to both the Instinct Agent and Letta tools.
 - **Policy / agent logic**:
-  - **Phase 1**: rule-based policies conditioned on **personality traits** (e.g., aggressiveness, bravery, curiosity, sociability, morality) and instincts (if predator probability high and health low and bravery low → flee; if hunger high and prey nearby and morality low → pursue juvenile, etc.).
+  - **Phase 1**: rule-based policies conditioned on **personality traits** (e.g., aggressiveness, bravery, curiosity, sociability, morality) and instincts, with explicit **threat response modes** (fight/flight/freeze) and examples such as: if predator probability high and health low and bravery low → flight; if cornered or out of stamina → fight; if surprised by a large hit with unclear escape → brief freeze.
   - **Phase 2 (optional)**: lightweight RL using `stable-baselines3` if we can construct a pseudo-environment over PoT episodes, still conditioned on personality traits.
+  - The policy should also encode **growth/juvenile-specific behavior**, e.g., some species being more likely to hunt juveniles of competitor species, or smaller predators preferring juvenile prey for size/safety reasons.
 - **Libraries**:
   - `numpy` – feature vectors.
   - `dataclasses` or `pydantic` – typed observations/actions.
@@ -139,6 +140,7 @@ flowchart LR
   - **Preprocessing**: `opencv-python` and `torchvision.transforms` to crop HUD/viewport regions and normalize images.
   - **Model inference**: `torch` models loaded from `ModelRegistry` and run in a low-latency loop, including PoT-specific detectors (HUD parsing, dino silhouettes/species classifiers) if later added.
   - **State buffer**: `collections.deque` or small ring buffer to keep last N observations for smoother decisions and to give Letta short-term episodic context.
+  - **Capture cadence**: start with low-rate periodic screenshots (e.g., 1–2 Hz) feeding the same observe → decide → act path, then graduate to a higher-FPS live loop (5–10 Hz) once stable.
 - **Action pipeline**:
   - **Input sending**: `pyautogui` or `keyboard` / `mouse` libraries for simulating keypresses and mouse input.
   - **Action abstraction**: high-level actions (`FLEE`, `GRAZE`, `FOLLOW_HERD`, etc.) mapped to low-level key sequences with timing.
@@ -184,7 +186,7 @@ flowchart LR
 ### Phase 1 – Dataset ingestion & exploration
 
 - **P1.1**: Implement a small ingestion script to download a tiny subset of Snapshot Serengeti (or load from a manually downloaded archive) into `data/raw`.
-- **P1.2**: Normalize metadata into a manifest (e.g., CSV/Parquet) with columns for image path, species, predator/prey flag, and split.
+- **P1.2**: Normalize metadata into a manifest (e.g., JSONL/Parquet) with columns for image path, species, predator/prey flag, and split; support both synthetic fallback and real Snapshot Serengeti metadata CSVs.
 - **P1.3**: Add a simple EDA notebook to inspect label balance and sample images.
 
 ### Phase 2 – Baseline models on Serengeti
@@ -270,4 +272,32 @@ flowchart LR
 - **Hardware**: Target machine specs (GPU model, RAM, CPU) to tune the real-time inference loop.
 - **Letta**: Version, preferred integration style (in-process Python vs. HTTP tools), and examples of long-running tool orchestration.
 - **Project constraints**: Any limits on external services (e.g., can we use wandb or is everything local-only?).
+
+
+## Alignment addendum (from context_dump & brainstorming)
+
+This section pins down a few explicit requirements that were previously only implied or missing:
+
+- **Local-only control & server policy**
+  - PALEO must run as a **local screen-watching + input-sending process**, *not* injected into the PoT client or shipped as a mod.
+  - On **official/anti-cheat servers**, the default is **advisor mode only** (no automated inputs), with any full-control experiments restricted to **private/community servers you own and run** where such automation is allowed.
+
+- **Fast-facts table alongside RAG**
+  - In addition to the wiki RAG vector store, maintain a small **fast-facts table** (e.g., JSON/CSV) mapping `species → {diet, size tier, threat tier, typical role, key abilities}` for cheap, deterministic lookups inside the Instinct Agent.
+
+- **Single Instinct Agent MVP**
+  - Phase 1 scope is **one dinosaur + one Instinct Agent with one Primal Mind** (per-dino memory block) end-to-end: Serengeti instincts → PoT perception → decisions → (advisor/control) actions.
+  - Multi-agent support (many dinos at once) remains an explicit **stretch goal** after the single-agent loop is robust.
+
+- **Ability-loadout inference**
+  - The Instinct Agent should perform **ability-loadout inference**: from observed enemy actions and limited hotbar slots, maintain hypotheses over what abilities a nearby dinosaur likely has equipped and update threat estimates accordingly.
+
+- **Non-verbal behavior in the action set**
+  - The high-level action space must explicitly include **non-verbal behaviors** (calls, emotes, body-language postures) such as broadcast/friendly/threaten/help calls, emote-wheel animations, and idle/defensive postures, not just movement and combat actions.
+
+- **Primal Mind terminology**
+  - The structured per-dinosaur memory (identity, personality traits, goals, recent experiences) is referred to consistently as the dinosaur’s **Primal Mind**, with the acting controller called the **Instinct Agent**, matching `docs/lexicon.md`.
+
+- **Live feed preference**
+  - The default PoT observation loop targets a **live, throttled capture stream** (e.g., 3–10 FPS region-based screen capture) rather than sporadic manual screenshots, with room to later explore incorporating audio as an additional signal if a safe/local capture path is available.
 

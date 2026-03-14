@@ -27,3 +27,15 @@
 - Added `src/agent.py` with an `AgentState`, stub decision rule, and formatted thought log, then surfaced `agent_action` and `thought_log` summaries from `run_pipeline()`.
 - Created `docs/lexicon.md` and defined canonical terminology for Instinct Agent and Primal Mind, referenced from `docs/project_brief.md` and enforced via `.cursor/rules/00-project.mdc`.
 - Updated `.cursor/rules/00-project.mdc`: reinforced short/simple replies and one-action-at-a-time when user leads development; avoid task dumps.
+- Replaced data stubs with real manifest-oriented ingestion utilities in `src/data.py` (directory setup, deterministic split assignment, CSV-to-JSONL normalization, synthetic fallback, summary stats).
+- Expanded `src/config.py` with concrete `DataConfig`, `PotConfig`, and `LettaConfig` for reproducible local setup and PoT/Letta assumptions.
+- Implemented baseline task specs and baseline contracts in `src/baselines.py` (OpenCV-style rule baseline metrics + ResNet-18 model builder when torch is available).
+- Upgraded `src/training.py` with reproducible training config/output handling and metrics persistence to `results/experiments/.../metrics.json`.
+- Reworked `src/agent.py` to canonical Instinct Agent + Primal Mind terminology, including personality traits, observation struct, and structured thought logs.
+- Added `src/pot.py` for Path of Titans runtime assumptions, screen-capture worker scaffold, and high-level action key mapping.
+- Added `src/letta_tools.py` defining Letta tool schemas (dataset stats, train/eval, run agent, wiki query, personality updates) plus local stubs.
+- Added `src/model_registry.py` for lightweight model registry metadata handling.
+- Added scripts `scripts/prepare_data.py` and `scripts/show_letta_tools.py` for reproducible data prep and Letta tool introspection.
+- Rewrote `README.md` with concrete environment setup and run commands.
+- Added `requirements.txt` listing standard dependencies for PALEO phases.
+- Added/updated tests in `tests/test_pipeline.py` and `tests/test_components.py` for end-to-end summary checks and component-level contracts.
