@@ -79,7 +79,32 @@ Actions should include **calls and emotes** as first-class options, not just mov
   - When health is critically low and nearby allies exist, prefer help calls while attempting to flee.
   - Juveniles may be more likely to emit distress calls earlier in a fight.
 
-Species-specific flavor can be layered on top later (e.g., some species using more visual emotes, others relying mostly on calls).
+- **Chat emotes**
+  - Optionally, the agent can trigger chat emotes (e.g. `:dinocry:`) as extra-flavor signals in low-stakes contexts, though these are not core to decision quality.
+
+Species-specific flavor can be layered on top later (e.g., some species using more visual emotes, others relying mostly on calls). For example, some carnivores with distinctive animations might use more head-bob or stretch emotes when asserting presence, while more skittish species lean heavily on Danger/Help calls.
+
+---
+
+### 5.1 Path of Titans–specific growth flavor
+
+Grounding the juvenile behavior in PoT’s growth system:
+
+- **Hatchling / Juvenile**
+  - Higher stamina but low health and weight; more likely to:
+    - Avoid direct confrontation with adults of most species.
+    - Stay near cover and group members when possible.
+    - Emit Danger/Help calls earlier when threatened.
+  - As hatchlings/juveniles take fewer group slots, the agent in a herd might tolerate more juveniles nearby and prioritize their safety.
+
+- **Adolescent / Sub-adult**
+  - Transitional stages where second ability slots may unlock.
+  - The agent can become more exploratory/aggressive as stats improve but should still avoid top-tier adult apex matchups.
+
+- **Adult**
+  - Full stats and higher group-slot cost.
+  - Territorial behavior becomes more pronounced: more Broadcast and Threaten calls around high-value locations (water, quests, carcasses).
+  - Death penalties (dropping back to Sub-adult) can factor into risk appetite in the Primal Mind (e.g., “avoid needless high-risk duels when solo”).
 
 ---
 
