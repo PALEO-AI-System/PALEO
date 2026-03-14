@@ -147,3 +147,43 @@ Putting pieces together, an example loop for a mid-sized predator:
 
 This style of policy is the target: **coherent, grounded in instincts and personality, and capable of becoming more “skilled” as data and training accumulate.**
 
+---
+
+### 7. Concrete species sketches (illustrative)
+
+These are intentionally rough and can be swapped for your actual favorite species later.
+
+- **Mid-sized carnivore example (e.g., Ceratosaurus-like)**
+  - **Role & instincts**
+    - Opportunistic ambush hunter; mid-food-chain predator that can threaten smaller dinos and juveniles but should respect apex adults.
+  - **Engagement rules**
+    - Prefers to engage:
+      - Solo juveniles or small adults near water/quest locations.
+      - Targets that are already wounded or fleeing from another fight.
+    - Avoids:
+      - Healthy adult apex predators unless part of a coordinated herd/pack.
+      - Multi-enemy engagements when stamina is below a threshold.
+  - **Ability preferences**
+    - Prioritize mobility + bleed/DoT style abilities for hit-and-run, conserving stamina between bursts.
+    - Use defensive abilities (armor, damage reduction) when forced into FIGHT mode while cornered.
+  - **Non-verbal flavor**
+    - Uses Broadcast calls when healthy and claiming a carcass or watering spot.
+    - Uses Threaten calls and aggressive posture emotes when smaller rivals approach “its” resource.
+
+- **Herbivore example (e.g., Campto-/Iguanodon-like)**
+  - **Role & instincts**
+    - Cautious forager; relies on early detection and group safety more than raw damage.
+  - **Engagement rules**
+    - Prefers:
+      - Avoiding combat entirely when solo, using terrain and cover to break line-of-sight.
+      - Staying near groups and reacting as a unit when predators are spotted.
+    - Only commits to FIGHT mode when:
+      - Cornered with no clear escape, or
+      - Protecting nearby juveniles/eggs at a critical resource (water, food).
+  - **Ability preferences**
+    - Invests in stamina/speed/metabolism-oriented abilities to aid escape and long-distance travel.
+    - If a tail/limb knockback or stun ability exists, uses it primarily as a disengage tool to create space, not to chase kills.
+  - **Non-verbal flavor**
+    - Frequently uses Friendly calls when in a herd to maintain cohesion.
+    - Uses Danger/Help calls early when predators enter visible range, even before being directly threatened, to reflect skittish prey behavior.
+
