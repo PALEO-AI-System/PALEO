@@ -4,166 +4,173 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PALEO | Technical Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <style>
     :root {
-      --bg: #f3f9f1;
-      --bg-fern: #e9f4e4;
-      --panel: #fffef7;
-      --ink: #1f3a2f;
-      --ink-soft: #4f6e60;
-      --accent: #6eb88f;
-      --accent-strong: #4b9b8e;
-      --line: #c9decd;
-      --cream: #f7efd9;
-      --teal-mist: #deefec;
-      --shadow: rgba(27, 58, 47, 0.12);
-      --ok: #5aa876;
-      --todo: #d19a45;
+      --bg: #f4f9f2;
+      --panel: rgba(255, 255, 255, 0.86);
+      --ink: #1f3b31;
+      --ink-soft: #4d6f62;
+      --line: #c7decd;
+      --accent: #4e9d92;
+      --accent-2: #56a984;
+      --cream: #f9f2e2;
+      --shadow: rgba(30, 62, 50, 0.16);
+    }
+
+    body.dark {
+      --bg: #0f1e1a;
+      --panel: rgba(23, 38, 32, 0.82);
+      --ink: #e5f5eb;
+      --ink-soft: #b2d4c4;
+      --line: #2b4e43;
+      --accent: #6bb9c3;
+      --accent-2: #75cb9f;
+      --cream: #2f2a21;
+      --shadow: rgba(5, 10, 8, 0.35);
     }
 
     * { box-sizing: border-box; }
-
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      font-family: "Urbanist", "Segoe UI", sans-serif;
       color: var(--ink);
       line-height: 1.55;
       background:
-        radial-gradient(circle at 10% 5%, rgba(110, 184, 143, 0.22), transparent 36%),
-        radial-gradient(circle at 88% 12%, rgba(75, 155, 142, 0.16), transparent 30%),
-        repeating-linear-gradient(160deg, rgba(255, 255, 255, 0.0) 0, rgba(255, 255, 255, 0.0) 24px, rgba(110, 184, 143, 0.06) 24px, rgba(110, 184, 143, 0.06) 30px),
+        radial-gradient(circle at 7% 3%, rgba(86, 169, 132, 0.18), transparent 33%),
+        radial-gradient(circle at 90% 5%, rgba(78, 157, 146, 0.16), transparent 31%),
+        repeating-radial-gradient(circle at 20% 20%, rgba(86, 169, 132, 0.04) 0 6px, transparent 6px 22px),
         var(--bg);
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
-    .fern-band {
-      height: 86px;
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 5px;
+      z-index: 100;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent), #89cf9a);
+      box-shadow: 0 0 16px rgba(96, 193, 141, 0.5);
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(9px);
+      background: rgba(244, 249, 242, 0.75);
       border-bottom: 1px solid var(--line);
-      background:
-        radial-gradient(ellipse at 15% 100%, rgba(110, 184, 143, 0.45), transparent 45%),
-        radial-gradient(ellipse at 30% 100%, rgba(75, 155, 142, 0.35), transparent 40%),
-        radial-gradient(ellipse at 45% 100%, rgba(110, 184, 143, 0.36), transparent 42%),
-        radial-gradient(ellipse at 60% 100%, rgba(75, 155, 142, 0.28), transparent 40%),
-        radial-gradient(ellipse at 76% 100%, rgba(110, 184, 143, 0.32), transparent 42%),
-        radial-gradient(ellipse at 90% 100%, rgba(75, 155, 142, 0.34), transparent 40%),
-        var(--bg-fern);
-      opacity: 0.9;
     }
+    body.dark .nav { background: rgba(15, 30, 26, 0.75); }
 
-    .wrap {
-      max-width: 1140px;
+    .nav-inner {
+      max-width: 1120px;
       margin: 0 auto;
-      padding: 20px 18px 56px;
+      padding: 12px 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    .site-nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 18px;
+    .brand {
+      font-family: "Fraunces", serif;
+      font-size: 1.3rem;
+      font-weight: 700;
     }
+
+    .nav-links { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
     .btn {
-      display: inline-block;
       text-decoration: none;
       color: var(--ink);
       border: 1px solid var(--line);
-      background: #ffffffc7;
-      padding: 8px 12px;
       border-radius: 999px;
+      padding: 8px 12px;
       font-weight: 600;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      background: rgba(255, 255, 255, 0.45);
+      transition: transform 0.15s ease, border-color 0.15s ease;
     }
-
-    .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px var(--shadow); }
-    .btn.active { background: var(--accent); color: #123527; border-color: #5ca57d; }
+    .btn:hover { transform: translateY(-1px); border-color: var(--accent-2); }
+    .btn.active { background: rgba(86, 169, 132, 0.2); border-color: #86c6a3; }
 
     .repo-btn {
       color: #fff;
-      border: none;
-      background: linear-gradient(120deg, #5aa876, #4b9b8e, #7bcf98, #57b8ad);
+      border: 0;
+      background: linear-gradient(120deg, #63b884, #4e9d92, #8bcf9f, #66b5c4);
       background-size: 300% 300%;
-      box-shadow: 0 6px 14px rgba(75, 155, 142, 0.35);
-      animation: repoGlow 6s ease infinite;
+      box-shadow: 0 8px 18px rgba(79, 157, 146, 0.42);
+      position: relative;
+      overflow: hidden;
+      animation: repoFlow 6s ease infinite;
+    }
+    .repo-btn::after {
+      content: "";
+      position: absolute;
+      top: -140%;
+      left: -40%;
+      width: 58%;
+      height: 340%;
+      transform: rotate(24deg);
+      background: rgba(255, 255, 255, 0.28);
+      animation: repoShine 3s linear infinite;
     }
 
-    .repo-btn:hover { transform: translateY(-2px) scale(1.01); }
-
-    @keyframes repoGlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .mode-toggle {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--ink);
+      padding: 8px 12px;
+      font-weight: 700;
+      cursor: pointer;
     }
 
-    .hero {
-      background: linear-gradient(130deg, #f6fbf4, #edf6ef 52%, #f8f0df);
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 22px 18px 56px; }
+
+    .hero, .card {
+      background: linear-gradient(125deg, var(--panel), rgba(249, 242, 226, 0.72));
       border: 1px solid var(--line);
       border-radius: 18px;
       box-shadow: 0 8px 22px var(--shadow);
-      padding: 24px;
-      margin-bottom: 16px;
-      position: relative;
-      overflow: hidden;
+      padding: 18px;
+      margin-bottom: 14px;
     }
 
-    .hero::before,
-    .hero::after {
+    .hero { position: relative; overflow: hidden; }
+    .hero::before {
       content: "";
       position: absolute;
+      right: -70px;
+      top: -70px;
+      width: 190px;
+      height: 190px;
       border-radius: 50%;
-      pointer-events: none;
+      background: rgba(86, 169, 132, 0.17);
     }
 
-    .hero::before {
-      width: 210px;
-      height: 210px;
-      right: -64px;
-      top: -82px;
-      background: rgba(110, 184, 143, 0.17);
-    }
+    h1, h2, h3 { margin: 0 0 8px; }
+    h1, h2 { font-family: "Fraunces", serif; }
+    h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+    h2 { font-size: 1.35rem; color: var(--accent); }
+    h3 { font-size: 1.03rem; color: var(--accent); }
 
-    .hero::after {
-      width: 170px;
-      height: 170px;
-      left: -60px;
-      bottom: -65px;
-      background: rgba(75, 155, 142, 0.16);
-    }
-
-    h1, h2, h3 { margin: 0 0 10px; }
-    h1 { font-size: 2.2rem; letter-spacing: 0.2px; }
-    h2 { font-size: 1.3rem; color: #2f6d58; }
-    h3 { font-size: 1rem; color: #2e5f50; }
-
-    .subhead {
-      margin: 0;
-      color: var(--ink-soft);
-      max-width: 850px;
-    }
-
-    .egg-note {
-      margin-top: 14px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: #fff8ea;
-      border: 1px dashed #d8be8a;
-      color: #6d5529;
-      display: inline-block;
-      font-size: 0.94rem;
-    }
+    .muted { color: var(--ink-soft); }
+    p { margin-top: 0; }
+    ul { margin: 0; padding-left: 18px; }
+    li { margin-bottom: 6px; }
 
     .grid {
       display: grid;
       gap: 12px;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      margin-bottom: 16px;
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 14px;
-      box-shadow: 0 4px 12px var(--shadow);
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     }
 
     .metric {
@@ -172,10 +179,6 @@
       color: #245745;
       margin: 2px 0 4px;
     }
-
-    .muted { color: var(--ink-soft); }
-    ul { margin: 0; padding-left: 18px; }
-    li { margin-bottom: 6px; }
 
     .status {
       display: inline-block;
@@ -187,14 +190,13 @@
       font-weight: 600;
       border: 1px solid;
     }
-
     .status.done { background: #eaf7ee; color: #275f3f; border-color: #9ac8aa; }
     .status.in-progress { background: #eef8f5; color: #2b6c5d; border-color: #9bc8be; }
     .status.planned { background: #fff5e2; color: #7e5922; border-color: #d7bb84; }
 
     .dash-links {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
       gap: 10px;
       margin-top: 8px;
     }
@@ -204,19 +206,13 @@
       text-decoration: none;
       color: inherit;
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 12px;
-      background: #fbfff8;
+      background: rgba(252, 255, 251, 0.76);
       transition: border-color 0.15s ease, transform 0.15s ease;
     }
-
     .dash-link:hover { border-color: #8dbca4; transform: translateY(-1px); }
-
-    .link-title {
-      font-weight: 700;
-      margin-bottom: 4px;
-      color: #2b6654;
-    }
+    .link-title { font-weight: 700; margin-bottom: 4px; color: #2b6654; }
 
     .feature-controls {
       display: flex;
@@ -234,7 +230,6 @@
       font-weight: 600;
       cursor: pointer;
     }
-
     .filter-btn.active {
       background: #dff1e5;
       border-color: #85b697;
@@ -244,9 +239,51 @@
     .feature {
       margin-bottom: 8px;
       padding: 10px;
-      border-radius: 10px;
+      border-radius: 12px;
       border: 1px solid #d6e8d8;
-      background: #fbfff8;
+      background: rgba(252, 255, 251, 0.76);
+    }
+
+    .icon-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .image-row {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      margin-top: 10px;
+    }
+    .img-placeholder {
+      border: 2px dashed #9ec5ae;
+      border-radius: 12px;
+      min-height: 140px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--ink-soft);
+      background: rgba(245, 251, 247, 0.65);
+      padding: 10px;
+      font-weight: 600;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    .footer {
+      margin-top: 18px;
+      font-size: 0.94rem;
+      color: var(--ink-soft);
+      text-align: center;
     }
 
     code {
@@ -256,35 +293,44 @@
       border: 1px solid #d3e6d5;
     }
 
-    .footer {
-      margin-top: 18px;
-      font-size: 0.9rem;
-      color: #5d7d6f;
-      text-align: center;
+    @keyframes repoFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes repoShine {
+      from { left: -45%; }
+      to { left: 130%; }
     }
   </style>
 </head>
 <body>
-  <div class="fern-band"></div>
-  <main class="wrap">
-    <nav class="site-nav" aria-label="Primary navigation">
-      <a class="btn" href="index.html">Home</a>
-      <a class="btn active" href="technical.html">Technical</a>
-      <a class="btn" href="project-checkin-1.html">Project Check-in 1</a>
-      <a class="btn repo-btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
-    </nav>
+  <div class="progress" id="scrollProgress"></div>
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">PALEO</div>
+      <div class="nav-links">
+        <a class="btn" href="index.html">Home</a>
+        <a class="btn active" href="technical.html">Technical</a>
+        <a class="btn" href="project-checkin-1.html">Check-in 1</a>
+        <a class="btn repo-btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">Dark Mode</button>
+      </div>
+    </div>
+  </nav>
 
-    <section class="hero">
+  <main class="wrap">
+    <section class="hero reveal">
+      <div class="icon-line"><i class="fa-solid fa-microscope"></i> Technical Overview</div>
       <h1>PALEO Technical Dashboard</h1>
-      <p class="subhead">
-        PALEO is an AI system for dinosaur-themed survival gameplay. It combines computer vision,
-        behavior modeling, and per-dinosaur Letta agents to produce instinct-driven actions and
-        interpretable thought logs.
+      <p class="muted">
+        This tab keeps the deeper model/data/agent details for development-focused readers
+        while the main homepage communicates the project in simpler terms.
       </p>
-      <p class="egg-note">Current phase: foundation build and check-in documentation complete; model training and game integration are next.</p>
+      <p><span class="status in-progress">IN PROGRESS</span>Foundation complete; model experiments and integration are next.</p>
     </section>
 
-    <section class="grid" aria-label="Project metrics">
+    <section class="grid reveal" aria-label="Project metrics">
       <article class="card">
         <h3>Current Milestone</h3>
         <p class="metric">Check-in 1</p>
@@ -307,55 +353,55 @@
       </article>
     </section>
 
-    <section class="card">
+    <section class="card reveal">
+      <div class="icon-line"><i class="fa-solid fa-compass-drafting"></i> Technical Navigation</div>
       <h2>Dashboard Navigation</h2>
-      <p class="muted">Use this page as the central hub for all project pages and future dashboards.</p>
       <div class="dash-links">
         <a class="dash-link" href="project-checkin-1.html">
           <div class="link-title">Project Check-in 1</div>
-          <div>Completed check-in site with abstract, model plan, timeline, challenges, and placeholders for future experiment visuals.</div>
+          <div>Current writeup and placeholders for experiments/outputs.</div>
         </a>
         <a class="dash-link" href="#" aria-disabled="true">
           <div class="link-title">Model Results Dashboard (Placeholder)</div>
-          <div>Will include loss/accuracy curves, confusion matrix, baseline table, and run-to-run comparisons.</div>
+          <div>Planned: loss/accuracy curves, confusion matrix, and baseline table.</div>
         </a>
         <a class="dash-link" href="#" aria-disabled="true">
           <div class="link-title">Agent Demo Gallery (Placeholder)</div>
-          <div>Will include short clips, thought logs, and behavior snapshots from in-game scenarios.</div>
+          <div>Planned: clips with thought logs and behavior snapshots.</div>
         </a>
         <a class="dash-link" href="#" aria-disabled="true">
-          <div class="link-title">System Architecture Viewer (Placeholder)</div>
-          <div>Will show perceive - decide - act - remember flow and memory block schema per dinosaur.</div>
+          <div class="link-title">Architecture Viewer (Placeholder)</div>
+          <div>Planned: perceive - decide - act - remember flow.</div>
         </a>
       </div>
     </section>
 
-    <section class="grid">
+    <section class="grid reveal">
       <article class="card">
+        <div class="icon-line"><i class="fa-solid fa-database"></i> Data + Models</div>
         <h2>Technical Direction</h2>
         <ul>
-          <li>Game context: survival-style species interactions inspired by Path of Titans.</li>
           <li>Data direction: Snapshot Serengeti + Kaggle predator/prey image sources.</li>
-          <li>Baseline: OpenCV rule policy for transparent first benchmark.</li>
+          <li>Baseline: OpenCV rule policy for first benchmark.</li>
           <li>Main model: ResNet-18 transfer learning for behavior state prediction.</li>
-          <li>Agent orchestration: one Letta agent per dinosaur individual.</li>
+          <li>Agent orchestration: one Letta agent per dinosaur.</li>
+          <li>Planned outputs: convergence curves, sensitivity sweeps, qualitative cases.</li>
         </ul>
       </article>
       <article class="card">
+        <div class="icon-line"><i class="fa-solid fa-terminal"></i> Reproducibility</div>
         <h2>Reproducible Commands</h2>
         <ul>
           <li><code>python scripts/run_pipeline.py</code></li>
           <li><code>python -m unittest discover -s tests -p "test_*.py"</code></li>
         </ul>
-        <p class="muted">
-          Training and evaluation commands will be added once the behavior classifier pipeline is implemented.
-        </p>
+        <p class="muted">Training/evaluation commands will be added after the classifier pipeline lands.</p>
       </article>
     </section>
 
-    <section class="card">
+    <section class="card reveal">
+      <div class="icon-line"><i class="fa-solid fa-list-check"></i> Delivery Tracker</div>
       <h2>Planned Features</h2>
-      <p class="muted">Filter by status to preview what is complete now vs planned next.</p>
       <div class="feature-controls" role="tablist" aria-label="Feature filters">
         <button class="filter-btn active" data-filter="all">All</button>
         <button class="filter-btn" data-filter="done">Done</button>
@@ -363,56 +409,60 @@
         <button class="filter-btn" data-filter="planned">Planned</button>
       </div>
       <div id="featureList">
-        <article class="feature" data-status="done">
-          <span class="status done">DONE</span>
-          GitHub Pages deployment from <code>pages/</code> via GitHub Actions.
-        </article>
-        <article class="feature" data-status="done">
-          <span class="status done">DONE</span>
-          Homepage dashboard and project check-in navigation interface.
-        </article>
-        <article class="feature" data-status="in-progress">
-          <span class="status in-progress">IN PROGRESS</span>
-          Project documentation alignment (brief, check-ins, AI disclosure log updates).
-        </article>
-        <article class="feature" data-status="planned">
-          <span class="status planned">PLANNED</span>
-          Dataset ingestion pipeline for Snapshot Serengeti and selected Kaggle predator/prey subset.
-        </article>
-        <article class="feature" data-status="planned">
-          <span class="status planned">PLANNED</span>
-          Supervised behavior classifier training with convergence tracking and sensitivity sweeps.
-        </article>
-        <article class="feature" data-status="planned">
-          <span class="status planned">PLANNED</span>
-          Integrated agent loop with per-dinosaur memory updates and fallback safe actions.
-        </article>
-        <article class="feature" data-status="planned">
-          <span class="status planned">PLANNED</span>
-          Demo page with qualitative behavior examples, failure cases, and interpretation notes.
-        </article>
+        <article class="feature" data-status="done"><span class="status done">DONE</span>GitHub Pages deployment from <code>pages/</code> via GitHub Actions.</article>
+        <article class="feature" data-status="done"><span class="status done">DONE</span>Public homepage + technical + check-in tab structure.</article>
+        <article class="feature" data-status="in-progress"><span class="status in-progress">IN PROGRESS</span>Documentation refinement and technical page upgrades.</article>
+        <article class="feature" data-status="planned"><span class="status planned">PLANNED</span>Dataset ingestion pipeline for selected training subsets.</article>
+        <article class="feature" data-status="planned"><span class="status planned">PLANNED</span>Classifier training with sensitivity experiments and baseline comparison.</article>
+        <article class="feature" data-status="planned"><span class="status planned">PLANNED</span>Integrated agent loop with confidence thresholds and fallback actions.</article>
       </div>
     </section>
 
-    <section class="card">
+    <section class="card reveal">
+      <div class="icon-line"><i class="fa-solid fa-route"></i> Timeline</div>
       <h2>Roadmap Snapshot</h2>
       <ul>
-        <li><strong>Week 1:</strong> finalize dataset selection, download plan, and preprocessing scripts.</li>
-        <li><strong>Week 2:</strong> implement OpenCV baseline and first ResNet-18 training pass.</li>
-        <li><strong>Week 3:</strong> run hyperparameter and augmentation sensitivity analysis.</li>
-        <li><strong>Week 4:</strong> integrate classifier with Letta agent loop and test behavior outcomes.</li>
-        <li><strong>Week 5:</strong> prepare figures/tables and polish report-ready outputs.</li>
+        <li><strong>Week 1:</strong> finalize dataset selection and preprocessing scripts.</li>
+        <li><strong>Week 2:</strong> implement OpenCV baseline and first ResNet-18 run.</li>
+        <li><strong>Week 3:</strong> run augmentation and hyperparameter sensitivity.</li>
+        <li><strong>Week 4:</strong> integrate classifier with Letta agent loop.</li>
+        <li><strong>Week 5:</strong> finalize report visuals and project outputs.</li>
       </ul>
     </section>
 
-    <footer class="footer">
-      <div>PALEO technical dashboard - prehistoric-themed interface with fern/cream/teal visual palette.</div>
+    <section class="card reveal">
+      <div class="icon-line"><i class="fa-solid fa-image"></i> Technical Visual Placeholders</div>
+      <div class="image-row">
+        <div class="img-placeholder">Placeholder: architecture diagram (perceive -> decide -> act -> remember)</div>
+        <div class="img-placeholder">Placeholder: confusion matrix and baseline table</div>
+        <div class="img-placeholder">Placeholder: dinosaur thought/action timeline</div>
+      </div>
+    </section>
+
+    <footer class="footer reveal">
+      <div>PALEO technical dashboard - aligned with homepage/check-in style system.</div>
       <div id="stamp"></div>
     </footer>
   </main>
 
   <script>
     (function () {
+      const body = document.body;
+      const modeToggle = document.getElementById("modeToggle");
+      const key = "paleo-mode";
+      const saved = localStorage.getItem(key);
+
+      function setMode(dark) {
+        body.classList.toggle("dark", dark);
+        modeToggle.textContent = dark ? "Light Mode" : "Dark Mode";
+        localStorage.setItem(key, dark ? "dark" : "light");
+      }
+
+      setMode(saved === "dark");
+      modeToggle.addEventListener("click", function () {
+        setMode(!body.classList.contains("dark"));
+      });
+
       const buttons = Array.from(document.querySelectorAll(".filter-btn"));
       const features = Array.from(document.querySelectorAll(".feature"));
 
@@ -432,10 +482,28 @@
         });
       });
 
+      const bar = document.getElementById("scrollProgress");
+      window.addEventListener("scroll", function () {
+        const top = window.scrollY;
+        const height = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = height <= 0 ? 0 : (top / height) * 100;
+        bar.style.width = pct + "%";
+      });
+
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in");
+          }
+        });
+      }, { threshold: 0.15 });
+      document.querySelectorAll(".reveal").forEach(function (section) {
+        observer.observe(section);
+      });
+
       document.getElementById("stamp").textContent =
         "Last updated: " + new Date().toLocaleDateString();
       applyFilter("all");
-      window.PALEO_SITE_READY = true;
     })();
   </script>
 </body>

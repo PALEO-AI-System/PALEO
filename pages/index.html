@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <style>
     :root {
       --bg: #f4f9f2;
@@ -239,19 +240,66 @@
     li { margin-bottom: 6px; color: var(--ink-soft); }
 
     .steps .card { position: relative; }
-    .steps .card::before {
-      content: attr(data-icon);
-      position: absolute;
-      top: 10px;
-      right: 12px;
-      opacity: 0.35;
-      font-size: 1.3rem;
+    .steps .step-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(86, 169, 132, 0.2);
+      color: var(--accent-2);
+      margin-bottom: 10px;
+      font-size: 1.15rem;
     }
 
     .image-row {
       display: grid;
       gap: 12px;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .stat-row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.45);
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: "Fraunces", serif;
+      font-size: 1.65rem;
+      color: var(--accent-2);
+    }
+
+    .icon-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      color: var(--accent-2);
+      font-weight: 700;
+    }
+
+    .feature-list .card {
+      min-height: 170px;
+    }
+
+    .pill {
+      display: inline-block;
+      border: 1px solid var(--line);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      margin: 0 6px 6px 0;
+      background: rgba(255, 255, 255, 0.46);
     }
 
     .reveal {
@@ -311,7 +359,7 @@
         </p>
         <div class="hero-actions">
           <a class="cta primary" href="#how-it-works">How PALEO Works</a>
-          <a class="cta secondary" href="project-checkin-1.html">See Project Progress</a>
+          <a class="cta secondary" href="technical.html">Open Technical Dashboard</a>
         </div>
       </article>
       <aside class="image-slot">
@@ -322,19 +370,46 @@
       </aside>
     </section>
 
+    <section class="section reveal">
+      <div class="card">
+        <h2>Quick Overview</h2>
+        <div class="stat-row">
+          <article class="stat">
+            <strong>3</strong>
+            Core stages: Perceive, Think, Act
+          </article>
+          <article class="stat">
+            <strong>1:1</strong>
+            One memory-backed agent per dinosaur
+          </article>
+          <article class="stat">
+            <strong>2+</strong>
+            Public datasets guiding behavior priors
+          </article>
+          <article class="stat">
+            <strong>Now</strong>
+            Foundation and check-in release phase
+          </article>
+        </div>
+      </div>
+    </section>
+
     <section class="section reveal" id="how-it-works">
       <div class="card">
         <h2>What PALEO Does</h2>
         <div class="grid steps">
-          <article class="card" data-icon="1">
+          <article class="card">
+            <div class="step-icon"><i class="fa-solid fa-eye"></i></div>
             <h3>Perceive</h3>
             <p>Reads gameplay frames and detects behavior cues like danger, hunger, and nearby opportunity.</p>
           </article>
-          <article class="card" data-icon="2">
+          <article class="card">
+            <div class="step-icon"><i class="fa-solid fa-brain"></i></div>
             <h3>Think</h3>
             <p>Uses a per-dinosaur memory profile so each creature has continuity, preferences, and risk memory.</p>
           </article>
-          <article class="card" data-icon="3">
+          <article class="card">
+            <div class="step-icon"><i class="fa-solid fa-shoe-prints"></i></div>
             <h3>Act</h3>
             <p>Produces context-aware actions and explainable thought logs for debugging and balancing.</p>
           </article>
@@ -345,6 +420,7 @@
     <section class="section reveal">
       <div class="grid">
         <article class="card">
+          <div class="icon-line"><i class="fa-solid fa-leaf"></i> Why It Matters</div>
           <h2>Why It Matters</h2>
           <ul>
             <li>Makes NPC behavior feel less scripted and more alive.</li>
@@ -353,6 +429,7 @@
           </ul>
         </article>
         <article class="card">
+          <div class="icon-line"><i class="fa-solid fa-users"></i> Who It Helps</div>
           <h2>Who It Helps</h2>
           <ul>
             <li>Game studios building survival and ecosystem-driven gameplay.</li>
@@ -365,6 +442,37 @@
 
     <section class="section reveal">
       <div class="card">
+        <div class="icon-line"><i class="fa-solid fa-dragon"></i> Product Features</div>
+        <h2>Core Product Features (Current + Planned)</h2>
+        <div class="grid feature-list">
+          <article class="card">
+            <h3>Behavior Intelligence Engine</h3>
+            <p>Model-assisted interpretation of visual cues into behavior intent categories.</p>
+            <span class="pill">Computer Vision</span>
+            <span class="pill">ResNet-18 plan</span>
+            <span class="pill">OpenCV baseline</span>
+          </article>
+          <article class="card">
+            <h3>Per-Dinosaur Agent Memory</h3>
+            <p>Each dinosaur stores identity, needs, recent events, and threat memory for continuity.</p>
+            <span class="pill">Letta architecture</span>
+            <span class="pill">State tracking</span>
+            <span class="pill">Explainable logs</span>
+          </article>
+          <article class="card">
+            <h3>Design Validation Support</h3>
+            <p>Helps identify map imbalance, route failures, and survival-loop bottlenecks.</p>
+            <span class="pill">Developer tooling</span>
+            <span class="pill">Stress testing</span>
+            <span class="pill">Balancing feedback</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="card">
+        <div class="icon-line"><i class="fa-solid fa-seedling"></i> Roadmap</div>
         <h2>Roadmap at a Glance</h2>
         <div class="grid">
           <article class="card"><h3>Now</h3><p>Scaffold, check-in site, deployment, and technical plan are complete.</p></article>
@@ -376,11 +484,40 @@
 
     <section class="section reveal">
       <div class="card">
+        <div class="icon-line"><i class="fa-solid fa-image"></i> Visual Placeholders</div>
         <h2>Image Gallery Placeholders</h2>
         <div class="image-row">
           <div class="placeholder">Placeholder: fern-themed map scene</div>
           <div class="placeholder">Placeholder: fossil/footprint overlay concept</div>
           <div class="placeholder">Placeholder: agent thought log interface</div>
+          <div class="placeholder">Placeholder: predator/prey behavior heatmap</div>
+          <div class="placeholder">Placeholder: dinosaur memory state cards</div>
+          <div class="placeholder">Placeholder: checkpoint metrics dashboard preview</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="card">
+        <div class="icon-line"><i class="fa-solid fa-flask"></i> Current Build Status</div>
+        <h2>What Is Live Today vs What Is Next</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>Live Today</h3>
+            <ul>
+              <li>GitHub Pages site with Home, Technical, and Check-in sections.</li>
+              <li>Project scaffold with reproducible run/test commands.</li>
+              <li>Documented plan for data, model, and agent architecture.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Coming Next</h3>
+            <ul>
+              <li>Data download and preprocessing pipeline scripts.</li>
+              <li>First baseline model runs and measurable metrics.</li>
+              <li>Behavior demo visuals and richer technical charts.</li>
+            </ul>
+          </article>
         </div>
       </div>
     </section>

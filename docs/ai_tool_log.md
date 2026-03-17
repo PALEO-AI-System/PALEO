@@ -19,6 +19,9 @@
 - Added `pages/technical.html` to preserve the technical dashboard view as a dedicated tab while converting `pages/index.html` into a user-friendly public homepage.
 - Enhanced site-wide nav styling with an animated gradient GitHub repository button and updated tab structure (`Home`, `Technical`, `Check-in 1`).
 - Added richer UI features to homepage/check-in pages: dark mode toggle, scroll progress bar, scroll-trigger reveal animations, Google Fonts, and themed image placeholders.
+- Performed a second-pass homepage polish (`pages/index.html`) with longer user-facing content flow, additional sections, and expanded image placeholder blocks.
+- Rebuilt `pages/technical.html` to match the same modern style system used on Home/Check-in (dark mode, progress bar, reveal animations, and consistent nav hierarchy).
+- Added Font Awesome CDN icon library for themed visual elements (leaf, footprint, fossil/bone-like, dinosaur-adjacent motifs) across homepage and technical views.
 
 ## 2026-03-14
 - Filled out `docs/project_brief.md` using project-checkin details (problem, datasets, models, metrics, experiments, deliverables).
