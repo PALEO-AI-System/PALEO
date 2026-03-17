@@ -16,6 +16,9 @@
 - Added GitHub Actions workflow at `.github/workflows/deploy-pages.yml` to deploy GitHub Pages from the `pages/` directory.
 - Upgraded `pages/index.html` into a full themed PALEO dashboard homepage with navigation, repo link, roadmap, and planned-feature placeholders.
 - Upgraded `pages/project-checkin-1.html` from placeholder to a complete check-in site with structured sections, planning notes, and experiment artifact placeholders.
+- Added `pages/technical.html` to preserve the technical dashboard view as a dedicated tab while converting `pages/index.html` into a user-friendly public homepage.
+- Enhanced site-wide nav styling with an animated gradient GitHub repository button and updated tab structure (`Home`, `Technical`, `Check-in 1`).
+- Added richer UI features to homepage/check-in pages: dark mode toggle, scroll progress bar, scroll-trigger reveal animations, Google Fonts, and themed image placeholders.
 
 ## 2026-03-14
 - Filled out `docs/project_brief.md` using project-checkin details (problem, datasets, models, metrics, experiments, deliverables).

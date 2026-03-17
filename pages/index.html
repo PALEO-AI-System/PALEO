@@ -3,421 +3,430 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PALEO | Dashboard</title>
+  <title>PALEO | Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #f3f9f1;
-      --bg-fern: #e9f4e4;
-      --panel: #fffef7;
-      --ink: #1f3a2f;
-      --ink-soft: #4f6e60;
-      --accent: #6eb88f;
-      --accent-strong: #4b9b8e;
-      --line: #c9decd;
-      --cream: #f7efd9;
-      --teal-mist: #deefec;
-      --shadow: rgba(27, 58, 47, 0.12);
-      --ok: #5aa876;
-      --todo: #d19a45;
+      --bg: #f4f9f2;
+      --bg-elev: #f9f4e8;
+      --panel: rgba(255, 255, 255, 0.84);
+      --ink: #1f3b31;
+      --ink-soft: #4a6d60;
+      --line: #c7decd;
+      --accent: #56a984;
+      --accent-2: #4e9d92;
+      --accent-3: #8bcf9f;
+      --shadow: rgba(30, 62, 50, 0.16);
+    }
+
+    body.dark {
+      --bg: #0f1e1a;
+      --bg-elev: #152923;
+      --panel: rgba(23, 38, 32, 0.82);
+      --ink: #e5f5eb;
+      --ink-soft: #b2d4c4;
+      --line: #2b4e43;
+      --accent: #75cb9f;
+      --accent-2: #6bb9c3;
+      --accent-3: #9adf86;
+      --shadow: rgba(5, 10, 8, 0.35);
     }
 
     * { box-sizing: border-box; }
-
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      font-family: "Urbanist", "Segoe UI", sans-serif;
       color: var(--ink);
-      line-height: 1.55;
+      line-height: 1.6;
       background:
-        radial-gradient(circle at 10% 5%, rgba(110, 184, 143, 0.22), transparent 36%),
-        radial-gradient(circle at 88% 12%, rgba(75, 155, 142, 0.16), transparent 30%),
-        repeating-linear-gradient(160deg, rgba(255, 255, 255, 0.0) 0, rgba(255, 255, 255, 0.0) 24px, rgba(110, 184, 143, 0.06) 24px, rgba(110, 184, 143, 0.06) 30px),
+        radial-gradient(circle at 8% 6%, rgba(86, 169, 132, 0.22), transparent 28%),
+        radial-gradient(circle at 92% 10%, rgba(78, 157, 146, 0.18), transparent 26%),
+        linear-gradient(120deg, rgba(255, 255, 255, 0.0) 0%, rgba(247, 238, 214, 0.2) 100%),
+        repeating-radial-gradient(circle at 20% 20%, rgba(86, 169, 132, 0.04) 0 6px, transparent 6px 22px),
         var(--bg);
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
-    .fern-band {
-      height: 86px;
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 5px;
+      width: 0;
+      z-index: 100;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+      box-shadow: 0 0 16px rgba(96, 193, 141, 0.6);
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(9px);
+      background: rgba(244, 249, 242, 0.75);
       border-bottom: 1px solid var(--line);
-      background:
-        radial-gradient(ellipse at 15% 100%, rgba(110, 184, 143, 0.45), transparent 45%),
-        radial-gradient(ellipse at 30% 100%, rgba(75, 155, 142, 0.35), transparent 40%),
-        radial-gradient(ellipse at 45% 100%, rgba(110, 184, 143, 0.36), transparent 42%),
-        radial-gradient(ellipse at 60% 100%, rgba(75, 155, 142, 0.28), transparent 40%),
-        radial-gradient(ellipse at 76% 100%, rgba(110, 184, 143, 0.32), transparent 42%),
-        radial-gradient(ellipse at 90% 100%, rgba(75, 155, 142, 0.34), transparent 40%),
-        var(--bg-fern);
-      opacity: 0.9;
     }
 
-    .wrap {
-      max-width: 1140px;
+    body.dark .nav { background: rgba(15, 30, 26, 0.75); }
+
+    .nav-inner {
+      max-width: 1120px;
       margin: 0 auto;
-      padding: 20px 18px 56px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .site-nav {
+    .brand {
+      font-family: "Fraunces", serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .nav-links {
       display: flex;
+      align-items: center;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 18px;
+      gap: 8px;
     }
 
     .btn {
-      display: inline-block;
       text-decoration: none;
       color: var(--ink);
       border: 1px solid var(--line);
-      background: #ffffffc7;
-      padding: 8px 12px;
       border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 0.95rem;
       font-weight: 600;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      background: rgba(255, 255, 255, 0.45);
+      transition: transform 0.15s ease, border-color 0.15s ease;
     }
 
-    .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px var(--shadow); }
-    .btn.active { background: var(--accent); color: #123527; border-color: #5ca57d; }
+    .btn:hover { transform: translateY(-1px); border-color: var(--accent); }
+    .btn.active { background: rgba(86, 169, 132, 0.2); border-color: #86c6a3; }
+
+    .repo-btn {
+      color: #fff;
+      border: 0;
+      padding: 9px 14px;
+      background: linear-gradient(120deg, #63b884, #4e9d92, #8bcf9f, #66b5c4);
+      background-size: 300% 300%;
+      box-shadow: 0 8px 18px rgba(79, 157, 146, 0.42);
+      position: relative;
+      overflow: hidden;
+      animation: repoFlow 6s ease infinite;
+    }
+
+    .repo-btn::after {
+      content: "";
+      position: absolute;
+      top: -140%;
+      left: -40%;
+      width: 58%;
+      height: 340%;
+      transform: rotate(24deg);
+      background: rgba(255, 255, 255, 0.28);
+      animation: repoShine 3s linear infinite;
+    }
+
+    .mode-toggle {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--ink);
+      padding: 8px 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 26px 18px 60px; }
 
     .hero {
-      background: linear-gradient(130deg, #f6fbf4, #edf6ef 52%, #f8f0df);
+      min-height: 58vh;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .hero-card, .image-slot, .card {
+      background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 18px;
       box-shadow: 0 8px 22px var(--shadow);
-      padding: 24px;
-      margin-bottom: 16px;
-      position: relative;
-      overflow: hidden;
     }
 
-    .hero::before,
-    .hero::after {
-      content: "";
+    .hero-card { padding: 22px; position: relative; overflow: hidden; }
+    .hero-card::before {
+      content: "footprints";
       position: absolute;
-      border-radius: 50%;
-      pointer-events: none;
+      right: 14px;
+      bottom: 12px;
+      font-size: 0.86rem;
+      letter-spacing: 2px;
+      color: rgba(74, 109, 96, 0.3);
+      text-transform: uppercase;
     }
 
-    .hero::before {
-      width: 210px;
-      height: 210px;
-      right: -64px;
-      top: -82px;
-      background: rgba(110, 184, 143, 0.17);
+    h1, h2, h3 {
+      margin: 0 0 10px;
+      font-family: "Fraunces", serif;
+      line-height: 1.15;
     }
 
-    .hero::after {
-      width: 170px;
-      height: 170px;
-      left: -60px;
-      bottom: -65px;
-      background: rgba(75, 155, 142, 0.16);
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); }
+    h2 { font-size: clamp(1.5rem, 3.3vw, 2.1rem); }
+    h3 { font-size: 1.1rem; color: var(--accent-2); }
+
+    p { margin-top: 0; color: var(--ink-soft); }
+    .lead { font-size: 1.05rem; max-width: 58ch; }
+
+    .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .cta {
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 700;
+      border: 1px solid var(--line);
     }
+    .cta.primary {
+      color: #fff;
+      background: linear-gradient(120deg, var(--accent), var(--accent-2));
+      border: none;
+    }
+    .cta.secondary { color: var(--ink); background: rgba(255, 255, 255, 0.55); }
 
-    h1, h2, h3 { margin: 0 0 10px; }
-    h1 { font-size: 2.2rem; letter-spacing: 0.2px; }
-    h2 { font-size: 1.3rem; color: #2f6d58; }
-    h3 { font-size: 1rem; color: #2e5f50; }
-
-    .subhead {
-      margin: 0;
+    .image-slot {
+      min-height: 320px;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      background:
+        radial-gradient(circle at 16% 18%, rgba(86, 169, 132, 0.16), transparent 34%),
+        radial-gradient(circle at 83% 82%, rgba(78, 157, 146, 0.15), transparent 35%),
+        var(--bg-elev);
+    }
+    .placeholder {
+      width: 100%;
+      height: 100%;
+      min-height: 290px;
+      border: 2px dashed #9ec5ae;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
       color: var(--ink-soft);
-      max-width: 850px;
+      text-align: center;
+      padding: 16px;
+      font-weight: 600;
     }
 
-    .egg-note {
-      margin-top: 14px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: #fff8ea;
-      border: 1px dashed #d8be8a;
-      color: #6d5529;
-      display: inline-block;
-      font-size: 0.94rem;
-    }
-
+    .section { margin-top: 14px; }
     .grid {
       display: grid;
       gap: 12px;
       grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      margin-bottom: 16px;
     }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 14px;
-      box-shadow: 0 4px 12px var(--shadow);
-    }
-
-    .metric {
-      font-size: 1.68rem;
-      font-weight: 700;
-      color: #245745;
-      margin: 2px 0 4px;
-    }
-
-    .muted { color: var(--ink-soft); }
+    .card { padding: 16px; }
     ul { margin: 0; padding-left: 18px; }
-    li { margin-bottom: 6px; }
+    li { margin-bottom: 6px; color: var(--ink-soft); }
 
-    .status {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 0.76rem;
-      letter-spacing: 0.2px;
-      margin-right: 8px;
-      font-weight: 600;
-      border: 1px solid;
+    .steps .card { position: relative; }
+    .steps .card::before {
+      content: attr(data-icon);
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      opacity: 0.35;
+      font-size: 1.3rem;
     }
 
-    .status.done { background: #eaf7ee; color: #275f3f; border-color: #9ac8aa; }
-    .status.in-progress { background: #eef8f5; color: #2b6c5d; border-color: #9bc8be; }
-    .status.planned { background: #fff5e2; color: #7e5922; border-color: #d7bb84; }
-
-    .dash-links {
+    .image-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 10px;
-      margin-top: 8px;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
 
-    .dash-link {
-      display: block;
-      text-decoration: none;
-      color: inherit;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px;
-      background: #fbfff8;
-      transition: border-color 0.15s ease, transform 0.15s ease;
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
     }
-
-    .dash-link:hover { border-color: #8dbca4; transform: translateY(-1px); }
-
-    .link-title {
-      font-weight: 700;
-      margin-bottom: 4px;
-      color: #2b6654;
-    }
-
-    .feature-controls {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
-    }
-
-    .filter-btn {
-      border: 1px solid var(--line);
-      background: #fff;
-      color: var(--ink);
-      border-radius: 999px;
-      padding: 6px 11px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .filter-btn.active {
-      background: #dff1e5;
-      border-color: #85b697;
-      color: #1f503b;
-    }
-
-    .feature {
-      margin-bottom: 8px;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #d6e8d8;
-      background: #fbfff8;
-    }
-
-    code {
-      border-radius: 6px;
-      padding: 1px 6px;
-      background: #f0f7f1;
-      border: 1px solid #d3e6d5;
-    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
 
     .footer {
-      margin-top: 18px;
-      font-size: 0.9rem;
-      color: #5d7d6f;
+      margin-top: 20px;
       text-align: center;
+      color: var(--ink-soft);
+      font-size: 0.94rem;
+    }
+
+    @keyframes repoFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes repoShine {
+      from { left: -45%; }
+      to { left: 130%; }
+    }
+
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
     }
   </style>
 </head>
 <body>
-  <div class="fern-band"></div>
+  <div class="progress" id="scrollProgress"></div>
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">PALEO</div>
+      <div class="nav-links">
+        <a class="btn active" href="index.html">Home</a>
+        <a class="btn" href="technical.html">Technical</a>
+        <a class="btn" href="project-checkin-1.html">Check-in 1</a>
+        <a class="btn repo-btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">Dark Mode</button>
+      </div>
+    </div>
+  </nav>
+
   <main class="wrap">
-    <nav class="site-nav" aria-label="Primary navigation">
-      <a class="btn active" href="index.html">Dashboard Home</a>
-      <a class="btn" href="project-checkin-1.html">Project Check-in 1</a>
-      <a class="btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
-    </nav>
-
-    <section class="hero">
-      <h1>PALEO</h1>
-      <p class="subhead">
-        PALEO is an AI system for dinosaur-themed survival gameplay. It combines computer vision,
-        behavior modeling, and per-dinosaur Letta agents to produce instinct-driven actions and
-        interpretable thought logs.
-      </p>
-      <p class="egg-note">Current phase: foundation build and check-in documentation complete; model training and game integration are next.</p>
-    </section>
-
-    <section class="grid" aria-label="Project metrics">
-      <article class="card">
-        <h3>Current Milestone</h3>
-        <p class="metric">Check-in 1</p>
-        <p class="muted">Prompt response drafted and published to project pages.</p>
-      </article>
-      <article class="card">
-        <h3>Primary Approach</h3>
-        <p class="metric">CV + Agentic AI</p>
-        <p class="muted">ResNet-18 behavior classification + Letta memory-driven agent loop.</p>
-      </article>
-      <article class="card">
-        <h3>Repository State</h3>
-        <p class="metric">Scaffold Ready</p>
-        <p class="muted"><code>src/</code>, <code>scripts/</code>, <code>tests/</code>, <code>docs/</code> plus Pages site deployed.</p>
-      </article>
-      <article class="card">
-        <h3>Planned Agent Scale</h3>
-        <p class="metric">1 Agent / Dinosaur</p>
-        <p class="muted">Each dinosaur keeps identity, needs, risks, and recent action memory blocks.</p>
-      </article>
-    </section>
-
-    <section class="card">
-      <h2>Dashboard Navigation</h2>
-      <p class="muted">Use this page as the central hub for all project pages and future dashboards.</p>
-      <div class="dash-links">
-        <a class="dash-link" href="project-checkin-1.html">
-          <div class="link-title">Project Check-in 1</div>
-          <div>Completed check-in site with abstract, model plan, timeline, challenges, and placeholders for future experiment visuals.</div>
-        </a>
-        <a class="dash-link" href="#" aria-disabled="true">
-          <div class="link-title">Model Results Dashboard (Placeholder)</div>
-          <div>Will include loss/accuracy curves, confusion matrix, baseline table, and run-to-run comparisons.</div>
-        </a>
-        <a class="dash-link" href="#" aria-disabled="true">
-          <div class="link-title">Agent Demo Gallery (Placeholder)</div>
-          <div>Will include short clips, thought logs, and behavior snapshots from in-game scenarios.</div>
-        </a>
-        <a class="dash-link" href="#" aria-disabled="true">
-          <div class="link-title">System Architecture Viewer (Placeholder)</div>
-          <div>Will show perceive - decide - act - remember flow and memory block schema per dinosaur.</div>
-        </a>
-      </div>
-    </section>
-
-    <section class="grid">
-      <article class="card">
-        <h2>Technical Direction</h2>
-        <ul>
-          <li>Game context: survival-style species interactions inspired by Path of Titans.</li>
-          <li>Data direction: Snapshot Serengeti + Kaggle predator/prey image sources.</li>
-          <li>Baseline: OpenCV rule policy for transparent first benchmark.</li>
-          <li>Main model: ResNet-18 transfer learning for behavior state prediction.</li>
-          <li>Agent orchestration: one Letta agent per dinosaur individual.</li>
-        </ul>
-      </article>
-      <article class="card">
-        <h2>Reproducible Commands</h2>
-        <ul>
-          <li><code>python scripts/run_pipeline.py</code></li>
-          <li><code>python -m unittest discover -s tests -p "test_*.py"</code></li>
-        </ul>
-        <p class="muted">
-          Training and evaluation commands will be added once the behavior classifier pipeline is implemented.
+    <section class="hero reveal">
+      <article class="hero-card">
+        <h1>Prehistoric Intelligence, Made Practical.</h1>
+        <p class="lead">
+          PALEO helps build believable dinosaur behavior for survival-style games. In simple terms:
+          it watches game visuals, understands what a dinosaur needs, and decides smart next actions.
         </p>
+        <p class="lead">
+          Teams can use it to test world balance, resource flow, and behavior realism before shipping gameplay changes.
+        </p>
+        <div class="hero-actions">
+          <a class="cta primary" href="#how-it-works">How PALEO Works</a>
+          <a class="cta secondary" href="project-checkin-1.html">See Project Progress</a>
+        </div>
       </article>
+      <aside class="image-slot">
+        <div class="placeholder">
+          Image Placeholder<br />
+          Hero visual: dinosaur silhouette + fern canopy + track marks
+        </div>
+      </aside>
     </section>
 
-    <section class="card">
-      <h2>Planned Features</h2>
-      <p class="muted">Filter by status to preview what is complete now vs planned next.</p>
-      <div class="feature-controls" role="tablist" aria-label="Feature filters">
-        <button class="filter-btn active" data-filter="all">All</button>
-        <button class="filter-btn" data-filter="done">Done</button>
-        <button class="filter-btn" data-filter="in-progress">In Progress</button>
-        <button class="filter-btn" data-filter="planned">Planned</button>
-      </div>
-      <div id="featureList">
-        <article class="feature" data-status="done">
-          <span class="status done">DONE</span>
-          GitHub Pages deployment from <code>pages/</code> via GitHub Actions.
-        </article>
-        <article class="feature" data-status="done">
-          <span class="status done">DONE</span>
-          Homepage dashboard and project check-in navigation interface.
-        </article>
-        <article class="feature" data-status="in-progress">
-          <span class="status in-progress">IN PROGRESS</span>
-          Project documentation alignment (brief, check-ins, AI disclosure log updates).
-        </article>
-        <article class="feature" data-status="planned">
-          <span class="status planned">PLANNED</span>
-          Dataset ingestion pipeline for Snapshot Serengeti and selected Kaggle predator/prey subset.
-        </article>
-        <article class="feature" data-status="planned">
-          <span class="status planned">PLANNED</span>
-          Supervised behavior classifier training with convergence tracking and sensitivity sweeps.
-        </article>
-        <article class="feature" data-status="planned">
-          <span class="status planned">PLANNED</span>
-          Integrated agent loop with per-dinosaur memory updates and fallback safe actions.
-        </article>
-        <article class="feature" data-status="planned">
-          <span class="status planned">PLANNED</span>
-          Demo page with qualitative behavior examples, failure cases, and interpretation notes.
-        </article>
+    <section class="section reveal" id="how-it-works">
+      <div class="card">
+        <h2>What PALEO Does</h2>
+        <div class="grid steps">
+          <article class="card" data-icon="1">
+            <h3>Perceive</h3>
+            <p>Reads gameplay frames and detects behavior cues like danger, hunger, and nearby opportunity.</p>
+          </article>
+          <article class="card" data-icon="2">
+            <h3>Think</h3>
+            <p>Uses a per-dinosaur memory profile so each creature has continuity, preferences, and risk memory.</p>
+          </article>
+          <article class="card" data-icon="3">
+            <h3>Act</h3>
+            <p>Produces context-aware actions and explainable thought logs for debugging and balancing.</p>
+          </article>
+        </div>
       </div>
     </section>
 
-    <section class="card">
-      <h2>Roadmap Snapshot</h2>
-      <ul>
-        <li><strong>Week 1:</strong> finalize dataset selection, download plan, and preprocessing scripts.</li>
-        <li><strong>Week 2:</strong> implement OpenCV baseline and first ResNet-18 training pass.</li>
-        <li><strong>Week 3:</strong> run hyperparameter and augmentation sensitivity analysis.</li>
-        <li><strong>Week 4:</strong> integrate classifier with Letta agent loop and test behavior outcomes.</li>
-        <li><strong>Week 5:</strong> prepare figures/tables and polish report-ready outputs.</li>
-      </ul>
+    <section class="section reveal">
+      <div class="grid">
+        <article class="card">
+          <h2>Why It Matters</h2>
+          <ul>
+            <li>Makes NPC behavior feel less scripted and more alive.</li>
+            <li>Gives designers evidence when tuning maps and survival loops.</li>
+            <li>Adds interpretable outputs so behavior decisions can be audited.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h2>Who It Helps</h2>
+          <ul>
+            <li>Game studios building survival and ecosystem-driven gameplay.</li>
+            <li>Design teams validating resource routes and encounter difficulty.</li>
+            <li>Players needing assistance with heavy survival micromanagement.</li>
+          </ul>
+        </article>
+      </div>
     </section>
 
-    <footer class="footer">
-      <div>PALEO project dashboard - prehistoric-themed interface with fern/cream/teal visual palette.</div>
-      <div id="stamp"></div>
+    <section class="section reveal">
+      <div class="card">
+        <h2>Roadmap at a Glance</h2>
+        <div class="grid">
+          <article class="card"><h3>Now</h3><p>Scaffold, check-in site, deployment, and technical plan are complete.</p></article>
+          <article class="card"><h3>Next</h3><p>Dataset setup, preprocessing, and baseline model training.</p></article>
+          <article class="card"><h3>Then</h3><p>Agent loop integration, evaluation dashboard, and demo gallery.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="card">
+        <h2>Image Gallery Placeholders</h2>
+        <div class="image-row">
+          <div class="placeholder">Placeholder: fern-themed map scene</div>
+          <div class="placeholder">Placeholder: fossil/footprint overlay concept</div>
+          <div class="placeholder">Placeholder: agent thought log interface</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer reveal">
+      PALEO - prehistoric-themed AI for realistic survival behavior.
     </footer>
   </main>
 
   <script>
     (function () {
-      const buttons = Array.from(document.querySelectorAll(".filter-btn"));
-      const features = Array.from(document.querySelectorAll(".feature"));
+      const body = document.body;
+      const modeToggle = document.getElementById("modeToggle");
+      const key = "paleo-mode";
+      const saved = localStorage.getItem(key);
 
-      function applyFilter(filter) {
-        features.forEach(function (feature) {
-          const isVisible = filter === "all" || feature.dataset.status === filter;
-          feature.style.display = isVisible ? "block" : "none";
-        });
-        buttons.forEach(function (btn) {
-          btn.classList.toggle("active", btn.dataset.filter === filter);
-        });
+      function setMode(dark) {
+        body.classList.toggle("dark", dark);
+        modeToggle.textContent = dark ? "Light Mode" : "Dark Mode";
+        localStorage.setItem(key, dark ? "dark" : "light");
       }
 
-      buttons.forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          applyFilter(btn.dataset.filter);
-        });
+      setMode(saved === "dark");
+      modeToggle.addEventListener("click", function () {
+        setMode(!body.classList.contains("dark"));
       });
 
-      document.getElementById("stamp").textContent =
-        "Last updated: " + new Date().toLocaleDateString();
-      applyFilter("all");
-      window.PALEO_SITE_READY = true;
+      const bar = document.getElementById("scrollProgress");
+      window.addEventListener("scroll", function () {
+        const top = window.scrollY;
+        const height = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = height <= 0 ? 0 : (top / height) * 100;
+        bar.style.width = pct + "%";
+      });
+
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in");
+          }
+        });
+      }, { threshold: 0.15 });
+
+      document.querySelectorAll(".reveal").forEach(function (section) {
+        observer.observe(section);
+      });
     })();
   </script>
 </body>

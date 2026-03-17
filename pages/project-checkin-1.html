@@ -4,46 +4,90 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PALEO | Project Check-in 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #f3f9f1;
-      --panel: #fffef8;
-      --ink: #1f3a2f;
-      --ink-soft: #547164;
-      --line: #c7ddca;
-      --accent: #4f9d8f;
-      --accent-soft: #deefeb;
-      --cream: #fbf3df;
-      --warn: #d29f50;
-      --ok: #5ca579;
-      --shadow: rgba(29, 61, 47, 0.11);
+      --bg: #f4f9f2;
+      --panel: rgba(255, 255, 255, 0.86);
+      --ink: #1f3b31;
+      --ink-soft: #4d6f62;
+      --line: #c7decd;
+      --accent: #4e9d92;
+      --accent-2: #56a984;
+      --cream: #f9f2e2;
+      --shadow: rgba(30, 62, 50, 0.16);
+    }
+
+    body.dark {
+      --bg: #0f1e1a;
+      --panel: rgba(23, 38, 32, 0.82);
+      --ink: #e5f5eb;
+      --ink-soft: #b2d4c4;
+      --line: #2b4e43;
+      --accent: #6bb9c3;
+      --accent-2: #75cb9f;
+      --cream: #2f2a21;
+      --shadow: rgba(5, 10, 8, 0.35);
     }
 
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
-      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      font-family: "Urbanist", "Segoe UI", sans-serif;
       color: var(--ink);
       line-height: 1.55;
       background:
-        radial-gradient(circle at 7% 3%, rgba(92, 165, 121, 0.18), transparent 33%),
-        radial-gradient(circle at 90% 5%, rgba(79, 157, 143, 0.16), transparent 31%),
+        radial-gradient(circle at 7% 3%, rgba(86, 169, 132, 0.18), transparent 33%),
+        radial-gradient(circle at 90% 5%, rgba(78, 157, 146, 0.16), transparent 31%),
+        repeating-radial-gradient(circle at 20% 20%, rgba(86, 169, 132, 0.04) 0 6px, transparent 6px 22px),
         var(--bg);
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
-    .wrap {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 20px 18px 54px;
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 5px;
+      z-index: 100;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent), #89cf9a);
+      box-shadow: 0 0 16px rgba(96, 193, 141, 0.5);
     }
 
     .nav {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(9px);
+      background: rgba(244, 249, 242, 0.75);
+      border-bottom: 1px solid var(--line);
+    }
+
+    body.dark .nav { background: rgba(15, 30, 26, 0.75); }
+
+    .nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 12px 18px;
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 16px;
+      align-items: center;
+      justify-content: space-between;
     }
+
+    .brand {
+      font-family: "Fraunces", serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .nav-links { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
     .btn {
       text-decoration: none;
@@ -52,32 +96,83 @@
       border-radius: 999px;
       padding: 8px 12px;
       font-weight: 600;
-      background: #ffffffd0;
+      background: rgba(255, 255, 255, 0.45);
+      transition: transform 0.15s ease, border-color 0.15s ease;
     }
 
-    .btn:hover {
-      border-color: #8fb89a;
-      box-shadow: 0 3px 10px var(--shadow);
+    .btn:hover { transform: translateY(-1px); border-color: var(--accent-2); }
+    .btn.active { background: rgba(86, 169, 132, 0.2); border-color: #86c6a3; }
+
+    .repo-btn {
+      color: #fff;
+      border: 0;
+      background: linear-gradient(120deg, #63b884, #4e9d92, #8bcf9f, #66b5c4);
+      background-size: 300% 300%;
+      box-shadow: 0 8px 18px rgba(79, 157, 146, 0.42);
+      position: relative;
+      overflow: hidden;
+      animation: repoFlow 6s ease infinite;
+    }
+
+    .repo-btn::after {
+      content: "";
+      position: absolute;
+      top: -140%;
+      left: -40%;
+      width: 58%;
+      height: 340%;
+      transform: rotate(24deg);
+      background: rgba(255, 255, 255, 0.28);
+      animation: repoShine 3s linear infinite;
+    }
+
+    .mode-toggle {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--ink);
+      padding: 8px 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 22px 18px 56px;
     }
 
     .hero,
     .card {
-      background: var(--panel);
+      background: linear-gradient(125deg, var(--panel), rgba(249, 242, 226, 0.72));
       border: 1px solid var(--line);
-      border-radius: 14px;
-      box-shadow: 0 5px 14px var(--shadow);
-      padding: 16px;
-      margin-bottom: 12px;
+      border-radius: 18px;
+      box-shadow: 0 8px 22px var(--shadow);
+      padding: 18px;
+      margin-bottom: 14px;
     }
 
     .hero {
-      background: linear-gradient(130deg, #f8fcf6, #eef7ef 52%, #f8f1e3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      right: -70px;
+      top: -70px;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: rgba(86, 169, 132, 0.17);
     }
 
     h1, h2, h3 { margin: 0 0 8px; }
-    h1 { font-size: 2rem; }
-    h2 { font-size: 1.2rem; color: #2b6a57; }
-    h3 { font-size: 1rem; color: #2a5d4d; }
+    h1, h2 { font-family: "Fraunces", serif; }
+    h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+    h2 { font-size: 1.35rem; color: var(--accent); }
+    h3 { font-size: 1.03rem; color: var(--accent); }
 
     .muted { color: var(--ink-soft); }
     p { margin-top: 0; }
@@ -87,7 +182,7 @@
     .grid {
       display: grid;
       gap: 12px;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
     }
 
     .status {
@@ -107,9 +202,9 @@
 
     .qa-item {
       border: 1px solid #d4e7d7;
-      border-radius: 10px;
-      background: #fcfffb;
-      margin-bottom: 10px;
+      border-radius: 12px;
+      background: rgba(252, 255, 251, 0.76);
+      margin-bottom: 11px;
       overflow: hidden;
     }
 
@@ -141,6 +236,26 @@
       min-height: 108px;
     }
 
+    .image-row {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      margin-top: 10px;
+    }
+
+    .img-placeholder {
+      border: 2px dashed #9ec5ae;
+      border-radius: 12px;
+      min-height: 140px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--ink-soft);
+      background: rgba(245, 251, 247, 0.65);
+      padding: 10px;
+      font-weight: 600;
+    }
+
     code {
       background: #f0f7f0;
       border: 1px solid #d1e4d2;
@@ -151,17 +266,42 @@
     .tiny {
       font-size: 0.9rem;
     }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    @keyframes repoFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes repoShine {
+      from { left: -45%; }
+      to { left: 130%; }
+    }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <nav class="nav" aria-label="Project pages">
-      <a class="btn" href="index.html">Dashboard Home</a>
-      <a class="btn" href="project-checkin-1.html">Project Check-in 1</a>
-      <a class="btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
-    </nav>
+  <div class="progress" id="scrollProgress"></div>
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">PALEO</div>
+      <div class="nav-links">
+        <a class="btn" href="index.html">Home</a>
+        <a class="btn" href="technical.html">Technical</a>
+        <a class="btn active" href="project-checkin-1.html">Check-in 1</a>
+        <a class="btn repo-btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">Dark Mode</button>
+      </div>
+    </div>
+  </nav>
 
-    <section class="hero">
+  <main class="wrap">
+    <section class="hero reveal">
       <h1>PALEO - Project Check-in 1</h1>
       <p class="muted">
         Complete web version of your check-in response, with explicit placeholders for planned experiment
@@ -173,7 +313,7 @@
       </p>
     </section>
 
-    <section class="grid">
+    <section class="grid reveal">
       <article class="card">
         <h2>Project Snapshot</h2>
         <ul>
@@ -191,7 +331,7 @@
       </article>
     </section>
 
-    <section class="card">
+    <section class="card reveal">
       <h2>Check-in Questions (1-10)</h2>
 
       <details class="qa-item" open>
@@ -271,7 +411,7 @@
       </details>
     </section>
 
-    <section class="card">
+    <section class="card reveal">
       <h2>Planned Artifact Placeholders</h2>
       <p class="muted">These correspond to items already described in your check-in and previous notes.</p>
       <div class="placeholder-board">
@@ -300,9 +440,14 @@
           <p>Placeholder for in-engine clips showing perceive-decide-act behavior loop.</p>
         </article>
       </div>
+      <div class="image-row">
+        <div class="img-placeholder">Image Placeholder: training curve screenshot</div>
+        <div class="img-placeholder">Image Placeholder: confusion matrix visual</div>
+        <div class="img-placeholder">Image Placeholder: dinosaur thought/action timeline</div>
+      </div>
     </section>
 
-    <section class="card">
+    <section class="card reveal">
       <h2>Notes Captured from Planning</h2>
       <ul id="notesList"></ul>
     </section>
@@ -310,6 +455,22 @@
 
   <script>
     (function () {
+      const body = document.body;
+      const modeToggle = document.getElementById("modeToggle");
+      const key = "paleo-mode";
+      const saved = localStorage.getItem(key);
+
+      function setMode(dark) {
+        body.classList.toggle("dark", dark);
+        modeToggle.textContent = dark ? "Light Mode" : "Dark Mode";
+        localStorage.setItem(key, dark ? "dark" : "light");
+      }
+
+      setMode(saved === "dark");
+      modeToggle.addEventListener("click", function () {
+        setMode(!body.classList.contains("dark"));
+      });
+
       const notes = [
         "One agent per dinosaur individual (Letta-based architecture).",
         "Memory blocks track identity, needs, risk history, and recent actions.",
@@ -326,6 +487,26 @@
         const item = document.createElement("li");
         item.textContent = text;
         list.appendChild(item);
+      });
+
+      const bar = document.getElementById("scrollProgress");
+      window.addEventListener("scroll", function () {
+        const top = window.scrollY;
+        const height = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = height <= 0 ? 0 : (top / height) * 100;
+        bar.style.width = pct + "%";
+      });
+
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in");
+          }
+        });
+      }, { threshold: 0.15 });
+
+      document.querySelectorAll(".reveal").forEach(function (section) {
+        observer.observe(section);
       });
     })();
   </script>
