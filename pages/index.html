@@ -302,6 +302,41 @@
       background: rgba(255, 255, 255, 0.46);
     }
 
+    .section-divider {
+      margin: 16px 2px 6px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.34);
+      backdrop-filter: blur(2px);
+      box-shadow: 0 6px 16px var(--shadow);
+      overflow: hidden;
+      padding: 5px 10px;
+    }
+
+    .section-divider svg {
+      width: 100%;
+      height: 22px;
+      display: block;
+      opacity: 0.65;
+    }
+
+    .section-divider.fern path {
+      stroke: var(--accent);
+      stroke-width: 1.8;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .section-divider.tracks ellipse {
+      fill: var(--accent-2);
+      opacity: 0.72;
+    }
+
+    .section-divider .divider-move {
+      animation: driftDivider 7.5s ease-in-out infinite alternate;
+    }
+
     .reveal {
       opacity: 0;
       transform: translateY(20px);
@@ -324,6 +359,11 @@
     @keyframes repoShine {
       from { left: -45%; }
       to { left: 130%; }
+    }
+
+    @keyframes driftDivider {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-12px); }
     }
 
     @media (max-width: 860px) {
@@ -370,6 +410,15 @@
       </aside>
     </section>
 
+    <div class="section-divider fern reveal" aria-hidden="true">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+        <g class="divider-move">
+          <path d="M10 20 C60 5, 120 5, 170 20 S280 35, 330 20 S440 5, 490 20 S600 35, 650 20 S760 5, 810 20 S920 35, 970 20 S1080 5, 1130 20" />
+          <path d="M40 22 C80 15, 100 8, 130 10 M180 22 C220 15, 240 8, 270 10 M320 22 C360 15, 380 8, 410 10 M460 22 C500 15, 520 8, 550 10 M600 22 C640 15, 660 8, 690 10 M740 22 C780 15, 800 8, 830 10 M880 22 C920 15, 940 8, 970 10 M1020 22 C1060 15, 1080 8, 1110 10" />
+        </g>
+      </svg>
+    </div>
+
     <section class="section reveal">
       <div class="card">
         <h2>Quick Overview</h2>
@@ -394,6 +443,61 @@
       </div>
     </section>
 
+    <div class="section-divider tracks reveal" aria-hidden="true">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+        <g class="divider-move">
+          <ellipse cx="55" cy="16" rx="8" ry="5" />
+          <ellipse cx="80" cy="12" rx="5" ry="4" />
+          <ellipse cx="94" cy="19" rx="5" ry="4" />
+          <ellipse cx="123" cy="16" rx="8" ry="5" />
+          <ellipse cx="148" cy="12" rx="5" ry="4" />
+          <ellipse cx="162" cy="19" rx="5" ry="4" />
+          <ellipse cx="191" cy="16" rx="8" ry="5" />
+          <ellipse cx="216" cy="12" rx="5" ry="4" />
+          <ellipse cx="230" cy="19" rx="5" ry="4" />
+          <ellipse cx="259" cy="16" rx="8" ry="5" />
+          <ellipse cx="284" cy="12" rx="5" ry="4" />
+          <ellipse cx="298" cy="19" rx="5" ry="4" />
+          <ellipse cx="327" cy="16" rx="8" ry="5" />
+          <ellipse cx="352" cy="12" rx="5" ry="4" />
+          <ellipse cx="366" cy="19" rx="5" ry="4" />
+          <ellipse cx="395" cy="16" rx="8" ry="5" />
+          <ellipse cx="420" cy="12" rx="5" ry="4" />
+          <ellipse cx="434" cy="19" rx="5" ry="4" />
+          <ellipse cx="463" cy="16" rx="8" ry="5" />
+          <ellipse cx="488" cy="12" rx="5" ry="4" />
+          <ellipse cx="502" cy="19" rx="5" ry="4" />
+          <ellipse cx="531" cy="16" rx="8" ry="5" />
+          <ellipse cx="556" cy="12" rx="5" ry="4" />
+          <ellipse cx="570" cy="19" rx="5" ry="4" />
+          <ellipse cx="599" cy="16" rx="8" ry="5" />
+          <ellipse cx="624" cy="12" rx="5" ry="4" />
+          <ellipse cx="638" cy="19" rx="5" ry="4" />
+          <ellipse cx="667" cy="16" rx="8" ry="5" />
+          <ellipse cx="692" cy="12" rx="5" ry="4" />
+          <ellipse cx="706" cy="19" rx="5" ry="4" />
+          <ellipse cx="735" cy="16" rx="8" ry="5" />
+          <ellipse cx="760" cy="12" rx="5" ry="4" />
+          <ellipse cx="774" cy="19" rx="5" ry="4" />
+          <ellipse cx="803" cy="16" rx="8" ry="5" />
+          <ellipse cx="828" cy="12" rx="5" ry="4" />
+          <ellipse cx="842" cy="19" rx="5" ry="4" />
+          <ellipse cx="871" cy="16" rx="8" ry="5" />
+          <ellipse cx="896" cy="12" rx="5" ry="4" />
+          <ellipse cx="910" cy="19" rx="5" ry="4" />
+          <ellipse cx="939" cy="16" rx="8" ry="5" />
+          <ellipse cx="964" cy="12" rx="5" ry="4" />
+          <ellipse cx="978" cy="19" rx="5" ry="4" />
+          <ellipse cx="1007" cy="16" rx="8" ry="5" />
+          <ellipse cx="1032" cy="12" rx="5" ry="4" />
+          <ellipse cx="1046" cy="19" rx="5" ry="4" />
+          <ellipse cx="1075" cy="16" rx="8" ry="5" />
+          <ellipse cx="1100" cy="12" rx="5" ry="4" />
+          <ellipse cx="1114" cy="19" rx="5" ry="4" />
+        </g>
+      </svg>
+    </div>
+
     <section class="section reveal" id="how-it-works">
       <div class="card">
         <h2>What PALEO Does</h2>
@@ -417,6 +521,14 @@
       </div>
     </section>
 
+    <div class="section-divider fern reveal" aria-hidden="true">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+        <g class="divider-move">
+          <path d="M10 18 C60 3, 120 3, 170 18 S280 33, 330 18 S440 3, 490 18 S600 33, 650 18 S760 3, 810 18 S920 33, 970 18 S1080 3, 1130 18" />
+        </g>
+      </svg>
+    </div>
+
     <section class="section reveal">
       <div class="grid">
         <article class="card">
@@ -439,6 +551,25 @@
         </article>
       </div>
     </section>
+
+    <div class="section-divider tracks reveal" aria-hidden="true">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+        <g class="divider-move">
+          <ellipse cx="85" cy="16" rx="9" ry="5.5" />
+          <ellipse cx="111" cy="12" rx="5.3" ry="4.1" />
+          <ellipse cx="125" cy="20" rx="5.3" ry="4.1" />
+          <ellipse cx="425" cy="16" rx="9" ry="5.5" />
+          <ellipse cx="451" cy="12" rx="5.3" ry="4.1" />
+          <ellipse cx="465" cy="20" rx="5.3" ry="4.1" />
+          <ellipse cx="765" cy="16" rx="9" ry="5.5" />
+          <ellipse cx="791" cy="12" rx="5.3" ry="4.1" />
+          <ellipse cx="805" cy="20" rx="5.3" ry="4.1" />
+          <ellipse cx="1085" cy="16" rx="9" ry="5.5" />
+          <ellipse cx="1111" cy="12" rx="5.3" ry="4.1" />
+          <ellipse cx="1125" cy="20" rx="5.3" ry="4.1" />
+        </g>
+      </svg>
+    </div>
 
     <section class="section reveal">
       <div class="card">
@@ -469,6 +600,14 @@
         </div>
       </div>
     </section>
+
+    <div class="section-divider fern reveal" aria-hidden="true">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+        <g class="divider-move">
+          <path d="M20 19 C70 8, 110 6, 160 19 S250 32, 300 19 S390 6, 440 19 S530 32, 580 19 S670 6, 720 19 S810 32, 860 19 S950 6, 1000 19 S1090 32, 1140 19" />
+        </g>
+      </svg>
+    </div>
 
     <section class="section reveal">
       <div class="card">
