@@ -4,6 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PALEO | Home</title>
+  <meta name="description" content="PALEO is a prehistoric-themed AI project for realistic dinosaur behavior in survival gameplay using computer vision and agent memory systems." />
+  <meta name="keywords" content="PALEO, dinosaur AI, game AI, computer vision, Letta, survival gameplay" />
+  <meta name="author" content="PALEO Team" />
+  <meta property="og:title" content="PALEO | Prehistoric Intelligence, Made Practical" />
+  <meta property="og:description" content="Explore PALEO: AI-powered dinosaur behavior modeling for survival-style games." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://paleo-ai-system.github.io/PALEO/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="PALEO | Prehistoric Intelligence, Made Practical" />
+  <meta name="twitter:description" content="AI-powered dinosaur behavior modeling with vision and memory-driven agents." />
+  <link rel="canonical" href="https://paleo-ai-system.github.io/PALEO/" />
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -14,12 +27,13 @@
       --bg-elev: #f9f4e8;
       --panel: rgba(255, 255, 255, 0.84);
       --ink: #1f3b31;
-      --ink-soft: #4a6d60;
+      --ink-soft: #35584b;
       --line: #c7decd;
       --accent: #56a984;
       --accent-2: #4e9d92;
       --accent-3: #8bcf9f;
       --shadow: rgba(30, 62, 50, 0.16);
+      --focus-ring: #1d7f67;
     }
 
     body.dark {
@@ -27,12 +41,13 @@
       --bg-elev: #152923;
       --panel: rgba(23, 38, 32, 0.82);
       --ink: #e5f5eb;
-      --ink-soft: #b2d4c4;
+      --ink-soft: #c6e2d5;
       --line: #2b4e43;
       --accent: #75cb9f;
       --accent-2: #6bb9c3;
       --accent-3: #9adf86;
       --shadow: rgba(5, 10, 8, 0.35);
+      --focus-ring: #9eead3;
     }
 
     * { box-sizing: border-box; }
@@ -50,6 +65,21 @@
         var(--bg);
       transition: background-color 0.25s ease, color 0.25s ease;
     }
+
+    .skip-link {
+      position: absolute;
+      top: -44px;
+      left: 10px;
+      z-index: 120;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #134c3c;
+      border: 2px solid var(--focus-ring);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .skip-link:focus { top: 8px; }
 
     .progress {
       position: fixed;
@@ -107,10 +137,10 @@
       font-size: 0.95rem;
       font-weight: 600;
       background: rgba(255, 255, 255, 0.45);
-      transition: transform 0.15s ease, border-color 0.15s ease;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
     }
 
-    .btn:hover { transform: translateY(-1px); border-color: var(--accent); }
+    .btn:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 8px 16px rgba(40, 88, 69, 0.15); }
     .btn.active { background: rgba(86, 169, 132, 0.2); border-color: #86c6a3; }
 
     .repo-btn {
@@ -147,6 +177,13 @@
       cursor: pointer;
     }
 
+    a:focus-visible,
+    button:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
     .wrap { max-width: 1120px; margin: 0 auto; padding: 26px 18px 60px; }
 
     .hero {
@@ -163,7 +200,9 @@
       border: 1px solid var(--line);
       border-radius: 18px;
       box-shadow: 0 8px 22px var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(29, 66, 50, 0.2); }
 
     .hero-card { padding: 22px; position: relative; overflow: hidden; }
     .hero-card::before {
@@ -178,17 +217,22 @@
     }
 
     h1, h2, h3 {
-      margin: 0 0 10px;
+      margin: 0 0 12px;
       font-family: "Fraunces", serif;
-      line-height: 1.15;
+      line-height: 1.18;
+      letter-spacing: 0.1px;
     }
 
     h1 { font-size: clamp(2rem, 5vw, 3.2rem); }
     h2 { font-size: clamp(1.5rem, 3.3vw, 2.1rem); }
     h3 { font-size: 1.1rem; color: var(--accent-2); }
 
-    p { margin-top: 0; color: var(--ink-soft); }
-    .lead { font-size: 1.05rem; max-width: 58ch; }
+    p {
+      margin: 0 0 11px;
+      color: var(--ink-soft);
+      max-width: 68ch;
+    }
+    .lead { font-size: 1.05rem; max-width: 60ch; line-height: 1.68; }
 
     .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
     .cta {
@@ -228,8 +272,13 @@
       padding: 16px;
       font-weight: 600;
     }
+    .placeholder:hover {
+      border-color: #7fb8a0;
+      background: rgba(242, 251, 246, 0.88);
+      transform: translateY(-1px);
+    }
 
-    .section { margin-top: 14px; }
+    .section { margin-top: 16px; }
     .grid {
       display: grid;
       gap: 12px;
@@ -237,7 +286,7 @@
     }
     .card { padding: 16px; }
     ul { margin: 0; padding-left: 18px; }
-    li { margin-bottom: 6px; color: var(--ink-soft); }
+    li { margin-bottom: 7px; color: var(--ink-soft); line-height: 1.55; }
 
     .steps .card { position: relative; }
     .steps .step-icon {
@@ -301,6 +350,75 @@
       margin: 0 6px 6px 0;
       background: rgba(255, 255, 255, 0.46);
     }
+
+    .credibility {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .cred-item {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.46);
+    }
+
+    .cred-item strong {
+      display: block;
+      color: var(--accent-2);
+      margin-bottom: 4px;
+      font-size: 1.02rem;
+    }
+
+    .updates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      gap: 10px;
+    }
+
+    .update-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(252, 255, 251, 0.82);
+    }
+
+    .update-date {
+      font-weight: 700;
+      color: var(--accent-2);
+      margin-bottom: 6px;
+      font-size: 0.93rem;
+    }
+
+    .update-tag {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 0.78rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 2px 8px;
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .action-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .action-link {
+      display: block;
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.55);
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .action-link:hover { transform: translateY(-2px); border-color: #84bba1; }
 
     .section-divider {
       margin: 14px 8px 10px;
@@ -369,33 +487,44 @@
     @media (max-width: 860px) {
       .hero { grid-template-columns: 1fr; min-height: auto; }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal { opacity: 1 !important; transform: none !important; }
+    }
   </style>
 </head>
 <body>
-  <div class="progress" id="scrollProgress"></div>
-  <nav class="nav">
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
+  <div class="progress" id="scrollProgress" aria-hidden="true"></div>
+  <nav class="nav" aria-label="Primary">
     <div class="nav-inner">
       <div class="brand">PALEO</div>
       <div class="nav-links">
-        <a class="btn active" href="index.html">Home</a>
+        <a class="btn active" href="index.html" aria-current="page">Home</a>
         <a class="btn" href="technical.html">Technical</a>
         <a class="btn" href="project-checkin-1.html">Check-in 1</a>
         <a class="btn repo-btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
-        <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">Dark Mode</button>
+        <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode" aria-pressed="false">Dark Mode</button>
       </div>
     </div>
   </nav>
 
-  <main class="wrap">
+  <main class="wrap" id="mainContent" aria-label="PALEO homepage content">
     <section class="hero reveal">
       <article class="hero-card">
-        <h1>Prehistoric Intelligence, Made Practical.</h1>
+        <h1>Build Smarter Dinosaur Behavior, Faster.</h1>
         <p class="lead">
-          PALEO helps build believable dinosaur behavior for survival-style games. In simple terms:
-          it watches game visuals, understands what a dinosaur needs, and decides smart next actions.
+          PALEO is an AI behavior layer for survival games. It interprets gameplay visuals, tracks dinosaur state,
+          and recommends actions that feel instinctive and believable.
         </p>
         <p class="lead">
-          Teams can use it to test world balance, resource flow, and behavior realism before shipping gameplay changes.
+          Teams use PALEO to validate map balance, improve encounter pacing, and prototype richer NPC behavior loops.
         </p>
         <div class="hero-actions">
           <a class="cta primary" href="#how-it-works">How PALEO Works</a>
@@ -410,8 +539,33 @@
       </aside>
     </section>
 
+    <section class="section reveal">
+      <div class="card">
+        <div class="icon-line"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i> Project Credibility</div>
+        <h2>Current Trust Snapshot</h2>
+        <div class="credibility">
+          <article class="cred-item">
+            <strong>Release Channel</strong>
+            Public GitHub Pages with versioned history.
+          </article>
+          <article class="cred-item">
+            <strong>Project Phase</strong>
+            Foundation + check-in delivery complete.
+          </article>
+          <article class="cred-item">
+            <strong>Last Updated</strong>
+            <span id="lastUpdatedText">Calculating...</span>
+          </article>
+          <article class="cred-item">
+            <strong>Reproducibility</strong>
+            Runnable commands and documented scaffolding in repo.
+          </article>
+        </div>
+      </div>
+    </section>
+
     <div class="section-divider fern reveal" aria-hidden="true">
-      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <g class="divider-move">
           <path d="M10 20 C60 5, 120 5, 170 20 S280 35, 330 20 S440 5, 490 20 S600 35, 650 20 S760 5, 810 20 S920 35, 970 20 S1080 5, 1130 20" />
           <path d="M40 22 C80 15, 100 8, 130 10 M180 22 C220 15, 240 8, 270 10 M320 22 C360 15, 380 8, 410 10 M460 22 C500 15, 520 8, 550 10 M600 22 C640 15, 660 8, 690 10 M740 22 C780 15, 800 8, 830 10 M880 22 C920 15, 940 8, 970 10 M1020 22 C1060 15, 1080 8, 1110 10" />
@@ -425,7 +579,7 @@
         <div class="stat-row">
           <article class="stat">
             <strong>3</strong>
-            Core stages: Perceive, Think, Act
+            Perceive, Think, Act
           </article>
           <article class="stat">
             <strong>1:1</strong>
@@ -437,14 +591,14 @@
           </article>
           <article class="stat">
             <strong>Now</strong>
-            Foundation and check-in release phase
+            Foundation + check-in delivered
           </article>
         </div>
       </div>
     </section>
 
     <div class="section-divider tracks reveal" aria-hidden="true">
-      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <g class="divider-move">
           <ellipse cx="55" cy="16" rx="8" ry="5" />
           <ellipse cx="80" cy="12" rx="5" ry="4" />
@@ -500,29 +654,29 @@
 
     <section class="section reveal" id="how-it-works">
       <div class="card">
-        <h2>What PALEO Does</h2>
+        <h2>How PALEO Works</h2>
         <div class="grid steps">
           <article class="card">
-            <div class="step-icon"><i class="fa-solid fa-eye"></i></div>
+            <div class="step-icon"><i class="fa-solid fa-eye" aria-hidden="true"></i></div>
             <h3>Perceive</h3>
-            <p>Reads gameplay frames and detects behavior cues like danger, hunger, and nearby opportunity.</p>
+            <p>Reads gameplay frames and extracts behavior cues like threat, hunger, and opportunity.</p>
           </article>
           <article class="card">
-            <div class="step-icon"><i class="fa-solid fa-brain"></i></div>
+            <div class="step-icon"><i class="fa-solid fa-brain" aria-hidden="true"></i></div>
             <h3>Think</h3>
-            <p>Uses a per-dinosaur memory profile so each creature has continuity, preferences, and risk memory.</p>
+            <p>Uses per-dinosaur memory so each creature keeps continuity, preferences, and risk history.</p>
           </article>
           <article class="card">
-            <div class="step-icon"><i class="fa-solid fa-shoe-prints"></i></div>
+            <div class="step-icon"><i class="fa-solid fa-shoe-prints" aria-hidden="true"></i></div>
             <h3>Act</h3>
-            <p>Produces context-aware actions and explainable thought logs for debugging and balancing.</p>
+            <p>Outputs context-aware actions and explainable logs for design tuning and debugging.</p>
           </article>
         </div>
       </div>
     </section>
 
     <div class="section-divider fern reveal" aria-hidden="true">
-      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <g class="divider-move">
           <path d="M10 18 C60 3, 120 3, 170 18 S280 33, 330 18 S440 3, 490 18 S600 33, 650 18 S760 3, 810 18 S920 33, 970 18 S1080 3, 1130 18" />
         </g>
@@ -532,28 +686,28 @@
     <section class="section reveal">
       <div class="grid">
         <article class="card">
-          <div class="icon-line"><i class="fa-solid fa-leaf"></i> Why It Matters</div>
+          <div class="icon-line"><i class="fa-solid fa-leaf" aria-hidden="true"></i> Why It Matters</div>
           <h2>Why It Matters</h2>
           <ul>
-            <li>Makes NPC behavior feel less scripted and more alive.</li>
-            <li>Gives designers evidence when tuning maps and survival loops.</li>
-            <li>Adds interpretable outputs so behavior decisions can be audited.</li>
+            <li>NPC behavior feels less scripted and more alive.</li>
+            <li>Designers get evidence when tuning maps and survival loops.</li>
+            <li>Interpretable outputs make behavior decisions auditable.</li>
           </ul>
         </article>
         <article class="card">
-          <div class="icon-line"><i class="fa-solid fa-users"></i> Who It Helps</div>
+          <div class="icon-line"><i class="fa-solid fa-users" aria-hidden="true"></i> Who It Helps</div>
           <h2>Who It Helps</h2>
           <ul>
-            <li>Game studios building survival and ecosystem-driven gameplay.</li>
-            <li>Design teams validating resource routes and encounter difficulty.</li>
-            <li>Players needing assistance with heavy survival micromanagement.</li>
+            <li>Studios building survival and ecosystem-driven gameplay.</li>
+            <li>Design teams validating routes, resources, and encounter difficulty.</li>
+            <li>Players who want help with heavy survival micromanagement.</li>
           </ul>
         </article>
       </div>
     </section>
 
     <div class="section-divider tracks reveal" aria-hidden="true">
-      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <g class="divider-move">
           <ellipse cx="85" cy="16" rx="9" ry="5.5" />
           <ellipse cx="111" cy="12" rx="5.3" ry="4.1" />
@@ -573,26 +727,26 @@
 
     <section class="section reveal">
       <div class="card">
-        <div class="icon-line"><i class="fa-solid fa-dragon"></i> Product Features</div>
-        <h2>Core Product Features (Current + Planned)</h2>
+        <div class="icon-line"><i class="fa-solid fa-dragon" aria-hidden="true"></i> Product Features</div>
+        <h2>Core Features</h2>
         <div class="grid feature-list">
           <article class="card">
             <h3>Behavior Intelligence Engine</h3>
-            <p>Model-assisted interpretation of visual cues into behavior intent categories.</p>
+            <p>Translates visual cues into actionable behavior-state signals.</p>
             <span class="pill">Computer Vision</span>
             <span class="pill">ResNet-18 plan</span>
             <span class="pill">OpenCV baseline</span>
           </article>
           <article class="card">
             <h3>Per-Dinosaur Agent Memory</h3>
-            <p>Each dinosaur stores identity, needs, recent events, and threat memory for continuity.</p>
+            <p>Each dinosaur tracks identity, needs, recent events, and threat memory.</p>
             <span class="pill">Letta architecture</span>
             <span class="pill">State tracking</span>
             <span class="pill">Explainable logs</span>
           </article>
           <article class="card">
             <h3>Design Validation Support</h3>
-            <p>Helps identify map imbalance, route failures, and survival-loop bottlenecks.</p>
+            <p>Flags map imbalance, route failures, and survival-loop bottlenecks.</p>
             <span class="pill">Developer tooling</span>
             <span class="pill">Stress testing</span>
             <span class="pill">Balancing feedback</span>
@@ -603,19 +757,19 @@
 
     <section class="section reveal">
       <div class="card">
-        <div class="icon-line"><i class="fa-solid fa-seedling"></i> Roadmap</div>
-        <h2>Roadmap at a Glance</h2>
+        <div class="icon-line"><i class="fa-solid fa-seedling" aria-hidden="true"></i> Roadmap</div>
+        <h2>Roadmap</h2>
         <div class="grid">
-          <article class="card"><h3>Now</h3><p>Scaffold, check-in site, deployment, and technical plan are complete.</p></article>
+          <article class="card"><h3>Now</h3><p>Scaffold, deployment, and check-in deliverables complete.</p></article>
           <article class="card"><h3>Next</h3><p>Dataset setup, preprocessing, and baseline model training.</p></article>
-          <article class="card"><h3>Then</h3><p>Agent loop integration, evaluation dashboard, and demo gallery.</p></article>
+          <article class="card"><h3>Then</h3><p>Agent-loop integration, evaluation dashboards, and demos.</p></article>
         </div>
       </div>
     </section>
 
     <section class="section reveal">
       <div class="card">
-        <div class="icon-line"><i class="fa-solid fa-image"></i> Visual Placeholders</div>
+        <div class="icon-line"><i class="fa-solid fa-image" aria-hidden="true"></i> Visual Placeholders</div>
         <h2>Image Gallery Placeholders</h2>
         <div class="image-row">
           <div class="placeholder">Placeholder: fern-themed map scene</div>
@@ -630,25 +784,79 @@
 
     <section class="section reveal">
       <div class="card">
-        <div class="icon-line"><i class="fa-solid fa-flask"></i> Current Build Status</div>
-        <h2>What Is Live Today vs What Is Next</h2>
+        <div class="icon-line"><i class="fa-solid fa-bullhorn" aria-hidden="true"></i> Project Updates</div>
+        <h2>Recent Updates</h2>
+        <div class="updates-grid">
+          <article class="update-card">
+            <div class="update-date">Mar 2026</div>
+            Launched the PALEO multi-tab site (Home, Technical, Check-in).
+            <div class="update-tag">Deployment</div>
+          </article>
+          <article class="update-card">
+            <div class="update-date">Mar 2026</div>
+            Added keyboard focus, skip links, reduced-motion support, and semantic landmarks.
+            <div class="update-tag">Accessibility</div>
+          </article>
+          <article class="update-card">
+            <div class="update-date">Mar 2026</div>
+            Locked in model direction and per-dinosaur memory architecture.
+            <div class="update-tag">Architecture</div>
+          </article>
+          <article class="update-card">
+            <div class="update-date">Next Milestone</div>
+            Start dataset ingestion and first benchmark training runs.
+            <div class="update-tag">Coming Next</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="card">
+        <div class="icon-line"><i class="fa-solid fa-flask" aria-hidden="true"></i> Current Build Status</div>
+        <h2>Live Now and Next</h2>
         <div class="grid">
           <article class="card">
             <h3>Live Today</h3>
             <ul>
-              <li>GitHub Pages site with Home, Technical, and Check-in sections.</li>
+              <li>Public PALEO site with Home, Technical, and Check-in tabs.</li>
               <li>Project scaffold with reproducible run/test commands.</li>
-              <li>Documented plan for data, model, and agent architecture.</li>
+              <li>Documented data, model, and agent architecture plan.</li>
             </ul>
           </article>
           <article class="card">
             <h3>Coming Next</h3>
             <ul>
-              <li>Data download and preprocessing pipeline scripts.</li>
-              <li>First baseline model runs and measurable metrics.</li>
-              <li>Behavior demo visuals and richer technical charts.</li>
+              <li>Dataset download and preprocessing scripts.</li>
+              <li>First baseline runs with measurable metrics.</li>
+              <li>Behavior demos and richer technical charts.</li>
             </ul>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="card">
+        <div class="icon-line"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i> Explore and Connect</div>
+        <h2>Quick Actions</h2>
+        <div class="action-links">
+          <a class="action-link" href="technical.html">
+            <strong>Technical Dashboard</strong><br />
+            Architecture, roadmap, and implementation status.
+          </a>
+          <a class="action-link" href="project-checkin-1.html">
+            <strong>Check-in Site</strong><br />
+            Full write-up, milestones, and planned artifacts.
+          </a>
+          <a class="action-link" href="https://github.com/PALEO-AI-System/PALEO/issues" target="_blank" rel="noopener noreferrer">
+            <strong>Report / Discuss</strong><br />
+            Track feedback, tasks, and open questions.
+          </a>
+          <a class="action-link" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">
+            <strong>View Repository</strong><br />
+            Source code, documentation, and history.
+          </a>
         </div>
       </div>
     </section>
@@ -664,10 +872,12 @@
       const modeToggle = document.getElementById("modeToggle");
       const key = "paleo-mode";
       const saved = localStorage.getItem(key);
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       function setMode(dark) {
         body.classList.toggle("dark", dark);
         modeToggle.textContent = dark ? "Light Mode" : "Dark Mode";
+        modeToggle.setAttribute("aria-pressed", dark ? "true" : "false");
         localStorage.setItem(key, dark ? "dark" : "light");
       }
 
@@ -677,24 +887,43 @@
       });
 
       const bar = document.getElementById("scrollProgress");
-      window.addEventListener("scroll", function () {
+      let scrollTicking = false;
+      function updateScrollProgress() {
         const top = window.scrollY;
         const height = document.documentElement.scrollHeight - window.innerHeight;
         const pct = height <= 0 ? 0 : (top / height) * 100;
         bar.style.width = pct + "%";
-      });
+        scrollTicking = false;
+      }
+      window.addEventListener("scroll", function () {
+        if (!scrollTicking) {
+          scrollTicking = true;
+          window.requestAnimationFrame(updateScrollProgress);
+        }
+      }, { passive: true });
+      updateScrollProgress();
 
-      const observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("in");
-          }
+      document.getElementById("lastUpdatedText").textContent =
+        new Date(document.lastModified).toLocaleDateString();
+
+      const revealEls = document.querySelectorAll(".reveal");
+      if (reduceMotion) {
+        revealEls.forEach(function (section) {
+          section.classList.add("in");
         });
-      }, { threshold: 0.15 });
+      } else {
+        const observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in");
+            }
+          });
+        }, { threshold: 0.15 });
 
-      document.querySelectorAll(".reveal").forEach(function (section) {
-        observer.observe(section);
-      });
+        revealEls.forEach(function (section) {
+          observer.observe(section);
+        });
+      }
     })();
   </script>
 </body>

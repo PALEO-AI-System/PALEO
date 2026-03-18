@@ -4,6 +4,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PALEO | Project Check-in 1</title>
+  <meta name="description" content="PALEO Project Check-in 1: complete write-up, milestones, planned experiments, and current progress status." />
+  <meta name="keywords" content="PALEO check-in, dinosaur AI project, machine learning check-in" />
+  <meta name="author" content="PALEO Team" />
+  <meta property="og:title" content="PALEO | Project Check-in 1" />
+  <meta property="og:description" content="Review the complete PALEO check-in response with roadmap and planned outputs." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://paleo-ai-system.github.io/PALEO/project-checkin-1.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="PALEO | Project Check-in 1" />
+  <meta name="twitter:description" content="PALEO project check-in details, progress, and planned milestones." />
+  <link rel="canonical" href="https://paleo-ai-system.github.io/PALEO/project-checkin-1.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -12,24 +23,26 @@
       --bg: #f4f9f2;
       --panel: rgba(255, 255, 255, 0.86);
       --ink: #1f3b31;
-      --ink-soft: #4d6f62;
+      --ink-soft: #35584b;
       --line: #c7decd;
       --accent: #4e9d92;
       --accent-2: #56a984;
       --cream: #f9f2e2;
       --shadow: rgba(30, 62, 50, 0.16);
+      --focus-ring: #1d7f67;
     }
 
     body.dark {
       --bg: #0f1e1a;
       --panel: rgba(23, 38, 32, 0.82);
       --ink: #e5f5eb;
-      --ink-soft: #b2d4c4;
+      --ink-soft: #c6e2d5;
       --line: #2b4e43;
       --accent: #6bb9c3;
       --accent-2: #75cb9f;
       --cream: #2f2a21;
       --shadow: rgba(5, 10, 8, 0.35);
+      --focus-ring: #9eead3;
     }
 
     * { box-sizing: border-box; }
@@ -47,6 +60,21 @@
         var(--bg);
       transition: background-color 0.25s ease, color 0.25s ease;
     }
+
+    .skip-link {
+      position: absolute;
+      top: -44px;
+      left: 10px;
+      z-index: 120;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #134c3c;
+      border: 2px solid var(--focus-ring);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .skip-link:focus { top: 8px; }
 
     .progress {
       position: fixed;
@@ -136,6 +164,13 @@
       cursor: pointer;
     }
 
+    a:focus-visible,
+    button:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
     .wrap {
       max-width: 1120px;
       margin: 0 auto;
@@ -168,16 +203,20 @@
       background: rgba(86, 169, 132, 0.17);
     }
 
-    h1, h2, h3 { margin: 0 0 8px; }
+    h1, h2, h3 { margin: 0 0 11px; letter-spacing: 0.1px; }
     h1, h2 { font-family: "Fraunces", serif; }
     h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
     h2 { font-size: 1.35rem; color: var(--accent); }
     h3 { font-size: 1.03rem; color: var(--accent); }
 
     .muted { color: var(--ink-soft); }
-    p { margin-top: 0; }
+    p {
+      margin: 0 0 10px;
+      max-width: 70ch;
+      line-height: 1.6;
+    }
     ul { margin: 0; padding-left: 18px; }
-    li { margin-bottom: 6px; }
+    li { margin-bottom: 7px; line-height: 1.54; }
 
     .grid {
       display: grid;
@@ -219,7 +258,7 @@
     }
 
     .qa-item[open] summary { background: #e5f3e9; }
-    .qa-content { padding: 12px; }
+    .qa-content { padding: 13px; }
 
     .placeholder-board {
       display: grid;
@@ -322,29 +361,40 @@
       0% { transform: translateX(0); }
       100% { transform: translateX(-8px); }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal { opacity: 1 !important; transform: none !important; }
+    }
   </style>
 </head>
 <body>
-  <div class="progress" id="scrollProgress"></div>
-  <nav class="nav">
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
+  <div class="progress" id="scrollProgress" aria-hidden="true"></div>
+  <nav class="nav" aria-label="Primary">
     <div class="nav-inner">
       <div class="brand">PALEO</div>
       <div class="nav-links">
         <a class="btn" href="index.html">Home</a>
         <a class="btn" href="technical.html">Technical</a>
-        <a class="btn active" href="project-checkin-1.html">Check-in 1</a>
+        <a class="btn active" href="project-checkin-1.html" aria-current="page">Check-in 1</a>
         <a class="btn repo-btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
-        <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode">Dark Mode</button>
+        <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode" aria-pressed="false">Dark Mode</button>
       </div>
     </div>
   </nav>
 
-  <main class="wrap">
+  <main class="wrap" id="mainContent" aria-label="PALEO check-in content">
     <section class="hero reveal">
-      <h1>PALEO - Project Check-in 1</h1>
+      <h1>PALEO Project Check-in 1</h1>
       <p class="muted">
-        Complete web version of your check-in response, with explicit placeholders for planned experiment
-        artifacts, dashboard modules, and upcoming technical deliverables.
+        Complete web version of the check-in response, with placeholders for planned
+        experiment artifacts and upcoming technical deliverables.
       </p>
       <p>
         <span class="status done">COMPLETE</span>
@@ -353,7 +403,7 @@
     </section>
 
     <div class="section-divider fern reveal" aria-hidden="true">
-      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <g class="divider-move">
           <path d="M10 20 C60 5, 120 5, 170 20 S280 35, 330 20 S440 5, 490 20 S600 35, 650 20 S760 5, 810 20 S920 35, 970 20 S1080 5, 1130 20" />
         </g>
@@ -379,7 +429,7 @@
     </section>
 
     <div class="section-divider tracks reveal" aria-hidden="true">
-      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <g class="divider-move">
           <ellipse cx="85" cy="16" rx="9" ry="5.5" />
           <ellipse cx="111" cy="12" rx="5.3" ry="4.1" />
@@ -398,7 +448,7 @@
     </div>
 
     <section class="card reveal">
-      <h2>Check-in Questions (1-10)</h2>
+      <h2>Check-in Questions (1 to 10)</h2>
 
       <details class="qa-item" open>
         <summary>1) Project title and team</summary>
@@ -478,7 +528,7 @@
     </section>
 
     <div class="section-divider fern reveal" aria-hidden="true">
-      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <g class="divider-move">
           <path d="M20 19 C70 8, 110 6, 160 19 S250 32, 300 19 S390 6, 440 19 S530 32, 580 19 S670 6, 720 19 S810 32, 860 19 S950 6, 1000 19 S1090 32, 1140 19" />
         </g>
@@ -522,7 +572,7 @@
     </section>
 
     <div class="section-divider tracks reveal" aria-hidden="true">
-      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <g class="divider-move">
           <ellipse cx="55" cy="16" rx="8" ry="5" />
           <ellipse cx="80" cy="12" rx="5" ry="4" />
@@ -547,7 +597,7 @@
     </div>
 
     <section class="card reveal">
-      <h2>Notes Captured from Planning</h2>
+      <h2>Planning Notes</h2>
       <ul id="notesList"></ul>
     </section>
   </main>
@@ -558,10 +608,12 @@
       const modeToggle = document.getElementById("modeToggle");
       const key = "paleo-mode";
       const saved = localStorage.getItem(key);
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       function setMode(dark) {
         body.classList.toggle("dark", dark);
         modeToggle.textContent = dark ? "Light Mode" : "Dark Mode";
+        modeToggle.setAttribute("aria-pressed", dark ? "true" : "false");
         localStorage.setItem(key, dark ? "dark" : "light");
       }
 
@@ -589,24 +641,40 @@
       });
 
       const bar = document.getElementById("scrollProgress");
-      window.addEventListener("scroll", function () {
+      let scrollTicking = false;
+      function updateScrollProgress() {
         const top = window.scrollY;
         const height = document.documentElement.scrollHeight - window.innerHeight;
         const pct = height <= 0 ? 0 : (top / height) * 100;
         bar.style.width = pct + "%";
-      });
+        scrollTicking = false;
+      }
+      window.addEventListener("scroll", function () {
+        if (!scrollTicking) {
+          scrollTicking = true;
+          window.requestAnimationFrame(updateScrollProgress);
+        }
+      }, { passive: true });
+      updateScrollProgress();
 
-      const observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("in");
-          }
+      const revealEls = document.querySelectorAll(".reveal");
+      if (reduceMotion) {
+        revealEls.forEach(function (section) {
+          section.classList.add("in");
         });
-      }, { threshold: 0.15 });
+      } else {
+        const observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in");
+            }
+          });
+        }, { threshold: 0.15 });
 
-      document.querySelectorAll(".reveal").forEach(function (section) {
-        observer.observe(section);
-      });
+        revealEls.forEach(function (section) {
+          observer.observe(section);
+        });
+      }
     })();
   </script>
 </body>

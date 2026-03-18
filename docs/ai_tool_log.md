@@ -25,6 +25,13 @@
 - Added reusable decorative section-divider components to homepage (`fern frond` and `track trail` SVG motifs) and applied them between major sections for a more premium visual rhythm.
 - Applied the same reusable fern/track SVG divider components to `pages/project-checkin-1.html` and `pages/technical.html` for cross-site visual consistency.
 - Normalized divider density/spacing across all three pages by softening SVG prominence and harmonizing divider spacing for a cleaner, more premium rhythm.
+- Applied a typography micro-pass across Home/Technical/Check-in pages (heading rhythm, paragraph spacing, line-length readability, and list spacing) for a more polished premium finish.
+- Added accessibility refinements across all site tabs: stronger keyboard focus states, skip-to-content links, improved muted-text contrast, and reduced-motion fallbacks for animations/reveal effects.
+- Added semantic accessibility polish across all pages: explicit primary-nav landmarks, `aria-current` for active tabs, decorative SVG/icon hiding (`aria-hidden`), and improved disabled-link keyboard behavior.
+- Added final no-manual-testing accessibility hardening: `aria-pressed` state on color-mode toggles, decorative progress bar marked hidden, and conversion of technical placeholder pseudo-links into non-interactive cards.
+- Implemented a combined UX/engineering pass: SEO metadata and canonical tags on all pages, requestAnimationFrame + passive scroll progress updates for smoother performance, richer homepage updates/credibility/quick-action sections, and enhanced micro-interaction polish for cards/buttons/placeholders.
+- Performed a portfolio/demo-readiness content pass: tightened homepage value proposition and section copy, streamlined Technical page messaging, and simplified Check-in hero copy for faster scanning.
+- Final style consistency pass: aligned heading capitalization/phrasing conventions across Home, Technical, and Check-in pages for one cohesive voice.
 
 ## 2026-03-14
 - Filled out `docs/project_brief.md` using project-checkin details (problem, datasets, models, metrics, experiments, deliverables).
