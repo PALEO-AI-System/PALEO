@@ -5,9 +5,11 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from typing import Dict, List
 
-from .agent import PersonalityTraits
+from .agent import PersonalityTraits, AgentState, decide_action, format_thought_log
 from .config import LettaConfig, default_letta_config
 from .data import DatasetRecord
+from .fast_facts import get_fast_facts
+from .wiki_rag import query_snippets
 
 
 @dataclass
@@ -70,6 +72,35 @@ def get_letta_tool_specs() -> List[ToolSpec]:
             },
             output_schema={"status": "str"},
         ),
+        ToolSpec(
+            name="get_species_fast_facts",
+            description="Return fast-facts (diet, size, threat role) for a species id.",
+            input_schema={"species_id": "str"},
+            output_schema={
+                "diet": "str",
+                "size_tier": "str",
+                "threat_role": "str",
+                "environment": "str",
+                "notes": "str",
+            },
+        ),
+        ToolSpec(
+            name="simulate_instinct_decision",
+            description="Run a single instinct decision for a species given scalar observation inputs.",
+            input_schema={
+                "species": "str",
+                "predator_probability": "float",
+                "prey_density": "float",
+                "health": "float",
+                "stamina": "float",
+                "hunger": "float",
+                "thirst": "float",
+            },
+            output_schema={
+                "action": "str",
+                "thought_log": "str",
+            },
+        ),
     ]
 
 
@@ -88,15 +119,8 @@ def get_dataset_stats(records: List[DatasetRecord]) -> Dict[str, object]:
 
 
 def query_pot_wiki(query: str) -> Dict[str, List[str]]:
-    """Tool stub: replace with vector-RAG retrieval in a later phase."""
-    lower = query.lower()
-    snippets = []
-    if "stamina" in lower:
-        snippets.append("Stamina affects sprinting and combat disengage decisions.")
-    if "juvenile" in lower:
-        snippets.append("Juveniles should avoid high-threat zones and conserve stamina.")
-    if not snippets:
-        snippets.append("No indexed snippet yet; integrate local wiki RAG index.")
+    """Tool: local wiki-snippet lookup over curated docs/wiki_snippets.md."""
+    snippets = query_snippets(query, top_k=3)
     return {"snippets": snippets}
 
 
@@ -105,6 +129,68 @@ def set_personality_traits(dino_id: str, traits: PersonalityTraits) -> Dict[str,
     _ = dino_id
     _ = traits
     return {"status": "ok"}
+
+
+def get_species_fast_facts(species_id: str) -> Dict[str, str]:
+    """Tool: surface fast-facts for Letta or other callers."""
+    ff = get_fast_facts(species_id)
+    if not ff:
+        return {
+            "diet": "",
+            "size_tier": "",
+            "threat_role": "",
+            "environment": "",
+            "notes": "",
+        }
+    return {
+        "diet": ff.diet,
+        "size_tier": ff.size_tier,
+        "threat_role": ff.threat_role,
+        "environment": ff.environment,
+        "notes": ff.notes,
+    }
+
+
+def simulate_instinct_decision(
+    species: str,
+    predator_probability: float,
+    prey_density: float,
+    health: float,
+    stamina: float,
+    hunger: float,
+    thirst: float,
+) -> Dict[str, str]:
+    """Tool: offline 'what would this dino do?' single-step sim.
+
+    Purely logical: constructs an AgentState in memory and returns the chosen
+    high-level action plus a JSON thought log, suitable for Letta tools.
+    """
+    state = AgentState(
+        primal_mind=PersonalityTraits().__class__(  # reuse class, but identity/species separate
+        ),  # placeholder; overridden below
+        observation=None,  # type: ignore[arg-type]
+    )
+    # Rebuild PrimalMind/Observation explicitly to keep dependencies minimal.
+    from .agent import PrimalMind, Observation  # local import to avoid cycles
+
+    state.primal_mind = PrimalMind(
+        identity="sim-dino",
+        species=species,
+        life_stage="adult",
+        current_goal="unspecified",
+    )
+    state.observation = Observation(
+        predator_probability=predator_probability,
+        prey_density=prey_density,
+        health=health,
+        stamina=stamina,
+        hunger=hunger,
+        thirst=thirst,
+        recent_event="simulated",
+    )
+    action = decide_action(state)
+    thought = format_thought_log(state, action)
+    return {"action": action, "thought_log": thought}
 
 
 def letta_config_summary(config: LettaConfig | None = None) -> Dict[str, object]:

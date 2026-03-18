@@ -1,0 +1,43 @@
+{
+  "policy_id": "kto_pachyrhinosaurus_v0",
+  "species_aliases": ["kto_pachyrhinosaurus", "pachyrhinosaurus", "pachyrhino"],
+  "role": "tanky_herbivore_guardian",
+  "notes": {
+    "sources": {
+      "curve_overrides": "https://guides.gsh-servers.com/path-of-titans/guides/curve-overrides/modded-dinosaurs/kto/path-of-titans-ktopachyrhino",
+      "kto_index": "https://guides.gsh-servers.com/path-of-titans/guides/curve-overrides/modded-dinosaurs/kto/"
+    },
+    "intent": "High-survivability, herd-protective behavior with low panic. This is an initial config meant to be tuned from gameplay logs."
+  },
+  "thresholds": {
+    "critical_health": 0.25,
+    "low_health": 0.45,
+    "low_stamina": 0.35,
+    "high_threat": 0.7,
+    "medium_threat": 0.45,
+    "high_thirst": 0.8,
+    "high_hunger": 0.8
+  },
+  "traits_overrides": {
+    "aggressiveness": 0.55,
+    "friendliness": 0.7,
+    "curiosity": 0.35,
+    "bravery": 0.75,
+    "morality": 0.8
+  },
+  "action_bias": {
+    "prefer_hold_ground_when_healthy": true,
+    "prefer_threaten_before_fight": true,
+    "prefer_call_for_help_when_critical": true,
+    "avoid_chasing_when_low_stamina": true
+  },
+  "high_level_actions": {
+    "hold_ground": "HOLD_POSITION",
+    "fallback_flee": "FLEE",
+    "seek_water": "SEEK_WATER",
+    "seek_food": "FORAGE",
+    "threaten_call": "CALL_DANGER",
+    "friendly_call": "ROAR_FRIENDLY"
+  }
+}
+

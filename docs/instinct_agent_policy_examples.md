@@ -194,12 +194,12 @@ These are intentionally rough and can be swapped for your actual favorite specie
 Modded dinosaurs can differ significantly in stats, abilities, and roles (e.g., KTO, Primordial Tyrants, Divine Beasts). The Instinct Agent should treat them as **first-class citizens** but with some extra care:
 
 - **General approach**
-  - Rely on the same tools as vanilla species:
-    - Wiki RAG over modded-creature pages (stats, roles, abilities).
-    - Fast-facts table entries for notable modded dinos when you care about them (especially KTO playables).
-  - Avoid hard-coding any one patch’s balance; instead, focus on:
-    - Relative size, armor, speed, and damage roles.
-    - Ability tags (mobility, bleed, armor, group buff, etc.).
+  - **Base description:** use the main Path of Titans wiki modded-creature pages for high-level role/ability descriptions (accepting that they may be slightly outdated).
+  - **Up-to-date stats:** use the GameServersHub KTO curve-override pages (e.g. [`KTO` overview](https://guides.gsh-servers.com/path-of-titans/guides/curve-overrides/modded-dinosaurs/kto/) and creature-specific pages like [`KTOPachyrhino`](https://guides.gsh-servers.com/path-of-titans/guides/curve-overrides/modded-dinosaurs/kto/path-of-titans-ktopachyrhino)) for current health, stamina, damage, and multiplier values.
+  - **Fast-facts table:** create entries for notable modded dinos when you care about them (especially KTO playables), combining wiki flavor + curve stats into a compact summary.
+  - Avoid hard-coding any one patch’s balance in the policy; instead, focus on:
+    - Relative size, armor, speed, and damage roles inferred from stats.
+    - Ability tags (mobility, bleed, armor, group buff, etc.), supplemented by **manual notes you add over time** when in-game tooltips or experience reveal more detail.
 
 - **KTO Pachyrhinosaurus–style tanky herbivore**
   - **Role & instincts**

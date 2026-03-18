@@ -1,0 +1,45 @@
+{
+  "kto_pachyrhinosaurus": {
+    "diet": "herbivore",
+    "size_tier": "large",
+    "threat_role": "tank_support",
+    "environment": "terrestrial",
+    "notes": "KTO ceratopsian tank; high combat weight and strong crowd-control abilities, ideal for guarding juveniles and choke points."
+  },
+  "kto_yangchuanosaurus": {
+    "diet": "carnivore",
+    "size_tier": "large",
+    "threat_role": "bruiser_carnivore",
+    "environment": "terrestrial",
+    "notes": "KTO mid-large predator with solid health and weight; good at pressuring isolated targets."
+  },
+  "allosaurus": {
+    "diet": "carnivore",
+    "size_tier": "large",
+    "threat_role": "generalist_carnivore",
+    "environment": "terrestrial",
+    "notes": "Well-rounded land carnivore with good speed and moderate damage; capable in many matchups."
+  },
+  "styracosaurus": {
+    "diet": "herbivore",
+    "size_tier": "medium_large",
+    "threat_role": "aggressive_frontliner",
+    "environment": "terrestrial",
+    "notes": "Fast, aggressive ceratopsian with jousting/ramming playstyles and support buffs."
+  },
+  "achillobator": {
+    "diet": "carnivore",
+    "size_tier": "medium",
+    "threat_role": "pack_raptor",
+    "environment": "terrestrial",
+    "notes": "Stocky raptor; excels with packs and coordinated attacks, but can run lone hunter builds."
+  },
+  "tylosaurus": {
+    "diet": "carnivore",
+    "size_tier": "apex",
+    "threat_role": "apex_aquatic",
+    "environment": "aquatic",
+    "notes": "Apex mosasaur; dominates water with grab-and-drag play, limited on land."
+  }
+}
+

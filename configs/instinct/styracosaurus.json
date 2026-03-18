@@ -1,0 +1,42 @@
+{
+  "policy_id": "styracosaurus_v0",
+  "species_aliases": ["styracosaurus", "styraco"],
+  "role": "aggressive_ceratopsian_frontliner",
+  "notes": {
+    "sources": {
+      "wiki": "https://pathoftitans.wiki/dinosaurs/herbivores/styracosaurus"
+    },
+    "intent": "Fast, horn-first herbivore that can play jousting/ramming lines or support with group buffs; willing to engage more directly than tank-only ceratopsians but still herd-aware."
+  },
+  "thresholds": {
+    "critical_health": 0.2,
+    "low_health": 0.45,
+    "low_stamina": 0.3,
+    "high_threat": 0.6,
+    "medium_threat": 0.4,
+    "high_thirst": 0.8,
+    "high_hunger": 0.7
+  },
+  "traits_overrides": {
+    "aggressiveness": 0.75,
+    "friendliness": 0.5,
+    "curiosity": 0.4,
+    "bravery": 0.8,
+    "morality": 0.6
+  },
+  "action_bias": {
+    "prefer_hold_ground_when_healthy": true,
+    "prefer_threaten_before_fight": true,
+    "prefer_call_for_help_when_critical": true,
+    "avoid_chasing_when_low_stamina": true
+  },
+  "high_level_actions": {
+    "hold_ground": "HOLD_POSITION",
+    "fallback_flee": "FLEE",
+    "seek_water": "SEEK_WATER",
+    "seek_food": "FORAGE",
+    "threaten_call": "CALL_THREATEN",
+    "friendly_call": "CALL_FRIENDLY"
+  }
+}
+

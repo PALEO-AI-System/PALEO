@@ -1,0 +1,42 @@
+{
+  "policy_id": "achillobator_v0",
+  "species_aliases": ["achillobator", "achillo"],
+  "role": "pack_raptor_with_lone_wolf_option",
+  "notes": {
+    "sources": {
+      "wiki": "https://pathoftitans.wiki/dinosaurs/carnivores/achillobator"
+    },
+    "intent": "Medium raptor that shines in packs but can also run lone-hunter builds; favors speed, positioning, and opportunistic attacks over face-tanking."
+  },
+  "thresholds": {
+    "critical_health": 0.25,
+    "low_health": 0.5,
+    "low_stamina": 0.25,
+    "high_threat": 0.6,
+    "medium_threat": 0.35,
+    "high_thirst": 0.8,
+    "high_hunger": 0.65
+  },
+  "traits_overrides": {
+    "aggressiveness": 0.7,
+    "friendliness": 0.6,
+    "curiosity": 0.6,
+    "bravery": 0.65,
+    "morality": 0.4
+  },
+  "action_bias": {
+    "prefer_hold_ground_when_healthy": false,
+    "prefer_threaten_before_fight": false,
+    "prefer_call_for_help_when_critical": true,
+    "avoid_chasing_when_low_stamina": true
+  },
+  "high_level_actions": {
+    "hold_ground": "HOLD_POSITION",
+    "fallback_flee": "FLEE",
+    "seek_water": "SEEK_WATER",
+    "seek_food": "HUNT",
+    "threaten_call": "CALL_THREATEN",
+    "friendly_call": "CALL_FRIENDLY"
+  }
+}
+

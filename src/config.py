@@ -45,11 +45,19 @@ class PotConfig:
     emergency_stop_key: str = "f12"
     keymap: Dict[str, Tuple[str, ...]] = field(
         default_factory=lambda: {
+            # Locomotion
             "FLEE": ("shift", "w"),
             "GRAZE": ("w",),
             "FOLLOW_HERD": ("w", "a"),
             "HOLD_POSITION": (),
-            "ROAR_FRIENDLY": ("1",),
+            "EXPLORE": ("w",),
+            # Calls (mapped to vocal wheel slots by future config)
+            "CALL_FRIENDLY": ("1",),
+            "CALL_THREATEN": ("2",),
+            "CALL_DANGER": ("3",),
+            # Survival
+            "SEEK_WATER": ("w",),
+            "FORAGE": ("w",),
         }
     )
 

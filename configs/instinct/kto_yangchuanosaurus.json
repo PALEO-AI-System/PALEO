@@ -1,0 +1,43 @@
+{
+  "policy_id": "kto_yangchuanosaurus_v0",
+  "species_aliases": ["kto_yangchuanosaurus", "kto_yang", "yangchuanosaurus", "yang"],
+  "role": "aggressive_midlarge_carnivore",
+  "notes": {
+    "sources": {
+      "curve_overrides": "https://guides.gsh-servers.com/path-of-titans/guides/curve-overrides/modded-dinosaurs/kto/path-of-titans-ktoyang",
+      "kto_index": "https://guides.gsh-servers.com/path-of-titans/guides/curve-overrides/modded-dinosaurs/kto/"
+    },
+    "intent": "High-pressure predator that focuses isolated targets and avoids getting bogged down trading into multiple tanks."
+  },
+  "thresholds": {
+    "critical_health": 0.2,
+    "low_health": 0.4,
+    "low_stamina": 0.3,
+    "high_threat": 0.6,
+    "medium_threat": 0.35,
+    "high_thirst": 0.8,
+    "high_hunger": 0.7
+  },
+  "traits_overrides": {
+    "aggressiveness": 0.8,
+    "friendliness": 0.2,
+    "curiosity": 0.5,
+    "bravery": 0.8,
+    "morality": 0.3
+  },
+  "action_bias": {
+    "prefer_hold_ground_when_healthy": false,
+    "prefer_threaten_before_fight": true,
+    "prefer_call_for_help_when_critical": false,
+    "avoid_chasing_when_low_stamina": true
+  },
+  "high_level_actions": {
+    "hold_ground": "HOLD_POSITION",
+    "fallback_flee": "FLEE",
+    "seek_water": "SEEK_WATER",
+    "seek_food": "HUNT",
+    "threaten_call": "CALL_THREATEN",
+    "friendly_call": "CALL_FRIENDLY"
+  }
+}
+
