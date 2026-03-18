@@ -23,6 +23,7 @@
 - Rebuilt `pages/technical.html` to match the same modern style system used on Home/Check-in (dark mode, progress bar, reveal animations, and consistent nav hierarchy).
 - Added Font Awesome CDN icon library for themed visual elements (leaf, footprint, fossil/bone-like, dinosaur-adjacent motifs) across homepage and technical views.
 - Added reusable decorative section-divider components to homepage (`fern frond` and `track trail` SVG motifs) and applied them between major sections for a more premium visual rhythm.
+- Applied the same reusable fern/track SVG divider components to `pages/project-checkin-1.html` and `pages/technical.html` for cross-site visual consistency.
 
 ## 2026-03-14
 - Filled out `docs/project_brief.md` using project-checkin details (problem, datasets, models, metrics, experiments, deliverables).

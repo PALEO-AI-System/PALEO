@@ -267,6 +267,41 @@
       font-size: 0.9rem;
     }
 
+    .section-divider {
+      margin: 16px 2px 6px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.34);
+      backdrop-filter: blur(2px);
+      box-shadow: 0 6px 16px var(--shadow);
+      overflow: hidden;
+      padding: 5px 10px;
+    }
+
+    .section-divider svg {
+      width: 100%;
+      height: 22px;
+      display: block;
+      opacity: 0.65;
+    }
+
+    .section-divider.fern path {
+      stroke: var(--accent);
+      stroke-width: 1.8;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .section-divider.tracks ellipse {
+      fill: var(--accent-2);
+      opacity: 0.72;
+    }
+
+    .section-divider .divider-move {
+      animation: driftDivider 7.5s ease-in-out infinite alternate;
+    }
+
     .reveal {
       opacity: 0;
       transform: translateY(20px);
@@ -282,6 +317,10 @@
     @keyframes repoShine {
       from { left: -45%; }
       to { left: 130%; }
+    }
+    @keyframes driftDivider {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-12px); }
     }
   </style>
 </head>
@@ -313,6 +352,14 @@
       </p>
     </section>
 
+    <div class="section-divider fern reveal" aria-hidden="true">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+        <g class="divider-move">
+          <path d="M10 20 C60 5, 120 5, 170 20 S280 35, 330 20 S440 5, 490 20 S600 35, 650 20 S760 5, 810 20 S920 35, 970 20 S1080 5, 1130 20" />
+        </g>
+      </svg>
+    </div>
+
     <section class="grid reveal">
       <article class="card">
         <h2>Project Snapshot</h2>
@@ -330,6 +377,25 @@
         <p class="muted tiny">No model results yet; this reflects honest current progress.</p>
       </article>
     </section>
+
+    <div class="section-divider tracks reveal" aria-hidden="true">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+        <g class="divider-move">
+          <ellipse cx="85" cy="16" rx="9" ry="5.5" />
+          <ellipse cx="111" cy="12" rx="5.3" ry="4.1" />
+          <ellipse cx="125" cy="20" rx="5.3" ry="4.1" />
+          <ellipse cx="425" cy="16" rx="9" ry="5.5" />
+          <ellipse cx="451" cy="12" rx="5.3" ry="4.1" />
+          <ellipse cx="465" cy="20" rx="5.3" ry="4.1" />
+          <ellipse cx="765" cy="16" rx="9" ry="5.5" />
+          <ellipse cx="791" cy="12" rx="5.3" ry="4.1" />
+          <ellipse cx="805" cy="20" rx="5.3" ry="4.1" />
+          <ellipse cx="1085" cy="16" rx="9" ry="5.5" />
+          <ellipse cx="1111" cy="12" rx="5.3" ry="4.1" />
+          <ellipse cx="1125" cy="20" rx="5.3" ry="4.1" />
+        </g>
+      </svg>
+    </div>
 
     <section class="card reveal">
       <h2>Check-in Questions (1-10)</h2>
@@ -411,6 +477,14 @@
       </details>
     </section>
 
+    <div class="section-divider fern reveal" aria-hidden="true">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+        <g class="divider-move">
+          <path d="M20 19 C70 8, 110 6, 160 19 S250 32, 300 19 S390 6, 440 19 S530 32, 580 19 S670 6, 720 19 S810 32, 860 19 S950 6, 1000 19 S1090 32, 1140 19" />
+        </g>
+      </svg>
+    </div>
+
     <section class="card reveal">
       <h2>Planned Artifact Placeholders</h2>
       <p class="muted">These correspond to items already described in your check-in and previous notes.</p>
@@ -446,6 +520,31 @@
         <div class="img-placeholder">Image Placeholder: dinosaur thought/action timeline</div>
       </div>
     </section>
+
+    <div class="section-divider tracks reveal" aria-hidden="true">
+      <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+        <g class="divider-move">
+          <ellipse cx="55" cy="16" rx="8" ry="5" />
+          <ellipse cx="80" cy="12" rx="5" ry="4" />
+          <ellipse cx="94" cy="19" rx="5" ry="4" />
+          <ellipse cx="123" cy="16" rx="8" ry="5" />
+          <ellipse cx="148" cy="12" rx="5" ry="4" />
+          <ellipse cx="162" cy="19" rx="5" ry="4" />
+          <ellipse cx="191" cy="16" rx="8" ry="5" />
+          <ellipse cx="216" cy="12" rx="5" ry="4" />
+          <ellipse cx="230" cy="19" rx="5" ry="4" />
+          <ellipse cx="259" cy="16" rx="8" ry="5" />
+          <ellipse cx="284" cy="12" rx="5" ry="4" />
+          <ellipse cx="298" cy="19" rx="5" ry="4" />
+          <ellipse cx="327" cy="16" rx="8" ry="5" />
+          <ellipse cx="352" cy="12" rx="5" ry="4" />
+          <ellipse cx="366" cy="19" rx="5" ry="4" />
+          <ellipse cx="395" cy="16" rx="8" ry="5" />
+          <ellipse cx="420" cy="12" rx="5" ry="4" />
+          <ellipse cx="434" cy="19" rx="5" ry="4" />
+        </g>
+      </svg>
+    </div>
 
     <section class="card reveal">
       <h2>Notes Captured from Planning</h2>
