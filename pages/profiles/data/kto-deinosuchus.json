@@ -1,0 +1,247 @@
+{
+  "slug": "kto-deinosuchus",
+  "theme": "kto",
+  "curveNamePrefix": "KTODeino",
+  "displayName": "Deinosuchus",
+  "subtitle": "Deinosuchus hatcheri (plus in-game subspecies variants)",
+  "modTeam": "KTO Mods",
+  "game": "Path of Titans",
+  "wikiLinks": [
+    {
+      "label": "Path of Titans modding wiki — Deinosuchus (KTO)",
+      "url": "https://pathoftitans.wiki/modding/creatures/deinosuchus-kto"
+    },
+    {
+      "label": "Fandom — Deinosuchus (KTO)",
+      "url": "https://path-of-titans.fandom.com/wiki/Deinosuchus_(KTO)"
+    },
+    {
+      "label": "NexLink Core — KTODeino curve overrides",
+      "url": "https://nexlinkcore.com/guides/path-of-titans/curve-overrides/modded-dinosaurs/kto/path-of-titans-ktodeino/"
+    }
+  ],
+  "dataProvenance": {
+    "seededFrom": ["Path of Titans community wiki (modding portal)", "NexLink Core curve override guide (KTODeino)", "Peer-reviewed paleontology literature (IRL section)"],
+    "curveNote": "NexLink lists default server CurveOverrides samples for `KTODeino.*`. Prefix every line with `CurveOverrides=(CurveName=\"KTODeino.` under `[/Script/PathOfTitans.IGameSession]` per host documentation. Stop the server before editing.",
+    "lastContentPass": "2026-03-19",
+    "disclaimer": "Game balance patches and mod updates can drift. Verify values in-game or from your server files when precision matters."
+  },
+  "heroImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Deinosuchus_BW.jpg/960px-Deinosuchus_BW.jpg",
+  "heroImageCaption": "Life reconstruction (artistic; not a PoT skin). Wikimedia / Nobu Tamura.",
+  "nicknames": ["Terrible Crocodile", "Deino", "Gator", "KTO Deino", "KTO Deinosuchus"],
+  "taxon": {
+    "speciesEpithets": ["D. hatcheri", "D. irwini", "D. rugosus", "D. brasiliensis", "D. timendus"],
+    "note": "Several epithets on the modding wiki are fictional ‘subspecies’ flavors for gameplay variety; D. irwini honors Steve Irwin per community trivia."
+  },
+  "classification": {
+    "diet": "Carnivore",
+    "class": "Semi-Aquatic",
+    "groupSlotSize": 5
+  },
+  "ratings": {
+    "Damage": 5,
+    "Defense": 5,
+    "Recovery": 1,
+    "LandSpeed": 2,
+    "WaterSpeed": 3,
+    "Survivability": 4,
+    "scaleMax": 5
+  },
+  "description": {
+    "gameplay": "A gigantic semi-aquatic playable crocodilian with crushing jaws and heavy armor. In Path of Titans the KTO Deinosuchus is roughly on the scale of the largest base-game carnivores (~14.5 m cited on community pages). Land mobility is limited like other semi-aquatics; water power, grabs, lunges, and bone-breaking charge attacks define its ambush identity."
+  },
+  "trivia": [
+    "First modded playable release from the KTO Mods team; community pages also note a separate DB Deinosuchus implementation.",
+    "The mesh is referenced against an Fadeno skeletal reconstruction of D. hatcheri on community documentation.",
+    "Community economy notes: unlocking every listed skin costs 86,300 Marks; every listed ability unlock totals 21,700 Marks (108,000 combined) — re-verify if patches change pricing.",
+    "KTO Deinosuchus is sometimes noted as omitting a D. schwimmeri-style variant that appears on another mod implementation."
+  ],
+  "marksEconomy": {
+    "skinsTotalMarks": 86300,
+    "abilitiesTotalMarks": 21700,
+    "combinedMarks": 108000,
+    "source": "Community modding wiki trivia (confirm in live client)."
+  },
+  "abilities": [
+    {
+      "slot": "Head",
+      "name": "Bite",
+      "description": "Direct biting attack.",
+      "costMarks": 0,
+      "icon": "https://cdn.alderongames.wiki/pot-wiki/master/AbilityIcon_DeinoBite.png",
+      "curveKeys": ["BiteDamage", "BiteCooldown", "BiteBoneBreakChance", "BiteBleedAmount", "BiteStaminaCost", "90BiteDamage", "90BiteCooldown", "90BiteStaminaCost", "180BiteDamage", "180BiteCooldown", "180BiteStaminaCost"]
+    },
+    {
+      "slot": "Head",
+      "name": "Bone Snap",
+      "description": "Charged attack; bone-break scales with how long the ability is held (community description).",
+      "costMarks": 900,
+      "icon": "https://cdn.alderongames.wiki/pot-wiki/master/AbilityIcon_BoneCrush.png",
+      "curveKeys": ["BoneSnapDamage", "BoneSnapBoneBreakChance", "BoneSnapCooldown", "BoneSnapStaminaCost", "BoneSnapBoneBreakAmount"]
+    },
+    {
+      "slot": "Metabolism",
+      "name": "Fisher",
+      "description": "Eats meat and fish; moderate food drain.",
+      "costMarks": 0,
+      "icon": "https://cdn.alderongames.wiki/pot-wiki/master/AbilityIcon_Piscivore.png",
+      "curveKeys": []
+    },
+    {
+      "slot": "Metabolism",
+      "name": "Hypercarnivore",
+      "description": "Meat-only diet; slower hunger drain.",
+      "costMarks": 1000,
+      "icon": "https://cdn.alderongames.wiki/pot-wiki/master/AbilityIcon_HyperCarnivore.png",
+      "curveKeys": []
+    },
+    {
+      "slot": "Metabolism",
+      "name": "Generalist",
+      "description": "Fish, meat, shellfish, and bones; faster food and water drain.",
+      "costMarks": 1200,
+      "icon": null,
+      "curveKeys": []
+    },
+    {
+      "slot": "Hide",
+      "name": "Standard",
+      "description": "Baseline defensive profile.",
+      "costMarks": 0,
+      "icon": "https://cdn.alderongames.wiki/pot-wiki/master/AbilityIcon_Hide_128.png",
+      "curveKeys": []
+    },
+    {
+      "slot": "Hide",
+      "name": "Thick Scales",
+      "description": "More armor and tighter turning at the cost of speed.",
+      "costMarks": 800,
+      "icon": "https://cdn.alderongames.wiki/pot-wiki/master/Hide_3.png",
+      "curveKeys": []
+    },
+    {
+      "slot": "Hide",
+      "name": "Streamlined",
+      "description": "Swimming agility up; defense down.",
+      "costMarks": 1500,
+      "icon": "https://cdn.alderongames.wiki/pot-wiki/master/Hide_4.png",
+      "curveKeys": []
+    },
+    {
+      "slot": "Hide",
+      "name": "Basking",
+      "description": "Land speed and stamina regen up; trades health.",
+      "costMarks": 1000,
+      "icon": null,
+      "curveKeys": ["SpeedBuffCrouchStrenght", "SpeedBuffCrouchCooldown", "SpeedBuffCrouchStaminaCost", "SpeedBuffCrouchSpeedDuration", "SpeedBuffCrouchSpeedMultiplier"]
+    },
+    {
+      "slot": "Back Limb",
+      "name": "Death Roll",
+      "description": "Heavy roll attack usable in water.",
+      "costMarks": 1000,
+      "icon": null,
+      "curveKeys": ["DeathrollDamage", "DeathrollCooldown", "DeathrollStaminaCost"]
+    },
+    {
+      "slot": "Back Limb",
+      "name": "Fracturing Lunge",
+      "description": "Short lunge ending in a crushing bite; self-slow after use.",
+      "costMarks": 2000,
+      "icon": null,
+      "curveKeys": ["LungeDamage", "LungeBoneBreakChance", "LungeBoneBreakAmount", "LungeCooldown", "LungeStaminaCost", "LungeSpeed", "LungeSplintersAmount", "LungeSplintersDuration", "SpeedLungeCooldown", "SpeedLungeSpeed", "SpeedLungeStaminaCost"]
+    },
+    {
+      "slot": "Tail",
+      "name": "Tail Swipe",
+      "description": "Tail slam with medium knockback.",
+      "costMarks": 200,
+      "icon": "https://cdn.alderongames.wiki/pot-wiki/master/Deinotail.png",
+      "curveKeys": ["TailSwipeDamage", "TailSwipeCooldown"]
+    }
+  ],
+  "abilitySlotsEmpty": ["Senses", "Front Limb", "Legs", "Voice"],
+  "skins": [
+    { "id": "default", "name": "Default", "marks": 0, "rarity": "Common" },
+    { "id": "coastal", "name": "Coastal", "marks": 1000, "rarity": "Common" },
+    { "id": "citrine", "name": "Citrine", "marks": 1000, "rarity": "Common" },
+    { "id": "everglades", "name": "Everglades", "marks": 2000, "rarity": "Common" },
+    { "id": "oblido", "name": "Oblido", "marks": 1500, "rarity": "Common" },
+    { "id": "dune", "name": "Dune", "marks": 1800, "rarity": "Common" },
+    { "id": "streaked", "name": "Streaked", "marks": 2000, "rarity": "Common" },
+    { "id": "oxide", "name": "Oxide", "marks": 2500, "rarity": "Common" },
+    { "id": "melanosuchus", "name": "Melanosuchus", "marks": 3500, "rarity": "Uncommon" },
+    { "id": "opalite", "name": "Opalite", "marks": 4000, "rarity": "Uncommon" },
+    { "id": "ladybird", "name": "Ladybird", "marks": 4500, "rarity": "Uncommon" },
+    { "id": "ember", "name": "Ember", "marks": 5000, "rarity": "Uncommon" },
+    { "id": "murky", "name": "Murky", "marks": 6000, "rarity": "Rare" },
+    { "id": "dacraena", "name": "Dacraena", "marks": 6200, "rarity": "Rare" },
+    { "id": "red-devil", "name": "Red Devil", "marks": 6500, "rarity": "Rare" },
+    { "id": "skink", "name": "Skink", "marks": 6800, "rarity": "Rare" },
+    { "id": "albino", "name": "Albino", "marks": 10000, "rarity": "Legendary" },
+    { "id": "melanistic", "name": "Melanistic", "marks": 10000, "rarity": "Legendary" }
+  ],
+  "combatCurveHighlight": [
+    { "key": "BiteDamage", "values": [20, 30, 30, 65, 75] },
+    { "key": "BiteCooldown", "values": [1.5, 1.5, 1.5, 1.5, 1.5] },
+    { "key": "BoneSnapDamage", "values": [1, 5, 22.5, 45, 60] },
+    { "key": "BoneSnapCooldown", "values": [6, 6, 6, 6, 6] },
+    { "key": "TailSwipeDamage", "values": [1, 5, 8, 10, 15] },
+    { "key": "LungeDamage", "values": [1, 7.5, 30, 60, 80] },
+    { "key": "LungeCooldown", "values": [15, 15, 15, 15, 15] },
+    { "key": "DeathrollDamage", "values": [30, 50, 80, 100, 115] },
+    { "key": "DeathrollCooldown", "values": [10, 10, 10, 10, 10] },
+    { "key": "StaminaSprintCostPerSecond", "values": [3.3, 5, 5, 5, 6.67] },
+    { "key": "StaminaFastSwimCostPerSecond", "values": [0.15, 0.22, 0.22, 0.26, 0.35] }
+  ],
+  "coreCurveHighlight": [
+    { "key": "Core.MaxHealth", "values": [100, 475, 750, 900, 1000] },
+    { "key": "Core.MaxStamina", "values": [100, 100, 100, 100, 100] },
+    { "key": "Core.CombatWeight", "values": [500, 1450, 3125, 4300, 5500] },
+    { "key": "Core.Armor", "values": [1, 1, 1.05, 1.1, 1.2] },
+    { "key": "Core.MaxHunger", "values": [50, 237, 425, 700, 1000] },
+    { "key": "Core.MaxThirst", "values": [50, 237, 425, 700, 1000] },
+    { "key": "Core.CarryCapacity", "values": [200, 900, 1700, 2800, 3901] }
+  ],
+  "growthStageLabels": ["Index 1", "Index 2", "Index 3", "Index 4", "Index 5"],
+  "growthStageCaption": "Five samples per curve — typical PoT growth indexing (juv → elder ordering is common; confirm on your server build).",
+  "paleontology": {
+    "summary": "Deinosuchus is a giant alligatoroid crocodylian from the Late Cretaceous of North America (and related forms are debated globally). It is famous for unusually deep, enlarged teeth and a broad rostrum suited to overpowering large prey in coastal rivers and estuaries.",
+    "size": "Adult length estimates in scientific literature have ranged widely depending on method; modern discussions often place large individuals in the ~8–10 m class with controversial larger estimates from fragmentary material. Treat headline ‘15 m’ figures from pop sources skeptically — they depend on extrapolation.",
+    "fossilRecord": "Remains come chiefly from Campanian marginals of the Western Interior Seaway (e.g., material historically tied to ‘Deinosuchus riograndensis’ complexes) with iconic occurrences across southern U.S. coastal-plain formations. Isolated teeth and skull fragments drive size extrapolations.",
+    "papers": [
+      {
+        "cite": "Schwimmer, D. R. (2002). King of the Crocodilians: The Paleobiology of Deinosuchus. Indiana University Press.",
+        "note": "Classic synthesis; still a starting point for paleo-histories (some taxonomy updated since)."
+      },
+      {
+        "cite": "Brochu, C. A. (1997). Morphology, fossils, and the phylogenetic relationships of Alligatoroidea. PhD dissertation / related papers on alligatoroid systematics framing Deinosuchus.",
+        "note": "Phylogenetic context for alligatoroid affinities."
+      },
+      {
+        "cite": "Cossette, A. P., & Brochu, C. A. (2020). Massive taxon-wide skull analysis reveals nuances of crocodilian evolutionary history. *Royal Society Open Science* (and related 2020 Eastgate work revising Deinosuchus species concepts).",
+        "note": "Illustrates how ongoing work reframes species-level taxonomy — good example of why in-game ‘subspecies’ are flavor, not peer-reviewed taxa."
+      }
+    ],
+    "collections": [
+      "Look for casts and originals in major U.S. natural history museums with Western Interior Seaway halls (NMNH, AMNH outreach exhibits rotate)."
+    ]
+  },
+  "gallery": [
+    {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Deinosuchus_BW.jpg/640px-Deinosuchus_BW.jpg",
+      "alt": "Deinosuchus life restoration",
+      "caption": "Artistic reconstruction for general education (not in-game)."
+    },
+    {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Deinosuchus_Hatcheri.JPG/640px-Deinosuchus_Hatcheri.JPG",
+      "alt": "Fossil jaw fragment exhibit",
+      "caption": "Museum fossil material (representative public-domain photo; exact specimen varies)."
+    },
+    {
+      "src": "https://cdn.alderongames.wiki/pot-wiki/master/AbilityIcon_DeinoBite.png",
+      "alt": "In-game bite ability icon",
+      "caption": "Official-style ability icon asset (Path of Titans wiki CDN)."
+    }
+  ]
+}

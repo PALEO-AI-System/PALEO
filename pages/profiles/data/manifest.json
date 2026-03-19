@@ -1,0 +1,15 @@
+{
+  "title": "PALEO Profiles",
+  "subtitle": "Accurate Path of Titans creature reference (mod playables + base, seed data).",
+  "creatures": [
+    {
+      "slug": "kto-deinosuchus",
+      "name": "Deinosuchus",
+      "lineage": "KTO Mods",
+      "theme": "kto",
+      "tagline": "Late Cretaceous alligatoroid — semi-aquatic group slot 5.",
+      "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Deinosuchus_BW.jpg/640px-Deinosuchus_BW.jpg",
+      "href": "kto-deinosuchus.html"
+    }
+  ]
+}

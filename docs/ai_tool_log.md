@@ -87,3 +87,4 @@
 - `companion-hud.html`: static / GitHub Pages mode with banner + offline preview heuristic when `/api/*` is unavailable; clarified live vs preview in `README.md`.
 - `companion-hud.html`: expandable “Run the real Instinct Agent” instructions with copy-to-clipboard for terminal command and local URL; explains browsers cannot launch Python.
 - `companion-hud.html`: fully spelled-out steps (terminal, full command, full local URL in prose + copy row); live URL sync updates both prose and code when already on localhost.
+- Added **PALEO Profiles** under `pages/profiles/`: dark-themed mini-wiki (`index.html` dashboard + `kto-deinosuchus.html` profile) with JSON-driven content, full KTODeino curve dumps (attributes / multipliers / combat from NexLink seed), wiki-style abilities & skins, local-only loadout + skin-note tools (localStorage + JSON export), and paleontology section; linked **Profiles** from main site nav and documented in `README.md`.
