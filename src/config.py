@@ -76,12 +76,15 @@ def default_data_config() -> DataConfig:
     """Return default dataset settings for local execution."""
     project_root = Path(__file__).resolve().parents[1]
     data_root = project_root / "data"
+    # Snapshot Serengeti consensus CSV uses camelCase species names (e.g., lionFemale),
+    # so we keep the list aligned to those actual string values.
     predator_species = (
-        "lion",
+        "lionfemale",
+        "lionmale",
         "cheetah",
         "leopard",
-        "hyena_spotted",
-        "hyena_striped",
+        "hyenaspotted",
+        "hyenastriped",
         "jackal",
         "wildcat",
     )

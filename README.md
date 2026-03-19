@@ -67,6 +67,10 @@ python -m unittest discover -s tests -p "test_*.py"
 
 ## Real dataset path (Snapshot Serengeti)
 
+In this repo we build manifests from CSV metadata.
+
+Dryad provides convenient CSVs for Snapshot Serengeti (the same underlying dataset); the main one we use right now is `consensus_data.csv`.
+
 Use one of these approaches:
 
 1. Start with synthetic manifest for development:

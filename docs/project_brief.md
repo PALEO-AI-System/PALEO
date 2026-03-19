@@ -11,6 +11,9 @@ Dataset (link + size):
 - Kaggle predator vs prey animal image dataset (specific subset TBD): `https://www.kaggle.com/datasets?search=predator+prey+animals`
 - Final sample counts and class distributions will be recorded in preprocessing logs.
 
+Note on CSV metadata used in this repo:
+- For the current CSV-based manifest builder, we use `consensus_data.csv` downloaded from Dryad’s Snapshot Serengeti release (the same underlying Snapshot Serengeti dataset; Dryad provides CSVs that are convenient for this stage). Later we can switch to LILA’s recommended COCO JSON annotations for full image training.
+
 Core AI function (ML/CV/NLP/Search/Opt):
 - Supervised computer vision classifier for behavior/intent from images.
 - Letta-based agentic orchestration for perceive → decide → act → remember loops.

@@ -9,7 +9,7 @@ import random
 import urllib.request
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Sequence
+from typing import Any, Dict, Iterable, List, Mapping, Sequence
 
 from .config import DataConfig
 
@@ -54,6 +54,22 @@ def _load_rows_from_csv(path: Path) -> Iterable[Dict[str, str]]:
             yield row
 
 
+def _pick_row_value(row: Mapping[str, str], candidates: Sequence[str], default: str = "") -> str:
+    """Pick the first matching value from `row` using case-insensitive header names."""
+    if not row:
+        return default
+    lower_to_actual = {k.lower(): k for k in row.keys()}
+    for cand in candidates:
+        actual_key = lower_to_actual.get(cand.lower())
+        if actual_key is not None:
+            val = row.get(actual_key)
+            if val is not None:
+                stripped = str(val).strip()
+                if stripped != "":
+                    return stripped
+    return default
+
+
 def create_manifest_from_csv(
     config: DataConfig,
     csv_path: Path,
@@ -68,15 +84,35 @@ def create_manifest_from_csv(
     for idx, row in enumerate(_load_rows_from_csv(csv_path)):
         if idx >= config.max_records:
             break
-        species = (row.get(species_field) or "unknown").strip().lower()
-        sample_id = (row.get(id_field) or f"row_{idx}").strip()
-        image_path = (row.get(image_field) or "").strip()
+        species = _pick_row_value(
+            row,
+            candidates=(species_field, "species", "Species", "specie"),
+            default="unknown",
+        ).lower()
+        sample_id = _pick_row_value(
+            row,
+            candidates=(id_field, "capture_id", "CaptureEventID", "CaptureEventId", "captureeventid", "capture_event_id"),
+            default=f"row_{idx}",
+        )
+        image_path = _pick_row_value(
+            row,
+            candidates=(
+                image_field,
+                "URL_Info",
+                "url_info",
+                "Image",
+                "image_path",
+                "imagePath",
+            ),
+            default="",
+        )
         record = DatasetRecord(
             sample_id=sample_id,
             image_path=image_path,
             species=species,
             predator_label=_to_predator_label(species, config),
             split=_stable_split(sample_id, config),
+            source=csv_path.stem,
         )
         records.append(record)
 
@@ -180,12 +216,31 @@ def prepare_datasets(config: DataConfig, use_synthetic_fallback: bool = True) ->
     }
 
 
-def sample_training_batch(config: DataConfig, split: str = "train", batch_size: int = 8) -> List[DatasetRecord]:
-    """Return a small deterministic batch from the manifest."""
+def _stable_hash_int(value: str, seed: int) -> int:
+    """Deterministic hash -> int for repeatable sampling."""
+    payload = f"{value}:{seed}".encode("utf-8")
+    return int(hashlib.sha1(payload).hexdigest(), 16)
+
+
+def sample_training_batch(
+    config: DataConfig,
+    split: str = "train",
+    batch_size: int = 8,
+) -> List[DatasetRecord]:
+    """Return a deterministic, distribution-friendly batch from the manifest.
+
+    Instead of taking the first N rows (which can bias toward early CSV rows),
+    we sort by a stable hash and take the first N. This makes dataset samples
+    more representative and keeps demo metrics consistent.
+    """
     records = load_manifest(config)
     split_records = [rec for rec in records if rec.split == split]
     if not split_records:
         return []
-    return split_records[:batch_size]
+    ordered = sorted(
+        split_records,
+        key=lambda r: _stable_hash_int(r.sample_id, config.split_seed),
+    )
+    return ordered[:batch_size]
 
 
