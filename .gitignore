@@ -180,7 +180,14 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-# PALEO generated artifacts
-data/
+# PALEO generated artifacts (ignore local data; allow one Kaggle placeholder README)
+data/*
+!data/raw/
+data/raw/*
+!data/raw/kaggle/
+data/raw/kaggle/*
+!data/raw/kaggle/animal-behavior-prediction/
+data/raw/kaggle/animal-behavior-prediction/*
+!data/raw/kaggle/animal-behavior-prediction/README.txt
 results/
 models/

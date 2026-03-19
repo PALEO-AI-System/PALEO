@@ -9,7 +9,11 @@ Why it matters:
 Dataset (link + size):
 - Dryad Snapshot Serengeti CSV exports (the same underlying Snapshot Serengeti data):
   `https://datadryad.org/dataset/doi:10.5061/dryad.5pt92`
-- Kaggle predator vs prey animal image dataset (specific subset TBD): `https://www.kaggle.com/datasets?search=predator+prey+animals`
+- Kaggle (locked secondary sources for behavior / on-theme tactics):
+  - Animal behaviour: `https://www.kaggle.com/datasets/sttaseen/animal-behaviour/data`
+  - Animal behavior prediction (deferred: ~16 GB download; use when disk/bandwidth allow): `https://www.kaggle.com/datasets/obulikarthikeyan/animal-behavior-prediction`
+  - Dinosaur Tactical Action Dataset (synthetic tactic CSV: attack / defend / flee / flank, etc.):
+    `https://www.kaggle.com/datasets/canozensoy/dinosaur-tactical-action-dataset`
 - Final sample counts and class distributions will be recorded in preprocessing logs.
 
 Note on CSV metadata used in this repo:

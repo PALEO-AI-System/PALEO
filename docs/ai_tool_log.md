@@ -59,3 +59,9 @@
 - Tuned predator label mapping to match actual `consensus_data.csv` species strings (e.g., `lionFemale`, `hyenaSpotted`).
 - Rerun `prepare_data.py` on `data/raw/dryad/consensus_data.csv` and confirmed `data/manifests/serengeti_manifest.jsonl` contains non-empty `image_path` URLs.
 - Updated `README.md` and `docs/project_brief.md` to reflect Dryad CSV exports as the current input source (derived from Snapshot Serengeti), while noting the future switch to LILA COCO JSON for full CV training.
+
+## 2026-03-19
+- Locked three Kaggle datasets in `docs/project_brief.md`: animal-behaviour, animal-behavior-prediction, Dinosaur Tactical Action Dataset (on-theme synthetic tactics for Instinct Agent alignment).
+- Noted in project brief: `animal-behavior-prediction` deferred locally due to large (~16 GB) download; animal-behaviour + dinosaur-tactical-action-dataset used first.
+- Added `data/raw/kaggle/animal-behavior-prediction/README.txt` placeholder for deferred Kaggle download.
+- Adjusted `.gitignore` so `data/**` stays ignored but `data/raw/kaggle/animal-behavior-prediction/README.txt` can be committed.
