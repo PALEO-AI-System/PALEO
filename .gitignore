@@ -189,5 +189,8 @@ data/raw/kaggle/*
 !data/raw/kaggle/animal-behavior-prediction/
 data/raw/kaggle/animal-behavior-prediction/*
 !data/raw/kaggle/animal-behavior-prediction/README.txt
+!data/raw/kaggle/animal-behaviour/
+data/raw/kaggle/animal-behaviour/*
+!data/raw/kaggle/animal-behaviour/README.txt
 results/
 models/

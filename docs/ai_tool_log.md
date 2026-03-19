@@ -65,3 +65,14 @@
 - Noted in project brief: `animal-behavior-prediction` deferred locally due to large (~16 GB) download; animal-behaviour + dinosaur-tactical-action-dataset used first.
 - Added `data/raw/kaggle/animal-behavior-prediction/README.txt` placeholder for deferred Kaggle download.
 - Adjusted `.gitignore` so `data/**` stays ignored but `data/raw/kaggle/animal-behavior-prediction/README.txt` can be committed.
+
+## 2026-03-20
+- Added `src/kaggle_ingest.py` to stream-count rows and list columns for every CSV under `data/raw/kaggle/`.
+- Added `scripts/kaggle_stats.py` (text or `--json`) for quick verification of local Kaggle extracts without loading full files.
+- Added `scripts/download_serengeti_images.py` to pull a deterministic small subset of `https://...` URLs from `serengeti_manifest.jsonl` into `data/processed/serengeti_images/`.
+- Documented both flows in `README.md`; added `tests/test_kaggle_ingest.py` + `tests/fixtures/kaggle_sample.csv`.
+- Ran `scripts/kaggle_stats.py` locally (Dino tactical 630k rows; `abp_accel.csv` ~14.6M rows) and successfully fetched two Snapshot Serengeti JPEGs via `scripts/download_serengeti_images.py`.
+- Added `data/raw/kaggle/animal-behaviour/README.txt` + `.gitignore` un-ignore for that README; attempted Kaggle CLI download — blocked without `~/.kaggle/kaggle.json` on this machine (user must add API token or manual unzip).
+- User chose to defer large local Kaggle downloads (deleted partial zip); clarified in README that sttaseen animal-behaviour ≠ deferred ~16 GB ABP dataset; raw extracts can be deleted after keeping small `results/` / processed artifacts.
+- Added `docs/deferred_large_datasets.md` and linked it from `docs/project_brief.md` + `README.md` for explicit “large downloads TODO later” tracking.
+- Ran `scripts/kaggle_stats.py` against existing local CSVs only (no new downloads): dino tactical 630k rows; `abp_accel.csv` ~14.6M rows.

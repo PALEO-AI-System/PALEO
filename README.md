@@ -27,6 +27,8 @@ high-level actions.
 - `src/letta_tools.py`: Letta tool schemas and stubs
 - `src/pipeline.py`: end-to-end lightweight pipeline summary
 - `scripts/prepare_data.py`: manifest build command
+- `scripts/download_serengeti_images.py`: fetch a small subset of manifest image URLs locally
+- `scripts/kaggle_stats.py`: column + row counts for CSVs under `data/raw/kaggle/`
 - `scripts/show_letta_tools.py`: print Letta tool schemas
 - `scripts/run_pipeline.py`: run integrated summary pipeline
 
@@ -89,6 +91,27 @@ python scripts/prepare_data.py --csv data/raw/dryad/consensus_data.csv --max-rec
 Expected manifest location:
 
 - `data/manifests/serengeti_manifest.jsonl`
+
+### Kaggle CSVs (local extracts)
+
+**Multi-GB Kaggle bundles:** deferred on purpose — see `docs/deferred_large_datasets.md`.
+
+Place downloads under `data/raw/kaggle/<dataset>/` (see per-folder `README.txt`). Inventory CSVs (streaming row counts, no load-all):
+
+```bash
+python scripts/kaggle_stats.py
+python scripts/kaggle_stats.py --json
+```
+
+### Optional: download a few real camera-trap images
+
+Requires a manifest with `image_path` set to `https://...` (Dryad consensus + `all_images` join from `prepare_data`):
+
+```bash
+python scripts/download_serengeti_images.py --max-images 16 --split train
+```
+
+Images are written under `data/processed/serengeti_images/` (gitignored).
 
 ## Notes
 

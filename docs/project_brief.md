@@ -11,9 +11,10 @@ Dataset (link + size):
   `https://datadryad.org/dataset/doi:10.5061/dryad.5pt92`
 - Kaggle (locked secondary sources for behavior / on-theme tactics):
   - Animal behaviour: `https://www.kaggle.com/datasets/sttaseen/animal-behaviour/data`
-  - Animal behavior prediction (deferred: ~16 GB download; use when disk/bandwidth allow): `https://www.kaggle.com/datasets/obulikarthikeyan/animal-behavior-prediction`
+  - Animal behavior prediction (~16 GB+): `https://www.kaggle.com/datasets/obulikarthikeyan/animal-behavior-prediction`
   - Dinosaur Tactical Action Dataset (synthetic tactic CSV: attack / defend / flee / flank, etc.):
     `https://www.kaggle.com/datasets/canozensoy/dinosaur-tactical-action-dataset`
+- **Large Kaggle pulls (multi-GB) are TODO later** — tracked in `docs/deferred_large_datasets.md` until disk/bandwidth allow.
 - Final sample counts and class distributions will be recorded in preprocessing logs.
 
 Note on CSV metadata used in this repo:
