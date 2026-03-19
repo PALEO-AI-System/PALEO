@@ -79,3 +79,11 @@
 - Wired local Kaggle inventory into `run_pipeline()` via `summarize_kaggle_for_pipeline()` (fast: skips full row scan for very large CSVs); added Letta tool `get_kaggle_local_inventory` + `scripts/kaggle_stats.py --quick`.
 - Raised `KAGGLE_PIPELINE_ROW_COUNT_MAX_FILE_BYTES` to 100 MB so medium Kaggle CSVs (e.g. dino tactical) get full row counts in `run_pipeline` while huge accel-scale files stay deferred.
 - Earlier `run_pipeline` check: manifest ~334k records; with a 12 MB threshold both local Kaggle CSVs deferred; 100 MB threshold targets tactical counts + accel deferred.
+
+## 2026-03-19
+- Added `scripts/serve_companion.py`: localhost static server for `pages/` plus `/api/hud`, `/api/species`, `/api/metrics` wired to `simulate_instinct_decision` and optional `results/experiments/default_run/metrics.json`.
+- Added `pages/companion-hud.html`: Path of Titans–themed local companion HUD (vitals, thought log JSON, rationale, fast facts); documented `file://` limitation.
+- Linked Companion HUD from `pages/index.html` and `pages/technical.html`; documented run command in `README.md`.
+- `companion-hud.html`: static / GitHub Pages mode with banner + offline preview heuristic when `/api/*` is unavailable; clarified live vs preview in `README.md`.
+- `companion-hud.html`: expandable “Run the real Instinct Agent” instructions with copy-to-clipboard for terminal command and local URL; explains browsers cannot launch Python.
+- `companion-hud.html`: fully spelled-out steps (terminal, full command, full local URL in prose + copy row); live URL sync updates both prose and code when already on localhost.

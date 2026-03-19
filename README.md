@@ -67,6 +67,18 @@ python scripts/show_letta_tools.py
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
+### Local PoT-style Companion HUD (no game install)
+
+Runs a tiny local server that serves `pages/` and JSON endpoints used by `pages/companion-hud.html` (Instinct Agent tick, Primal Mind snapshot, optional training metrics). Use this beside Path of Titans on a second monitor or Alt+Tab — it does not modify game files.
+
+```bash
+python scripts/serve_companion.py
+```
+
+Then open `http://127.0.0.1:8765/companion-hud.html` (avoid `file://`, which cannot reach `/api/*`).
+
+**GitHub Pages:** you can open `companion-hud.html` from the site nav, but Pages only serves static files — there is no `/api/*`. The page falls back to an **offline preview** (browser-only heuristic). For the real **Instinct Agent** output matching the Python code, use `serve_companion.py` locally.
+
 ## Real dataset path (Dryad CSV exports of Snapshot Serengeti)
 
 In this repo we build manifests from CSV metadata.

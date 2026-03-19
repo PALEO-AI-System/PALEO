@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PALEO · PoT Companion HUD (local)</title>
+  <meta name="description" content="Local-only companion-style HUD for Path of Titans themed demos: Instinct Agent vitals, Primal Mind snapshot, and thought logs. No game modification." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg0: #0d1014;
+      --bg1: #141a21;
+      --panel: rgba(22, 30, 38, 0.92);
+      --border: rgba(120, 162, 148, 0.28);
+      --text: #e8f0ec;
+      --muted: #9cb0a6;
+      --accent: #6bc4a5;
+      --accent-dim: #4a8f78;
+      --warn: #d4a574;
+      --danger: #c97a6b;
+      --bar-bg: rgba(255, 255, 255, 0.06);
+      --shadow: rgba(0, 0, 0, 0.45);
+      --font: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(107, 196, 165, 0.12), transparent 55%),
+        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
+      min-height: 100vh;
+    }
+
+    a { color: var(--accent); }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10, 14, 18, 0.85);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .brand {
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .brand strong { color: var(--text); font-weight: 700; }
+    .pill {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 320px) 1fr minmax(240px, 300px);
+      gap: 14px;
+      padding: 14px 18px 28px;
+      max-width: 1400px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    @media (max-width: 1020px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: 0 12px 32px var(--shadow);
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-dim);
+    }
+
+    label.field {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    select, button {
+      font-family: var(--font);
+      font-size: 0.9rem;
+    }
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg1);
+      color: var(--text);
+    }
+
+    .slider-row {
+      margin-bottom: 12px;
+    }
+    .slider-row .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .slider-row .head span.val {
+      font-family: var(--mono);
+      color: var(--warn);
+      font-size: 0.78rem;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    button.primary {
+      flex: 1;
+      min-width: 140px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent-dim), var(--accent));
+      color: #08110d;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button.secondary {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .bar {
+      height: 8px;
+      border-radius: 4px;
+      background: var(--bar-bg);
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .bar > i {
+      display: block;
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+    }
+    .bar.threat > i { background: linear-gradient(90deg, #8b5a4a, var(--danger)); }
+    .bar.hunger > i { background: linear-gradient(90deg, #7a6b4a, var(--warn)); }
+
+    .center-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .action-badge {
+      font-family: var(--mono);
+      font-size: 1.05rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      background: rgba(107, 196, 165, 0.08);
+    }
+    .status-line {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+    .status-line.err { color: var(--danger); }
+
+    .scroll-box {
+      max-height: min(58vh, 520px);
+      overflow: auto;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      line-height: 1.55;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #c5d9ce;
+    }
+
+    .subgrid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      margin-top: 10px;
+    }
+    .mini {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.15);
+      font-size: 0.8rem;
+    }
+    .mini h3 {
+      margin: 0 0 6px;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-dim);
+    }
+    .mini p { margin: 0; color: var(--muted); line-height: 1.45; }
+
+    .rationale {
+      margin-top: 12px;
+      padding: 12px;
+      border-left: 3px solid var(--warn);
+      background: rgba(212, 165, 116, 0.06);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .rationale strong { color: var(--warn); }
+
+    .metrics-mini {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: var(--mono);
+      margin-top: 8px;
+    }
+
+    .note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .mode-banner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 10px 18px 0;
+    }
+    .mode-banner p {
+      margin: 0;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: var(--warn);
+      border: 1px solid rgba(212, 165, 116, 0.35);
+      background: rgba(212, 165, 116, 0.08);
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+
+    .howto-wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 18px 14px;
+      position: relative;
+    }
+    details.howto {
+      padding: 0;
+      overflow: hidden;
+    }
+    details.howto summary {
+      cursor: pointer;
+      padding: 14px 16px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text);
+      list-style: none;
+    }
+    details.howto summary::-webkit-details-marker { display: none; }
+    details.howto[open] summary {
+      border-bottom: 1px solid var(--border);
+    }
+    .howto-inner {
+      padding: 14px 16px 18px;
+    }
+    .howto-lead {
+      margin: 0 0 12px;
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .howto-steps {
+      margin: 0;
+      padding-left: 1.2rem;
+      font-size: 0.86rem;
+      line-height: 1.55;
+      color: var(--text);
+    }
+    .howto-steps li { margin-bottom: 14px; }
+    .howto-steps code { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); }
+    .howto-hint {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .copy-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+    }
+    .copy-row code {
+      flex: 1;
+      min-width: 200px;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      word-break: break-all;
+      color: #c5d9ce;
+    }
+    button.copy-btn {
+      flex-shrink: 0;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(107, 196, 165, 0.12);
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.copy-btn:hover { border-color: var(--accent-dim); }
+    .howto-foot {
+      margin: 14px 0 0;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      background: rgba(107, 196, 165, 0.1);
+      border: 1px solid rgba(107, 196, 165, 0.35);
+      color: var(--text);
+    }
+    .howto-wrap > .howto-foot { margin-top: 10px; }
+    .copy-toast {
+      position: absolute;
+      right: 24px;
+      bottom: 0;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: var(--accent-dim);
+      color: #08110d;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><strong>PALEO</strong> · PoT companion (local)</div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span class="pill">Runs beside Path of Titans — no game files changed</span>
+      <a href="index.html">Site home</a>
+      <a href="technical.html">Technical</a>
+    </div>
+  </header>
+
+  <div class="mode-banner" id="modeBanner" hidden>
+    <p id="modeBannerText"></p>
+  </div>
+
+  <div class="howto-wrap">
+    <details class="panel howto" id="howtoDetails">
+      <summary id="howtoSummary">Run the real Instinct Agent on your PC</summary>
+      <div class="howto-inner">
+        <p class="howto-lead">
+          A <strong>button on this website cannot start Python</strong> on your computer (every browser blocks that for safety).
+          For outputs that match <code>simulate_instinct_decision</code> in the repo, run the small local server below once per session.
+        </p>
+        <ol class="howto-steps">
+          <li>Open a terminal (PowerShell, Command Prompt, Terminal, etc.) and <code>cd</code> to your PALEO repository root — the folder that contains <code>scripts/</code> next to <code>src/</code> and <code>pages/</code>.</li>
+          <li>
+            Start the companion server. In that same terminal, run exactly:
+            <strong><code>python scripts/serve_companion.py</code></strong>
+            (default port <strong>8765</strong>). Leave this window open while you use the HUD.
+            <div class="copy-row">
+              <code id="cmdServeText">python scripts/serve_companion.py</code>
+              <button type="button" class="copy-btn" id="btnCopyCmd">Copy command</button>
+            </div>
+            <span class="howto-hint">
+              Port already in use? Use
+              <code>python scripts/serve_companion.py --port 8766</code>
+              — then in step 3 replace <strong>8765</strong> with <strong>8766</strong> everywhere (or use <strong>Copy URL</strong> after you opened this page on that port once).
+            </span>
+          </li>
+          <li>
+            In your web browser, go to the local address below — this is <strong>on your machine</strong> (<code>127.0.0.1</code>), <em>not</em> your GitHub Pages URL. Type or paste:
+            <strong><code id="urlLiveProse">http://127.0.0.1:8765/companion-hud.html</code></strong>
+            <div class="copy-row">
+              <code id="urlLiveText">http://127.0.0.1:8765/companion-hud.html</code>
+              <button type="button" class="copy-btn" id="btnCopyUrl">Copy URL</button>
+            </div>
+          </li>
+          <li>
+            You should see this same Companion HUD, with <strong>no</strong> yellow “static mode” banner. Click <strong>Run Instinct tick</strong>; the gray status line should end with <strong>(live API)</strong>.
+            If the banner is still there, the tab is not talking to your local server — double-check step 2 is running and step 3’s URL matches your port.
+          </li>
+        </ol>
+      </div>
+    </details>
+    <p class="howto-foot" id="howtoLiveNote" hidden>You are connected to the local Python API — ticks use the real Instinct Agent path from the repository.</p>
+    <p class="copy-toast" id="copyToast" hidden aria-live="polite">Copied.</p>
+  </div>
+
+  <div class="layout">
+    <section class="panel" aria-labelledby="controls-h">
+      <h2 id="controls-h">Telemetry</h2>
+      <label class="field" for="species">Species (policy id)</label>
+      <select id="species"></select>
+
+      <div class="slider-row" style="margin-top:14px;">
+        <div class="head">Threat (predator probability) <span class="val" id="v-pred">0.35</span></div>
+        <input type="range" id="pred" min="0" max="100" value="35" aria-valuemin="0" aria-valuemax="1" />
+      </div>
+      <div class="slider-row">
+        <div class="head">Prey density <span class="val" id="v-prey">0.40</span></div>
+        <input type="range" id="prey" min="0" max="100" value="40" />
+      </div>
+      <div class="slider-row">
+        <div class="head">Health <span class="val" id="v-health">0.85</span></div>
+        <input type="range" id="health" min="0" max="100" value="85" />
+      </div>
+      <div class="slider-row">
+        <div class="head">Stamina <span class="val" id="v-stamina">0.75</span></div>
+        <input type="range" id="stamina" min="0" max="100" value="75" />
+      </div>
+      <div class="slider-row">
+        <div class="head">Hunger <span class="val" id="v-hunger">0.45</span></div>
+        <input type="range" id="hunger" min="0" max="100" value="45" />
+      </div>
+      <div class="slider-row">
+        <div class="head">Thirst <span class="val" id="v-thirst">0.35</span></div>
+        <input type="range" id="thirst" min="0" max="100" value="35" />
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="primary" id="runBtn">Run Instinct tick</button>
+        <button type="button" class="secondary" id="autoBtn">Auto: off</button>
+      </div>
+      <p class="note">
+        <strong>Full fidelity:</strong> use the <strong>“Run the real Instinct Agent”</strong> steps above (copy buttons + terminal).
+        This panel is the offline preview when the API is missing.
+      </p>
+    </section>
+
+    <section class="panel" aria-labelledby="thought-h">
+      <div class="center-head">
+        <h2 id="thought-h" style="margin:0;">Thought log</h2>
+        <div class="action-badge" id="actionOut" title="High-level action from Instinct Agent">—</div>
+      </div>
+      <div class="status-line" id="statusLine">Ready.</div>
+      <div class="subgrid" id="vitalsOut"></div>
+      <div class="rationale" id="rationaleOut" hidden>
+        <strong>Rationale</strong> <span id="rationaleText"></span>
+      </div>
+      <div class="scroll-box" id="jsonOut" aria-label="Structured thought JSON">{ }</div>
+      <div class="metrics-mini" id="metricsOut"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="mind-h">
+      <h2 id="mind-h">Primal Mind · facts</h2>
+      <div class="mini"><h3>Diet</h3><p id="ff-diet">—</p></div>
+      <div class="mini"><h3>Size / role</h3><p id="ff-size">—</p></div>
+      <div class="mini"><h3>Environment</h3><p id="ff-env">—</p></div>
+      <div class="mini" style="grid-column: 1 / -1;"><h3>Notes</h3><p id="ff-notes">—</p></div>
+      <p class="note">
+        <strong>Instinct Agent</strong> chooses a mode from telemetry;
+        <strong>Primal Mind</strong> is the structured identity/memory model in-repo (<code>docs/lexicon.md</code>).
+      </p>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      var speciesSel = document.getElementById("species");
+      var runBtn = document.getElementById("runBtn");
+      var autoBtn = document.getElementById("autoBtn");
+      var statusLine = document.getElementById("statusLine");
+      var actionOut = document.getElementById("actionOut");
+      var jsonOut = document.getElementById("jsonOut");
+      var vitalsOut = document.getElementById("vitalsOut");
+      var rationaleOut = document.getElementById("rationaleOut");
+      var rationaleText = document.getElementById("rationaleText");
+      var metricsOut = document.getElementById("metricsOut");
+      var modeBanner = document.getElementById("modeBanner");
+      var modeBannerText = document.getElementById("modeBannerText");
+      var howtoDetails = document.getElementById("howtoDetails");
+      var howtoSummary = document.getElementById("howtoSummary");
+      var howtoLiveNote = document.getElementById("howtoLiveNote");
+      var copyToast = document.getElementById("copyToast");
+
+      /** When GitHub Pages (or file://) cannot reach /api/*, we still show an interactive preview. */
+      var liveApi = false;
+
+      (function syncLocalUrlHint() {
+        var full = "http://127.0.0.1:8765/companion-hud.html";
+        if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
+          full = location.protocol + "//" + location.host + "/companion-hud.html";
+        }
+        var codeEl = document.getElementById("urlLiveText");
+        var proseEl = document.getElementById("urlLiveProse");
+        if (codeEl) codeEl.textContent = full;
+        if (proseEl) proseEl.textContent = full;
+      })();
+
+      function showCopyToast(msg) {
+        copyToast.textContent = msg || "Copied.";
+        copyToast.hidden = false;
+        clearTimeout(showCopyToast._t);
+        showCopyToast._t = setTimeout(function () {
+          copyToast.hidden = true;
+        }, 2200);
+      }
+
+      function copyText(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text).then(function () {
+            showCopyToast("Copied to clipboard.");
+          });
+        }
+        return new Promise(function (resolve) {
+          var ta = document.createElement("textarea");
+          ta.value = text;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "fixed";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand("copy");
+            showCopyToast("Copied to clipboard.");
+          } catch (e) {
+            showCopyToast("Copy failed — select text manually.");
+          }
+          document.body.removeChild(ta);
+          resolve();
+        });
+      }
+
+      function updateHowtoForMode() {
+        if (!howtoDetails || !howtoSummary || !howtoLiveNote) return;
+        if (liveApi) {
+          howtoDetails.open = false;
+          howtoLiveNote.hidden = false;
+          howtoSummary.textContent =
+            "Live API connected — expand for instructions to run locally again";
+        } else {
+          howtoDetails.open = true;
+          howtoLiveNote.hidden = true;
+          howtoSummary.textContent =
+            "Run the real Instinct Agent on your PC (copy commands below)";
+        }
+      }
+
+      document.getElementById("btnCopyCmd").addEventListener("click", function () {
+        copyText(document.getElementById("cmdServeText").textContent.trim());
+      });
+      document.getElementById("btnCopyUrl").addEventListener("click", function () {
+        copyText(document.getElementById("urlLiveText").textContent.trim());
+      });
+
+      var OFFLINE_SPECIES = [
+        "achillobator",
+        "allosaurus",
+        "kto_pachyrhinosaurus",
+        "kto_yangchuanosaurus",
+        "ktopachyrhino",
+        "styracosaurus",
+        "tylosaurus",
+      ];
+
+      var OFFLINE_FAST_FACTS = {
+        achillobator: {
+          diet: "carnivore",
+          size_tier: "medium",
+          threat_role: "pack_raptor",
+          environment: "terrestrial",
+          notes:
+            "Stocky raptor; excels with packs and coordinated attacks, but can run lone hunter builds.",
+        },
+        allosaurus: {
+          diet: "carnivore",
+          size_tier: "large",
+          threat_role: "generalist_carnivore",
+          environment: "terrestrial",
+          notes: "Well-rounded land carnivore with good speed and moderate damage; capable in many matchups.",
+        },
+        kto_pachyrhinosaurus: {
+          diet: "herbivore",
+          size_tier: "large",
+          threat_role: "tank_support",
+          environment: "terrestrial",
+          notes:
+            "KTO ceratopsian tank; high combat weight and strong crowd-control abilities, ideal for guarding juveniles and choke points.",
+        },
+        kto_yangchuanosaurus: {
+          diet: "carnivore",
+          size_tier: "large",
+          threat_role: "bruiser_carnivore",
+          environment: "terrestrial",
+          notes: "KTO mid-large predator with solid health and weight; good at pressuring isolated targets.",
+        },
+        ktopachyrhino: {
+          diet: "",
+          size_tier: "",
+          threat_role: "",
+          environment: "",
+          notes: "Fast facts live in-repo; run the local companion server or see configs/fast_facts.json.",
+        },
+        styracosaurus: {
+          diet: "herbivore",
+          size_tier: "medium_large",
+          threat_role: "aggressive_frontliner",
+          environment: "terrestrial",
+          notes: "Fast, aggressive ceratopsian with jousting/ramming playstyles and support buffs.",
+        },
+        tylosaurus: {
+          diet: "carnivore",
+          size_tier: "apex",
+          threat_role: "apex_aquatic",
+          environment: "aquatic",
+          notes: "Apex mosasaur; dominates water with grab-and-drag play, limited on land.",
+        },
+      };
+
+      var sliders = [
+        { id: "pred", key: "predator_probability", label: "Threat", v: "v-pred", threat: true },
+        { id: "prey", key: "prey_density", label: "Prey nearby", v: "v-prey", threat: false },
+        { id: "health", key: "health", label: "Health", v: "v-health", threat: false },
+        { id: "stamina", key: "stamina", label: "Stamina", v: "v-stamina", threat: false },
+        { id: "hunger", key: "hunger", label: "Hunger", v: "v-hunger", threat: false, hunger: true },
+        { id: "thirst", key: "thirst", label: "Thirst", v: "v-thirst", threat: false, hunger: true }
+      ];
+
+      var autoId = null;
+
+      function fracFromSlider(el) {
+        return Math.round(parseFloat(el.value, 10)) / 100;
+      }
+
+      function bindSliders() {
+        sliders.forEach(function (s) {
+          var el = document.getElementById(s.id);
+          var lab = document.getElementById(s.v);
+          function upd() {
+            lab.textContent = fracFromSlider(el).toFixed(2);
+          }
+          el.addEventListener("input", upd);
+          upd();
+        });
+      }
+
+      function vitalsFromInputs(inputs) {
+        vitalsOut.innerHTML = "";
+        function row(label, val, cls) {
+          var pct = Math.round(val * 100);
+          var d = document.createElement("div");
+          d.className = "mini";
+          d.innerHTML =
+            "<h3>" + label + "</h3>" +
+            '<div class="bar' + (cls ? " " + cls : "") + '"><i style="width:' + pct + '%"></i></div>' +
+            '<p style="margin:6px 0 0;font-family:var(--mono);font-size:0.75rem;color:var(--muted);">' +
+            (val * 100).toFixed(0) + "%</p>";
+          vitalsOut.appendChild(d);
+        }
+        row("Threat", inputs.predator_probability, "threat");
+        row("Prey density", inputs.prey_density, "");
+        row("Health", inputs.health, "");
+        row("Stamina", inputs.stamina, "");
+        row("Hunger", inputs.hunger, "hunger");
+        row("Thirst", inputs.thirst, "hunger");
+      }
+
+      function setFastFacts(ff) {
+        document.getElementById("ff-diet").textContent = ff.diet || "—";
+        document.getElementById("ff-size").textContent =
+          (ff.size_tier || "—") + " · " + (ff.threat_role || "—");
+        document.getElementById("ff-env").textContent = ff.environment || "—";
+        document.getElementById("ff-notes").textContent = ff.notes || "—";
+      }
+
+      function currentInputs() {
+        return {
+          predator_probability: fracFromSlider(document.getElementById("pred")),
+          prey_density: fracFromSlider(document.getElementById("prey")),
+          health: fracFromSlider(document.getElementById("health")),
+          stamina: fracFromSlider(document.getElementById("stamina")),
+          hunger: fracFromSlider(document.getElementById("hunger")),
+          thirst: fracFromSlider(document.getElementById("thirst")),
+        };
+      }
+
+      /** Lightweight browser-only heuristic for static hosting — not the Python Instinct Agent. */
+      function offlineHudPayload(species, inputs) {
+        var p = inputs.predator_probability;
+        var action;
+        var rationale;
+        if (p >= 0.75 && inputs.health < 0.45) {
+          action = "FLEE";
+          rationale = "Offline preview: high threat with low health.";
+        } else if (p >= 0.78) {
+          action = "FLEE";
+          rationale = "Offline preview: threat dominant; disengage.";
+        } else if (inputs.thirst >= 0.82) {
+          action = "FORAGE";
+          rationale = "Offline preview: thirst critical — seek water.";
+        } else if (inputs.hunger >= 0.75 && inputs.prey_density >= 0.5) {
+          action = "HUNT";
+          rationale = "Offline preview: hunger with prey available.";
+        } else {
+          action = "HOLD_POSITION";
+          rationale = "Offline preview: no strong survival trigger.";
+        }
+        var ff = OFFLINE_FAST_FACTS[species] || {
+          diet: "",
+          size_tier: "",
+          threat_role: "",
+          environment: "",
+          notes: "Run serve_companion.py locally for full fast facts from the repo.",
+        };
+        return {
+          species: species,
+          inputs: inputs,
+          action: action,
+          fast_facts: ff,
+          thought: {
+            identity: "sim-dino",
+            primal_mind: {
+              identity: "sim-dino",
+              species: species,
+              life_stage: "adult",
+              current_goal: "unspecified",
+              traits: {
+                aggressiveness: 0.5,
+                friendliness: 0.5,
+                curiosity: 0.5,
+                bravery: 0.5,
+                morality: 0.5,
+              },
+              recent_events: [],
+            },
+            observation: {
+              predator_probability: inputs.predator_probability,
+              prey_density: inputs.prey_density,
+              health: inputs.health,
+              stamina: inputs.stamina,
+              hunger: inputs.hunger,
+              thirst: inputs.thirst,
+              recent_event: "offline_preview",
+            },
+            decision: {
+              action: action,
+              rationale: rationale,
+              confidence: 0.55,
+            },
+          },
+        };
+      }
+
+      function applyData(data) {
+        actionOut.textContent = data.action || "—";
+        jsonOut.textContent = JSON.stringify(data.thought, null, 2);
+        if (data.inputs) vitalsFromInputs(data.inputs);
+        setFastFacts(data.fast_facts || {});
+        var dec = data.thought && data.thought.decision;
+        if (dec && dec.rationale) {
+          rationaleOut.hidden = false;
+          rationaleText.textContent = dec.rationale;
+        } else {
+          rationaleOut.hidden = true;
+        }
+      }
+
+      function queryHud() {
+        var sp = speciesSel.value;
+        var inp = currentInputs();
+        return (
+          "/api/hud?" +
+          [
+            "species=" + encodeURIComponent(sp),
+            "predator_probability=" + inp.predator_probability,
+            "prey_density=" + inp.prey_density,
+            "health=" + inp.health,
+            "stamina=" + inp.stamina,
+            "hunger=" + inp.hunger,
+            "thirst=" + inp.thirst,
+          ].join("&")
+        );
+      }
+
+      function loadMetrics() {
+        if (!liveApi) {
+          metricsOut.textContent =
+            "Static / GitHub Pages: no metrics API. Clone the repo and run serve_companion.py for training snapshots.";
+          return;
+        }
+        fetch("/api/metrics")
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (!data.ok || !data.metrics) {
+              metricsOut.textContent = data.error ? "Metrics: " + data.error : "Runs: no metrics.json yet.";
+              return;
+            }
+            var m = data.metrics;
+            var last = m.val_acc && m.val_acc.length ? m.val_acc[m.val_acc.length - 1] : null;
+            metricsOut.textContent = last != null
+              ? "Training snapshot: last val_acc ≈ " + last.toFixed(3) + " (demo metrics.json)"
+              : "Training snapshot: metrics loaded.";
+          })
+          .catch(function () {
+            metricsOut.textContent = "Metrics: unavailable (is the companion server running?)";
+          });
+      }
+
+      function runTick() {
+        runBtn.disabled = true;
+        statusLine.textContent = liveApi ? "Requesting…" : "Offline preview…";
+        statusLine.classList.remove("err");
+
+        if (!liveApi) {
+          try {
+            applyData(offlineHudPayload(speciesSel.value, currentInputs()));
+            statusLine.textContent =
+              "Offline preview " + new Date().toLocaleTimeString() + " (not the Python Instinct Agent).";
+          } catch (e) {
+            statusLine.textContent = "Error: " + e.message;
+            statusLine.classList.add("err");
+          }
+          runBtn.disabled = false;
+          return;
+        }
+
+        fetch(queryHud())
+          .then(function (r) {
+            if (!r.ok) throw new Error("HTTP " + r.status);
+            return r.json();
+          })
+          .then(function (data) {
+            applyData(data);
+            statusLine.textContent = "Updated " + new Date().toLocaleTimeString() + " (live API).";
+          })
+          .catch(function (e) {
+            statusLine.textContent = "Error: " + e.message + " — run serve_companion.py locally.";
+            statusLine.classList.add("err");
+          })
+          .finally(function () {
+            runBtn.disabled = false;
+          });
+      }
+
+      function loadSpecies() {
+        return fetch("/api/species")
+          .then(function (r) {
+            if (!r.ok) throw new Error("no api");
+            return r.json();
+          })
+          .then(function (data) {
+            liveApi = true;
+            modeBanner.hidden = true;
+            speciesSel.innerHTML = "";
+            var list = data.species && data.species.length ? data.species : OFFLINE_SPECIES;
+            list.forEach(function (s) {
+              var o = document.createElement("option");
+              o.value = s;
+              o.textContent = s;
+              speciesSel.appendChild(o);
+            });
+            updateHowtoForMode();
+          })
+          .catch(function () {
+            liveApi = false;
+            modeBanner.hidden = false;
+            modeBannerText.innerHTML =
+              "<strong>Static mode.</strong> GitHub Pages (and file://) cannot run the Python API. " +
+              "Sliders + <em>Run Instinct tick</em> use a small <strong>browser-only preview</strong> — not the real Instinct Agent in the repo. " +
+              "For identical output to <code>simulate_instinct_decision</code>, run " +
+              "<code>python scripts/serve_companion.py</code> and open the same page from that server.";
+            speciesSel.innerHTML = "";
+            OFFLINE_SPECIES.forEach(function (s) {
+              var o = document.createElement("option");
+              o.value = s;
+              o.textContent = s;
+              speciesSel.appendChild(o);
+            });
+            updateHowtoForMode();
+          });
+      }
+
+      bindSliders();
+      loadSpecies()
+        .then(function () {
+          runTick();
+          loadMetrics();
+        });
+
+      runBtn.addEventListener("click", runTick);
+
+      autoBtn.addEventListener("click", function () {
+        if (autoId) {
+          clearInterval(autoId);
+          autoId = null;
+          autoBtn.textContent = "Auto: off";
+        } else {
+          autoId = setInterval(runTick, 3200);
+          autoBtn.textContent = "Auto: on";
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
