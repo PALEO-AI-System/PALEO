@@ -1,14 +1,14 @@
 {
   "title": "PALEO Profiles",
-  "subtitle": "Accurate Path of Titans creature reference (mod playables + base, seed data).",
+  "subtitle": "Path of Titans reference: mod playables + (soon) base creatures — Fandom-first tables, NexLink curves, local tools.",
   "creatures": [
     {
       "slug": "kto-deinosuchus",
       "name": "Deinosuchus",
       "lineage": "KTO Mods",
       "theme": "kto",
-      "tagline": "Late Cretaceous alligatoroid — semi-aquatic group slot 5.",
-      "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Deinosuchus_BW.jpg/640px-Deinosuchus_BW.jpg",
+      "tagline": "Heavy semi-aquatic brawler — bonebreak, grabs, and death-roll ambushes.",
+      "thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/637650/ss_1b02d71822001f88219574bd02d65004d26a4299.1920x1080.jpg?t=1773826488",
       "href": "kto-deinosuchus.html"
     }
   ]
