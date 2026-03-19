@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from pathlib import Path
 from typing import Dict, List
 
 from .agent import PersonalityTraits, AgentState, decide_action, format_thought_log
@@ -10,6 +11,7 @@ from .config import LettaConfig, default_letta_config
 from .data import DatasetRecord
 from .fast_facts import get_fast_facts
 from .wiki_rag import query_snippets
+from .kaggle_ingest import KAGGLE_PIPELINE_ROW_COUNT_MAX_FILE_BYTES, summarize_all_kaggle
 
 
 @dataclass
@@ -85,6 +87,15 @@ def get_letta_tool_specs() -> List[ToolSpec]:
             },
         ),
         ToolSpec(
+            name="get_kaggle_local_inventory",
+            description=(
+                "Inventory CSV files under data/raw/kaggle/ (columns + optional row counts; "
+                "skips full row scan for very large files)."
+            ),
+            input_schema={"use_full_row_count": "bool"},
+            output_schema={"csv_files": "int", "files": "list[dict]"},
+        ),
+        ToolSpec(
             name="simulate_instinct_decision",
             description="Run a single instinct decision for a species given scalar observation inputs.",
             input_schema={
@@ -102,6 +113,25 @@ def get_letta_tool_specs() -> List[ToolSpec]:
             },
         ),
     ]
+
+
+def get_kaggle_local_inventory(use_full_row_count: bool = False) -> Dict[str, object]:
+    """Tool: list local Kaggle CSVs (no download)."""
+    threshold = None if use_full_row_count else KAGGLE_PIPELINE_ROW_COUNT_MAX_FILE_BYTES
+    summaries = summarize_all_kaggle(row_count_max_file_bytes=threshold)
+    files: List[Dict[str, object]] = []
+    for s in summaries:
+        files.append(
+            {
+                "path": s["path"],
+                "name": Path(s["path"]).name,
+                "num_columns": s["num_columns"],
+                "num_rows": s["num_rows"],
+                "row_count_skipped": s.get("row_count_skipped", False),
+                "columns_head": s["columns"][:8],
+            }
+        )
+    return {"csv_files": len(files), "files": files}
 
 
 def get_dataset_stats(records: List[DatasetRecord]) -> Dict[str, object]:

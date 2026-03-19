@@ -12,6 +12,7 @@ from .training import default_training_config, train_resnet18_classifier
 from .agent import default_agent_state, decide_action, format_thought_log
 from .pot import describe_pot_integration_assumptions, sample_action_mapping
 from .letta_tools import get_letta_tool_specs, get_dataset_stats
+from .kaggle_ingest import summarize_kaggle_for_pipeline
 
 
 def run_pipeline() -> str:
@@ -36,6 +37,7 @@ def run_pipeline() -> str:
     pot_assumptions = describe_pot_integration_assumptions()
     action_keymap = sample_action_mapping(["FLEE", "GRAZE", "HOLD_POSITION"])
     letta_tools = get_letta_tool_specs()
+    kaggle_line = summarize_kaggle_for_pipeline()
 
     msg_parts = [
         "PALEO pipeline is running.",
@@ -57,5 +59,6 @@ def run_pipeline() -> str:
         f"pot_emergency_key={pot_assumptions['emergency_stop_key']}",
         f"action_keymap={action_keymap}",
         f"letta_tools={len(letta_tools)}",
+        f"{kaggle_line}",
     ]
     return " ".join(msg_parts)

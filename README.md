@@ -100,6 +100,7 @@ Place downloads under `data/raw/kaggle/<dataset>/` (see per-folder `README.txt`)
 
 ```bash
 python scripts/kaggle_stats.py
+python scripts/kaggle_stats.py --quick
 python scripts/kaggle_stats.py --json
 ```
 

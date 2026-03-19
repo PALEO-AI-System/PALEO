@@ -57,6 +57,7 @@ class TestComponents(unittest.TestCase):
         names = {spec.name for spec in specs}
         required = {
             "get_dataset_stats",
+            "get_kaggle_local_inventory",
             "train_model",
             "evaluate_model",
             "run_pot_agent",

@@ -28,6 +28,7 @@ class TestPipeline(unittest.TestCase):
         self.assertIn("pot_emergency_key=", result)
         self.assertIn("action_keymap=", result)
         self.assertIn("letta_tools=", result)
+        self.assertIn("kaggle_local=", result)
 
 
 if __name__ == "__main__":

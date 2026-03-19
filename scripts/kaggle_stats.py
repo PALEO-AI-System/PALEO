@@ -11,7 +11,12 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.kaggle_ingest import default_kaggle_root, iter_kaggle_csv_paths, summarize_all_kaggle
+from src.kaggle_ingest import (
+    KAGGLE_PIPELINE_ROW_COUNT_MAX_FILE_BYTES,
+    default_kaggle_root,
+    iter_kaggle_csv_paths,
+    summarize_all_kaggle,
+)
 
 
 def main() -> None:
@@ -21,6 +26,14 @@ def main() -> None:
         type=str,
         default="",
         help="Override root (default: data/raw/kaggle).",
+    )
+    p.add_argument(
+        "--quick",
+        action="store_true",
+        help=(
+            f"Skip full row count for CSVs larger than "
+            f"{KAGGLE_PIPELINE_ROW_COUNT_MAX_FILE_BYTES // (1024 * 1024)} MB (faster; for huge files)."
+        ),
     )
     p.add_argument("--json", action="store_true", help="Emit JSON instead of plain text.")
     args = p.parse_args()
@@ -36,7 +49,8 @@ def main() -> None:
             print("Add Kaggle extracts there (see docs/project_brief.md).")
         return
 
-    summaries = summarize_all_kaggle(root)
+    threshold = KAGGLE_PIPELINE_ROW_COUNT_MAX_FILE_BYTES if args.quick else None
+    summaries = summarize_all_kaggle(root, row_count_max_file_bytes=threshold)
     if args.json:
         print(json.dumps(summaries, indent=2))
         return
@@ -44,7 +58,13 @@ def main() -> None:
     for s in summaries:
         rel = Path(s["path"]).as_posix()
         print(rel)
-        print(f"  rows: {s['num_rows']}  cols: {s['num_columns']}")
+        if s.get("row_count_skipped"):
+            print(
+                f"  rows: (deferred; file {s['file_size_bytes']} B — omit --quick for full count)  "
+                f"cols: {s['num_columns']}"
+            )
+        else:
+            print(f"  rows: {s['num_rows']}  cols: {s['num_columns']}")
         print(f"  columns: {', '.join(s['columns'][:12])}{' ...' if len(s['columns']) > 12 else ''}")
         if s.get("preview_rows"):
             print(f"  preview: {s['preview_rows'][0][:6] if s['preview_rows'][0] else []}")

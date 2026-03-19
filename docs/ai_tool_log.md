@@ -76,3 +76,6 @@
 - User chose to defer large local Kaggle downloads (deleted partial zip); clarified in README that sttaseen animal-behaviour ≠ deferred ~16 GB ABP dataset; raw extracts can be deleted after keeping small `results/` / processed artifacts.
 - Added `docs/deferred_large_datasets.md` and linked it from `docs/project_brief.md` + `README.md` for explicit “large downloads TODO later” tracking.
 - Ran `scripts/kaggle_stats.py` against existing local CSVs only (no new downloads): dino tactical 630k rows; `abp_accel.csv` ~14.6M rows.
+- Wired local Kaggle inventory into `run_pipeline()` via `summarize_kaggle_for_pipeline()` (fast: skips full row scan for very large CSVs); added Letta tool `get_kaggle_local_inventory` + `scripts/kaggle_stats.py --quick`.
+- Raised `KAGGLE_PIPELINE_ROW_COUNT_MAX_FILE_BYTES` to 100 MB so medium Kaggle CSVs (e.g. dino tactical) get full row counts in `run_pipeline` while huge accel-scale files stay deferred.
+- Earlier `run_pipeline` check: manifest ~334k records; with a 12 MB threshold both local Kaggle CSVs deferred; 100 MB threshold targets tactical counts + accel deferred.
