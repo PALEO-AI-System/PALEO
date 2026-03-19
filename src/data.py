@@ -116,6 +116,45 @@ def create_manifest_from_csv(
         )
         records.append(record)
 
+    # If we are ingesting Dryad Snapshot Serengeti CSVs, they may not include
+    # image URLs directly (e.g., consensus_data.csv). In that case, join with
+    # all_images.csv by CaptureEventID to populate image_path.
+    if csv_path.stem.lower() == "consensus_data":
+        # Prefer a sibling `all_images.csv` if the user organized data as `data/raw/dryad/...`.
+        join_candidates = [csv_path.parent / "all_images.csv", config.raw_dir / "all_images.csv"]
+        join_path = next((p for p in join_candidates if p.exists()), None)
+        if join_path is not None:
+            capture_ids = {rec.sample_id for rec in records if rec.image_path.strip() == ""}
+            if capture_ids:
+                mapping: Dict[str, str] = {}
+                # URL_Info is a path fragment; we turn it into a full URL.
+                base_url = "https://snapshotserengeti.s3.msi.umn.edu/"
+                with join_path.open("r", encoding="utf-8", newline="") as f:
+                    reader = csv.DictReader(f)
+                    for row_idx, row in enumerate(reader):
+                        if len(mapping) >= len(capture_ids):
+                            break
+                        cid = _pick_row_value(
+                            row,
+                            candidates=("CaptureEventID", "captureeventid"),
+                            default="",
+                        )
+                        if cid not in capture_ids:
+                            continue
+                        url_info = _pick_row_value(
+                            row,
+                            candidates=("URL_Info", "url_info"),
+                            default="",
+                        )
+                        if url_info:
+                            mapping[cid] = base_url + str(url_info).lstrip("/")
+
+                # Write joined URLs back to the manifest records.
+                if mapping:
+                    for rec in records:
+                        if rec.image_path.strip() == "" and rec.sample_id in mapping:
+                            rec.image_path = mapping[rec.sample_id]
+
     with config.manifest_path.open("w", encoding="utf-8") as out:
         for rec in records:
             out.write(json.dumps(asdict(rec)) + "\n")

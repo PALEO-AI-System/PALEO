@@ -65,11 +65,13 @@ python scripts/show_letta_tools.py
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
-## Real dataset path (Snapshot Serengeti)
+## Real dataset path (Dryad CSV exports of Snapshot Serengeti)
 
 In this repo we build manifests from CSV metadata.
 
-Dryad provides convenient CSVs for Snapshot Serengeti (the same underlying dataset); the main one we use right now is `consensus_data.csv`.
+Dryad provides convenient CSV exports of Snapshot Serengeti (same underlying dataset). In this repo the current manifest builder ingests:
+- `data/raw/dryad/consensus_data.csv` (labels/species/behavior columns)
+- `data/raw/dryad/all_images.csv` (image URL fragments), joined on `CaptureEventID` to populate `image_path`
 
 Use one of these approaches:
 
@@ -77,6 +79,12 @@ Use one of these approaches:
    - `python scripts/prepare_data.py`
 2. Build manifest from your downloaded metadata CSV:
    - `python scripts/prepare_data.py --csv path/to/metadata.csv --max-records 500`
+
+For this project specifically, a good starting command is:
+
+```bash
+python scripts/prepare_data.py --csv data/raw/dryad/consensus_data.csv --max-records 5000
+```
 
 Expected manifest location:
 

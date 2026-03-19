@@ -7,12 +7,14 @@ Why it matters:
 - For game developers, PALEO provides a behavior-stress-testing tool for level design, resource placement, and balance. For players (especially those with accessibility needs), it can assist with complex survival loops while keeping behavior explainable via thought logs.
 
 Dataset (link + size):
-- Snapshot Serengeti (subset of millions of camera-trap images): `https://lila.science/datasets/snapshot-serengeti`
+- Dryad Snapshot Serengeti CSV exports (the same underlying Snapshot Serengeti data):
+  `https://datadryad.org/dataset/doi:10.5061/dryad.5pt92`
 - Kaggle predator vs prey animal image dataset (specific subset TBD): `https://www.kaggle.com/datasets?search=predator+prey+animals`
 - Final sample counts and class distributions will be recorded in preprocessing logs.
 
 Note on CSV metadata used in this repo:
-- For the current CSV-based manifest builder, we use `consensus_data.csv` downloaded from Dryad’s Snapshot Serengeti release (the same underlying Snapshot Serengeti dataset; Dryad provides CSVs that are convenient for this stage). Later we can switch to LILA’s recommended COCO JSON annotations for full image training.
+- For the current CSV-based manifest builder, we use `consensus_data.csv` downloaded from Dryad (labels/species/behavior-ish columns) and join it with `all_images.csv` on `CaptureEventID` to populate `image_path`.
+  Later we can switch to LILA’s recommended COCO JSON annotations for full image training.
 
 Core AI function (ML/CV/NLP/Search/Opt):
 - Supervised computer vision classifier for behavior/intent from images.

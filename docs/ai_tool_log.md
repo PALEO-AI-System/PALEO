@@ -55,3 +55,7 @@
 - Rewrote `README.md` with concrete environment setup and run commands.
 - Added `requirements.txt` listing standard dependencies for PALEO phases.
 - Added/updated tests in `tests/test_pipeline.py` and `tests/test_components.py` for end-to-end summary checks and component-level contracts.
+- Implemented manifest join: `consensus_data.csv` + `all_images.csv` on `CaptureEventID` to populate `image_path` (full Snapshot Serengeti image URLs).
+- Tuned predator label mapping to match actual `consensus_data.csv` species strings (e.g., `lionFemale`, `hyenaSpotted`).
+- Rerun `prepare_data.py` on `data/raw/dryad/consensus_data.csv` and confirmed `data/manifests/serengeti_manifest.jsonl` contains non-empty `image_path` URLs.
+- Updated `README.md` and `docs/project_brief.md` to reflect Dryad CSV exports as the current input source (derived from Snapshot Serengeti), while noting the future switch to LILA COCO JSON for full CV training.

@@ -238,7 +238,7 @@ flowchart LR
 ### Phase 9 – Stretch goals (live loop + full integrations)
 
 - **P9.1**: Upgrade from low-rate periodic screenshots to a full live loop (capture → encode → Letta → map action to keys → send inputs) with safety guards.
-- **P9.2**: Replace dummy training curves with real ResNet-18 training on Snapshot Serengeti (and, optionally, PoT screenshots) plus full evaluation.
+- **P9.2**: Replace dummy training curves with real ResNet-18 training on Snapshot Serengeti using real downloaded image data (or a small subset) and LILA’s recommended COCO JSON annotation format, plus full evaluation.
 - **P9.3**: Implement a real local wiki RAG index for Path of Titans and wire it into Letta tools for species/mechanics queries in play.
 
 ## Key unknowns, risks, and info to gather
