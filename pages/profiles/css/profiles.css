@@ -664,6 +664,41 @@ pre.curve-dump {
   margin: 16px 0;
 }
 
+/* Dashboard “how to use” expander */
+details.profiles-howto {
+  margin-bottom: 22px;
+}
+
+details.profiles-howto summary {
+  cursor: pointer;
+  font-family: var(--font-display);
+  color: var(--ink);
+  padding: 4px 0;
+}
+
+details.profiles-howto summary::-webkit-details-marker {
+  color: var(--accent);
+}
+
+.profiles-howto-body {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.profiles-howto-body p {
+  font-size: 0.92rem;
+  margin-bottom: 12px;
+}
+
+.profiles-howto-body code {
+  font-size: 0.86em;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+}
+
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;

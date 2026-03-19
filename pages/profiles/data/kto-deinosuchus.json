@@ -8,12 +8,12 @@
   "game": "Path of Titans",
   "wikiLinks": [
     {
-      "label": "Path of Titans modding wiki — Deinosuchus (KTO)",
-      "url": "https://pathoftitans.wiki/modding/creatures/deinosuchus-kto"
+      "label": "Fandom — Deinosuchus (KTO) (preferred for up-to-date tables)",
+      "url": "https://path-of-titans.fandom.com/wiki/Deinosuchus_(KTO)"
     },
     {
-      "label": "Fandom — Deinosuchus (KTO)",
-      "url": "https://path-of-titans.fandom.com/wiki/Deinosuchus_(KTO)"
+      "label": "Path of Titans modding portal — Deinosuchus (KTO) (secondary context)",
+      "url": "https://pathoftitans.wiki/modding/creatures/deinosuchus-kto"
     },
     {
       "label": "NexLink Core — KTODeino curve overrides",
@@ -21,7 +21,12 @@
     }
   ],
   "dataProvenance": {
-    "seededFrom": ["Path of Titans community wiki (modding portal)", "NexLink Core curve override guide (KTODeino)", "Peer-reviewed paleontology literature (IRL section)"],
+    "seededFrom": [
+      "Path of Titans Fandom wiki (preferred for current ability/skin-style tables when available)",
+      "Path of Titans modding portal (supplementary narrative)",
+      "NexLink Core curve override guide (KTODeino numeric defaults)",
+      "Peer-reviewed paleontology literature (IRL section)"
+    ],
     "curveNote": "NexLink lists default server CurveOverrides samples for `KTODeino.*`. Prefix every line with `CurveOverrides=(CurveName=\"KTODeino.` under `[/Script/PathOfTitans.IGameSession]` per host documentation. Stop the server before editing.",
     "lastContentPass": "2026-03-19",
     "disclaimer": "Game balance patches and mod updates can drift. Verify values in-game or from your server files when precision matters."

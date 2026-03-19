@@ -30,6 +30,31 @@
         future base-game pages use a <span style="color: #e85d5d">red</span> accent.
       </p>
     </div>
+
+    <details class="panel profiles-howto">
+      <summary><strong>Using this site</strong> — GitHub Pages vs local server · which wikis we favor</summary>
+      <div class="profiles-howto-body">
+        <p>
+          <strong>GitHub Pages is enough for Profiles.</strong> These pages only need static files (HTML, JSON, curve text).
+          If you already have the PALEO site open on GitHub Pages, you do <em>not</em> need to run
+          <code>python scripts/serve_companion.py</code> just to browse creature profiles.
+          That local server is mainly for the <a href="../companion-hud.html">Companion HUD</a>, which calls
+          <code>/api/*</code> for the Instinct Agent-style endpoints (same idea as the HUD’s own “run Python locally” note).
+        </p>
+        <p>
+          <strong>Avoid <code>file://</code></strong> for Profiles: browsers block or restrict <code>fetch()</code> for local data files, so open the site over <code>https://</code> (Pages) or <code>http://127.0.0.1</code> (local static server) instead.
+        </p>
+        <p>
+          <strong>Wiki sources:</strong> For Path of Titans playables (base game and many mods), community updates on the
+          <a href="https://path-of-titans.fandom.com/" target="_blank" rel="noopener noreferrer">Path of Titans Fandom wiki</a>
+          are often more current than the separate Alderon-hosted modding portal (e.g. compare a base creature like
+          <a href="https://path-of-titans.fandom.com/wiki/Kaiwhekea" target="_blank" rel="noopener noreferrer">Kaiwhekea on Fandom</a>
+          with older portal pages). PALEO Profiles will <em>prefer Fandom for narrative tables</em> when we add base creatures,
+          and keep cross-checking numeric curves with guides like NexLink and your own game/server exports when precision matters.
+        </p>
+      </div>
+    </details>
+
     <div id="creature-grid" class="dashboard-grid" aria-live="polite"></div>
   </main>
 

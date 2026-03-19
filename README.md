@@ -77,7 +77,7 @@ python scripts/serve_companion.py
 
 Then open `http://127.0.0.1:8765/companion-hud.html` (avoid `file://`, which cannot reach `/api/*`).
 
-**PALEO Profiles** (creature reference mini-site): open `http://127.0.0.1:8765/profiles/index.html` when using the companion server, or use the **Profiles** tab from the main site nav on GitHub Pages. Profiles load JSON + curve text via `fetch()`; use a local server (or Pages), not raw `file://`, so data files resolve.
+**PALEO Profiles** (creature reference mini-site): use the **Profiles** tab from the main site on **GitHub Pages** — no need to run Python for that. Profiles load JSON + curve text via `fetch()`; avoid raw `file://`. Optionally open `http://127.0.0.1:8765/profiles/index.html` when already running `serve_companion.py` for the Companion HUD. (`serve_companion.py` is for HUD `/api/*`, not required for browsing Profiles.)
 
 **GitHub Pages:** you can open `companion-hud.html` from the site nav, but Pages only serves static files — there is no `/api/*`. The page falls back to an **offline preview** (browser-only heuristic). For the real **Instinct Agent** output matching the Python code, use `serve_companion.py` locally.
 
