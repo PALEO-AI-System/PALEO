@@ -14,6 +14,7 @@
   const LS_PRESETS = `paleo-profiles:v1:loadout-presets:${slug}`;
   const LS_PALETTE = `paleo-profiles:v1:skin-palette:${slug}`;
   const LS_GENDER = `paleo-profiles:v1:gender:${slug}`;
+  const LS_SKIN_LAB = `paleo-profiles:v1:skin-lab-pick:${slug}`;
 
   function el(tag, cls, html) {
     const n = document.createElement(tag);
@@ -64,6 +65,11 @@
     return String(v);
   }
 
+  function speedMultDisp(v) {
+    if (v === null || v === undefined) return "—";
+    return `×${v}`;
+  }
+
   function renderStarsBlock(data) {
     const r = data.ratings;
     const max = r.scaleMax || 5;
@@ -83,21 +89,51 @@
     return shots[index % shots.length].src;
   }
 
-  function buildToc(sections) {
-    const nav = el("nav", "profile-toc");
-    nav.setAttribute("aria-label", "On this page");
-    nav.appendChild(el("h2", "toc-title", "Contents"));
-    const ul = document.createElement("ul");
+  function buildSubnav(sections) {
+    const host = document.getElementById("profileSubnav");
+    if (!host) return;
+    host.innerHTML = "";
+    const inner = el("div", "profile-subnav-inner");
     sections.forEach(({ id, label }) => {
-      const li = document.createElement("li");
-      const a = document.createElement("a");
-      a.href = `#${id}`;
-      a.textContent = label;
-      li.appendChild(a);
-      ul.appendChild(li);
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "profile-subnav-tab";
+      btn.textContent = label;
+      btn.addEventListener("click", () => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      inner.appendChild(btn);
     });
-    nav.appendChild(ul);
-    return nav;
+    host.appendChild(inner);
+  }
+
+  function thIcon(label, iconClass) {
+    const th = document.createElement("th");
+    th.className = "th-stat-icon";
+    th.title = label;
+    th.innerHTML = `<i class="${iconClass}" aria-hidden="true"></i><span class="th-stat-lbl">${label}</span>`;
+    return th;
+  }
+
+  async function copyToClipboard(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand("copy");
+        ta.remove();
+        return ok;
+      } catch {
+        return false;
+      }
+    }
   }
 
   function wrapDetails(summaryText, innerNodes, open) {
@@ -196,25 +232,63 @@
       { id: "sources", label: "Sources" },
     ];
 
-    root.appendChild(buildToc(sections));
+    buildSubnav(sections);
 
     /* —— Hero —— */
     const top = el("section", "profile-top");
-    const split = el("div", "profile-hero-split");
-    const vis = el("div", "profile-hero-visual");
-    vis.style.backgroundImage = `linear-gradient(145deg, rgba(0,0,0,0.5), transparent), url(${JSON.stringify(data.heroImage)})`;
-    const heroMain = el("div", "profile-hero-main");
+    const banner = el("div", "profile-hero-banner");
+    banner.style.backgroundImage = `linear-gradient(180deg, rgba(7,9,14,0.88) 0%, transparent 38%, rgba(7,9,14,0.55) 100%), url(${JSON.stringify(data.heroImage)})`;
+    top.appendChild(banner);
+    if (data.heroImageCaption) {
+      top.appendChild(el("p", "hero-caption-banner muted", `<small>${data.heroImageCaption}</small>`));
+    }
+
+    const heroMain = el("div", "profile-hero-below");
     heroMain.appendChild(el("div", "eyebrow", `${data.modTeam} · ${data.game}`));
     heroMain.appendChild(el("h1", "profile-title", data.displayName));
     heroMain.appendChild(el("p", "profile-intro", data.intro || data.description.gameplay));
+    heroMain.appendChild(renderStarsBlock(data));
+
     const quick = el("div", "quick-facts");
     quick.innerHTML = `
       <div class="qf-item"><span class="qf-label">Nicknames</span><span class="qf-val">${data.nicknames.slice(0, 4).join(", ")}</span></div>
       <div class="qf-item"><span class="qf-label">Species flavors</span><span class="qf-val">${data.taxon.speciesEpithets.join(", ")}</span></div>
       <div class="qf-item"><span class="qf-label">Category</span><span class="qf-val">${data.classification.diet}</span></div>
-      <div class="qf-item"><span class="qf-label">Class</span><span class="qf-val">${data.classification.class}</span></div>
     `;
     heroMain.appendChild(quick);
+
+    const mid = data.modIdentifiers || {};
+    const curvePh = (mid.curvePrefix || "").trim() || "—";
+    const modId = (mid.modIdToCopy || "").trim();
+    const metaRow = el("div", "hero-meta-row");
+    const clsBox = el("div", "meta-block");
+    clsBox.innerHTML = `<span class="qf-label">Class</span><span class="qf-val">${data.classification.class}</span>`;
+    metaRow.appendChild(clsBox);
+    const curveBox = el("div", "meta-block meta-curve");
+    curveBox.innerHTML = `<span class="qf-label">Curve prefix</span><span class="qf-val font-mono">${curvePh}</span>`;
+    metaRow.appendChild(curveBox);
+    const copyWrap = el("div", "meta-copy");
+    const copyBtn = el("button", "copy-mod-btn");
+    copyBtn.type = "button";
+    copyBtn.innerHTML = modId
+      ? '<i class="fa-regular fa-copy" aria-hidden="true"></i> Copy mod ID'
+      : '<i class="fa-regular fa-copy" aria-hidden="true"></i> Copy curve prefix';
+    copyBtn.title =
+      (mid.modIdHint || "").replace(/</g, "") || (modId ? "Copy mod / workshop identifier" : "No mod ID in JSON yet — copies curve prefix");
+    const copyFlash = el("span", "copy-flash", "");
+    copyWrap.appendChild(copyBtn);
+    copyWrap.appendChild(copyFlash);
+    copyBtn.addEventListener("click", async () => {
+      const text = modId || (curvePh !== "—" ? curvePh : "");
+      if (!text) return;
+      const ok = await copyToClipboard(text);
+      copyFlash.textContent = ok ? "Copied" : "Copy blocked";
+      setTimeout(() => {
+        copyFlash.textContent = "";
+      }, 1600);
+    });
+    metaRow.appendChild(copyWrap);
+    heroMain.appendChild(metaRow);
 
     const gs = data.classification.groupSlotSize;
     const groupBanner = el("div", "group-slot-hero");
@@ -222,17 +296,10 @@
     heroMain.appendChild(groupBanner);
 
     const modStrip = el("div", "mod-strip");
-    const mid = data.modIdentifiers || {};
-    modStrip.innerHTML = `<span class="mod-pill"><strong>Curve prefix</strong> ${mid.curvePrefix || "—"}</span>
-      <span class="mod-pill"><strong>Internal key</strong> ${mid.internalKey || "—"}</span>
-      <span class="mod-pill note">${(mid.workshopNote || "").replace(/</g, "&lt;")}</span>`;
+    modStrip.innerHTML = `<span class="mod-pill note">${(mid.workshopNote || "").replace(/</g, "&lt;")}</span>`;
     heroMain.appendChild(modStrip);
 
-    heroMain.appendChild(el("p", "hero-caption muted", `<small>${data.heroImageCaption || ""}</small>`));
-    heroMain.appendChild(renderStarsBlock(data));
-    split.appendChild(vis);
-    split.appendChild(heroMain);
-    top.appendChild(split);
+    top.appendChild(heroMain);
     root.appendChild(top);
 
     /* Core vitals */
@@ -327,7 +394,7 @@
     paleoInner.push(paleoMediaBlock);
     const paleoSec = el("section", "profile-section");
     paleoSec.id = "paleo";
-    paleoSec.appendChild(wrapDetails("Paleontology (real world)", paleoInner, true));
+    paleoSec.appendChild(wrapDetails("Paleontology (real world)", paleoInner, false));
     root.appendChild(paleoSec);
 
     /* Subspecies */
@@ -359,10 +426,26 @@
     const tbl = el("div", "table-wrap");
     const table = document.createElement("table");
     table.className = "profile-table abilities-table";
-    table.innerHTML = `<thead><tr>
-      <th></th><th>Ability</th><th>Slot</th><th>Description</th><th>Marks</th>
-      <th>Dmg</th><th>CD (s)</th><th>Stam</th><th>Detail</th><th>Curves</th>
-    </tr></thead>`;
+    const thead = document.createElement("thead");
+    const trh = document.createElement("tr");
+    trh.appendChild(el("th", "th-abil-icon", ""));
+    trh.appendChild(el("th", null, "Ability"));
+    trh.appendChild(el("th", null, "Slot"));
+    trh.appendChild(el("th", "th-desc", "Description"));
+    trh.appendChild(thIcon("Marks", "fa-solid fa-coins"));
+    trh.appendChild(thIcon("Damage", "fa-solid fa-crosshairs"));
+    trh.appendChild(thIcon("Cooldown (s)", "fa-regular fa-clock"));
+    trh.appendChild(thIcon("Stamina", "fa-solid fa-bolt"));
+    trh.appendChild(thIcon("Bleed", "fa-solid fa-droplet"));
+    trh.appendChild(thIcon("Bone-break %", "fa-solid fa-bone"));
+    trh.appendChild(thIcon("Break amount", "fa-solid fa-arrow-up-right-dots"));
+    trh.appendChild(thIcon("Speed", "fa-solid fa-gauge-high"));
+    trh.appendChild(thIcon("Speed mult", "fa-solid fa-arrow-trend-up"));
+    trh.appendChild(thIcon("Splinters", "fa-solid fa-shapes"));
+    trh.appendChild(el("th", null, "Detail"));
+    trh.appendChild(el("th", null, "Curves"));
+    thead.appendChild(trh);
+    table.appendChild(thead);
     const tb = document.createElement("tbody");
     (data.abilityTable || []).forEach((a) => {
       const tr = document.createElement("tr");
@@ -388,11 +471,15 @@
         tr.appendChild(el("td", "num", statDisp(st.damage)));
         tr.appendChild(el("td", "num", statDisp(st.cooldown)));
         tr.appendChild(el("td", "num", statDisp(st.stamina)));
+        tr.appendChild(el("td", "num", statDisp(st.bleed)));
+        tr.appendChild(el("td", "num", statDisp(st.boneBreakChance)));
+        tr.appendChild(el("td", "num", statDisp(st.boneBreakAmount)));
+        tr.appendChild(el("td", "num", statDisp(st.speed)));
+        tr.appendChild(el("td", "num", speedMultDisp(st.speedMultiplier)));
+        tr.appendChild(el("td", "num", statDisp(st.splinter)));
         tr.appendChild(el("td", "abil-detail", st.detail || "—"));
       } else {
-        tr.appendChild(el("td", "num", "—"));
-        tr.appendChild(el("td", "num", "—"));
-        tr.appendChild(el("td", "num", "—"));
+        for (let i = 0; i < 9; i++) tr.appendChild(el("td", "num", "—"));
         tr.appendChild(el("td", "abil-detail", "—"));
       }
       const ckTd = document.createElement("td");
@@ -614,8 +701,29 @@
     /* Skin color lab */
     const labBody = [];
     labBody.push(
-      el("p", "muted", "Toggle sex, then click swatches per body region to cycle palette indices (0–5). Values save per skin. Add per-skin renders in media/ when you have them.")
+      el("p", "muted", "Pick a skin from the list (placeholder art uses the same shots as the skin board until you add per-skin files). Toggle sex, then click swatches per region to cycle palette indices (0–5). Values save per skin.")
     );
+    const pickerRow = el("div", "skin-lab-picker-row");
+    const skinLabSelect = document.createElement("select");
+    skinLabSelect.className = "skin-lab-select";
+    skinLabSelect.setAttribute("aria-label", "Skin to edit");
+    (data.skins || []).forEach((skin, i) => {
+      skinLabSelect.appendChild(new Option(`${skin.name} (${skin.rarity})`, String(i)));
+    });
+    let skinLabIdx = Number(readJson(LS_SKIN_LAB, 0)) || 0;
+    if (skinLabIdx < 0 || skinLabIdx >= (data.skins || []).length) skinLabIdx = 0;
+    skinLabSelect.value = String(skinLabIdx);
+    skinLabSelect.addEventListener("change", () => {
+      writeJson(LS_SKIN_LAB, Number(skinLabSelect.value) || 0);
+      renderSkinLab();
+    });
+    const labPreview = el("div", "skin-lab-preview");
+    labPreview.appendChild(el("span", "skin-lab-preview-rarity", ""));
+    labPreview.appendChild(el("span", "skin-lab-preview-name", ""));
+    pickerRow.appendChild(skinLabSelect);
+    pickerRow.appendChild(labPreview);
+    labBody.push(pickerRow);
+
     const genderRow = el("div", "gender-toggle");
     let gender = readJson(LS_GENDER, "male");
     const maleB = el("button", gender === "male" ? "gender-btn active" : "gender-btn", "Male");
@@ -649,38 +757,49 @@
 
     function renderSkinLab() {
       labHost.innerHTML = "";
+      const skins = data.skins || [];
+      let idx = Number(skinLabSelect.value) || 0;
+      if (idx < 0 || idx >= skins.length) idx = 0;
+      const skin = skins[idx];
+      if (!skin) return;
+
+      const src = skin.image || skinFallbackSrc(data, idx);
+      labPreview.style.backgroundImage = `linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.82)), url(${JSON.stringify(src)})`;
+      labPreview.className = `skin-lab-preview ${rarityCss(skin.rarity)}`;
+      labPreview.querySelector(".skin-lab-preview-rarity").textContent = skin.rarity;
+      labPreview.querySelector(".skin-lab-preview-name").textContent = skin.name;
+
       const state = paletteState();
       const regions = data.colorRegions || ["Head", "Body", "Pattern", "Accents"];
-      (data.skins || []).forEach((skin) => {
-        const card = el("div", "skin-lab-card");
-        card.appendChild(el("h4", null, skin.name));
-        const inner = el("div", "skin-lab-regions");
-        regions.forEach((reg) => {
-          const row = el("div", "region-row");
-          row.appendChild(el("span", "region-name", reg));
-          const sw = el("div", "region-swatches");
-          const gk = gender === "male" ? "male" : "female";
-          if (!state[skin.id]) state[skin.id] = { male: {}, female: {} };
-          const idx = state[skin.id][gk][reg] || 0;
-          for (let k = 0; k < 6; k++) {
-            const b = el("button", `swatch swatch-${k} ${k === idx ? "swatch-on" : ""}`);
-            b.type = "button";
-            b.title = `Palette ${k}`;
-            b.addEventListener("click", () => {
-              const st = paletteState();
-              if (!st[skin.id]) st[skin.id] = { male: {}, female: {} };
-              st[skin.id][gk][reg] = k;
-              writeJson(LS_PALETTE, st);
-              renderSkinLab();
-            });
-            sw.appendChild(b);
-          }
-          row.appendChild(sw);
-          inner.appendChild(row);
-        });
-        card.appendChild(inner);
-        labHost.appendChild(card);
+      const card = el("div", "skin-lab-card");
+      const sub = el("p", "skin-lab-sub", skin.marks === 0 ? "Free" : `${skin.marks.toLocaleString()} marks`);
+      card.appendChild(sub);
+      const inner = el("div", "skin-lab-regions");
+      regions.forEach((reg) => {
+        const row = el("div", "region-row");
+        row.appendChild(el("span", "region-name", reg));
+        const sw = el("div", "region-swatches");
+        const gk = gender === "male" ? "male" : "female";
+        if (!state[skin.id]) state[skin.id] = { male: {}, female: {} };
+        const pidx = state[skin.id][gk][reg] || 0;
+        for (let k = 0; k < 6; k++) {
+          const b = el("button", `swatch swatch-${k} ${k === pidx ? "swatch-on" : ""}`);
+          b.type = "button";
+          b.title = `Palette ${k}`;
+          b.addEventListener("click", () => {
+            const st = paletteState();
+            if (!st[skin.id]) st[skin.id] = { male: {}, female: {} };
+            st[skin.id][gk][reg] = k;
+            writeJson(LS_PALETTE, st);
+            renderSkinLab();
+          });
+          sw.appendChild(b);
+        }
+        row.appendChild(sw);
+        inner.appendChild(row);
       });
+      card.appendChild(inner);
+      labHost.appendChild(card);
     }
     renderSkinLab();
     const labSec = el("section", "profile-section");

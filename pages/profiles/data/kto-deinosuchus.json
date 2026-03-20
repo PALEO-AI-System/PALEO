@@ -7,8 +7,9 @@
   "game": "Path of Titans",
   "modIdentifiers": {
     "curvePrefix": "KTODeino",
-    "internalKey": "KTODeino",
-    "workshopNote": "Install via in-game Mods (search “KTO Deinosuchus”). Steam Workshop IDs vary by platform build — confirm in the client.",
+    "modIdToCopy": "UGC_M_43G76JQ0NR_SK",
+    "modIdHint": "KTO Deinosuchus mod identifier for the Copy mod ID button.",
+    "workshopNote": "Install via in-game Mods (search “KTO Deinosuchus”). IDs differ by platform — confirm in client.",
     "nexlinkSlug": "path-of-titans-ktodeino"
   },
   "curvesOfficialUrl": "https://nexlinkcore.com/guides/path-of-titans/curve-overrides/modded-dinosaurs/kto/path-of-titans-ktodeino/",
@@ -104,7 +105,7 @@
       "marks": 0,
       "icon": "https://cdn.alderongames.wiki/pot-wiki/master/AbilityIcon_DeinoBite.png",
       "loadoutGroup": "head",
-      "stats": { "damage": 75, "cooldown": 1.5, "stamina": 0, "detail": "Bleed 0 · bonebreak chance 0" },
+      "stats": { "damage": 75, "cooldown": 1.5, "stamina": 0, "bleed": 0, "boneBreakChance": 0, "boneBreakAmount": 0, "detail": "Adult growth index 4 snapshot" },
       "curveKeys": ["BiteDamage", "BiteCooldown", "BiteBoneBreakChance", "BiteBleedAmount", "BiteStaminaCost"]
     },
     {
@@ -140,7 +141,7 @@
       "marks": 900,
       "icon": "https://cdn.alderongames.wiki/pot-wiki/master/AbilityIcon_BoneCrush.png",
       "loadoutGroup": "head",
-      "stats": { "damage": 60, "cooldown": 6, "stamina": 5, "detail": "Bone-break chance 2 · break amount 30" },
+      "stats": { "damage": 60, "cooldown": 6, "stamina": 5, "boneBreakChance": 2, "boneBreakAmount": 30, "detail": "Charged bone-break (hold)" },
       "curveKeys": ["BoneSnapDamage", "BoneSnapBoneBreakChance", "BoneSnapCooldown", "BoneSnapStaminaCost", "BoneSnapBoneBreakAmount"]
     },
     {
@@ -164,7 +165,7 @@
       "marks": 2000,
       "icon": "https://cdn.alderongames.wiki/pot-wiki/master/AbilityIcon_DeinoBite.png",
       "loadoutGroup": "back",
-      "stats": { "damage": 80, "cooldown": 15, "stamina": 30, "detail": "Lunge speed 750 · splinters 0.5 / 20s · fracture amt 0.01" },
+      "stats": { "damage": 80, "cooldown": 15, "stamina": 30, "boneBreakChance": 1, "boneBreakAmount": 0.01, "speed": 750, "splinter": "0.5 / 20s", "detail": "Gap-closer + fracture package" },
       "curveKeys": ["LungeDamage", "LungeBoneBreakChance", "LungeBoneBreakAmount", "LungeCooldown", "LungeStaminaCost", "LungeSpeed", "LungeSplintersAmount", "LungeSplintersDuration"]
     },
     {
@@ -176,7 +177,7 @@
       "marks": 0,
       "icon": "https://cdn.alderongames.wiki/pot-wiki/master/AbilityIcon_DeinoBite.png",
       "loadoutGroup": "back",
-      "stats": { "damage": null, "cooldown": 20, "stamina": 15, "detail": "Speed 700 (curve)" },
+      "stats": { "damage": null, "cooldown": 20, "stamina": 15, "speed": 700, "detail": "Alternate lunge pacing" },
       "curveKeys": ["SpeedLungeCooldown", "SpeedLungeSpeed", "SpeedLungeStaminaCost"]
     },
     {
@@ -200,7 +201,7 @@
       "marks": 1000,
       "icon": "https://cdn.alderongames.wiki/pot-wiki/master/AbilityIcon_Hide_128.png",
       "loadoutGroup": null,
-      "stats": { "damage": null, "cooldown": 60, "stamina": 10, "detail": "Speed mult ×1.15 · buff window 30s · charge scaling to 800" },
+      "stats": { "damage": null, "cooldown": 60, "stamina": 10, "speedMultiplier": 1.15, "detail": "Buff window 30s · charge scaling to 800" },
       "curveKeys": ["SpeedBuffCrouchStrenght", "SpeedBuffCrouchCooldown", "SpeedBuffCrouchStaminaCost", "SpeedBuffCrouchSpeedDuration", "SpeedBuffCrouchSpeedMultiplier"]
     },
     {
