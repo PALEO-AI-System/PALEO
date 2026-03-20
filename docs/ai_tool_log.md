@@ -79,6 +79,7 @@
 - Wired local Kaggle inventory into `run_pipeline()` via `summarize_kaggle_for_pipeline()` (fast: skips full row scan for very large CSVs); added Letta tool `get_kaggle_local_inventory` + `scripts/kaggle_stats.py --quick`.
 - Raised `KAGGLE_PIPELINE_ROW_COUNT_MAX_FILE_BYTES` to 100 MB so medium Kaggle CSVs (e.g. dino tactical) get full row counts in `run_pipeline` while huge accel-scale files stay deferred.
 - Earlier `run_pipeline` check: manifest ~334k records; with a 12 MB threshold both local Kaggle CSVs deferred; 100 MB threshold targets tactical counts + accel deferred.
+- Added `src/serengeti_image_paths.py` (shared naming with download script), `src/image_training.py` (ResNet-18 disk fine-tune on predator labels), `scripts/train_serengeti_images.py`, and `tests/test_serengeti_image_paths.py`; README section for JPEG training workflow.
 
 ## 2026-03-19
 - Added `scripts/serve_companion.py`: localhost static server for `pages/` plus `/api/hud`, `/api/species`, `/api/metrics` wired to `simulate_instinct_decision` and optional `results/experiments/default_run/metrics.json`.

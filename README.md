@@ -22,6 +22,7 @@ high-level actions.
 - `src/data.py`: ingestion, manifest generation, split logic
 - `src/baselines.py`: OpenCV/ResNet baseline task specs and interfaces
 - `src/training.py`: training config and metrics persistence
+- `src/serengeti_image_paths.py` / `src/image_training.py`: map downloaded JPEGs to manifest rows; ResNet-18 disk fine-tuning
 - `src/agent.py`: Instinct Agent + Primal Mind decision logic
 - `src/pot.py`: PoT capture/control assumptions and keymap
 - `src/letta_tools.py`: Letta tool schemas and stubs
@@ -127,6 +128,17 @@ python scripts/download_serengeti_images.py --max-images 16 --split train
 ```
 
 Images are written under `data/processed/serengeti_images/` (gitignored).
+
+### Train on local JPEGs (requires working `torch` + `torchvision`)
+
+Uses the **same filenames** as the download script and labels from the manifest (`predator_label`).
+
+```bash
+python scripts/download_serengeti_images.py --max-images 64 --split train
+python scripts/train_serengeti_images.py --epochs 5 --batch-size 8
+```
+
+Artifacts: `results/experiments/serengeti_disk_resnet18/resnet18_serengeti_disk.pt` and `metrics.json`.
 
 ## Notes
 

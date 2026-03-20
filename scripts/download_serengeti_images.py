@@ -7,7 +7,6 @@ import hashlib
 import sys
 from pathlib import Path
 from typing import List
-from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -16,25 +15,12 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from src.config import default_data_config
 from src.data import DatasetRecord, ensure_data_dirs, load_manifest
+from src.serengeti_image_paths import serengeti_local_filename
 
 
 def _stable_hash_key(sample_id: str, seed: int) -> int:
     payload = f"{sample_id}:{seed}".encode("utf-8")
     return int(hashlib.sha1(payload).hexdigest(), 16)
-
-
-def _suffix_from_url(url: str) -> str:
-    path = urlparse(url).path
-    suf = Path(path).suffix.lower()
-    if suf in {".jpg", ".jpeg", ".png", ".gif", ".webp"}:
-        return suf
-    return ".jpg"
-
-
-def _safe_filename(sample_id: str, url: str) -> str:
-    digest = hashlib.sha256(f"{sample_id}:{url}".encode("utf-8")).hexdigest()[:12]
-    safe = "".join(c if c.isalnum() or c in "-_" else "_" for c in sample_id)[:64]
-    return f"{safe}_{digest}{_suffix_from_url(url)}"
 
 
 def _candidate_records(config, split: str | None) -> List[DatasetRecord]:
@@ -98,7 +84,7 @@ def main() -> None:
 
     print(f"Selected {len(picked)} of {len(candidates)} candidate rows (cap {args.max_images}).")
     for rec in picked:
-        dest = out / _safe_filename(rec.sample_id, rec.image_path)
+        dest = out / serengeti_local_filename(rec.sample_id, rec.image_path)
         print(f"  {rec.sample_id} -> {dest.name}")
         if args.dry_run:
             continue
