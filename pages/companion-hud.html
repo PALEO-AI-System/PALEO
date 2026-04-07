@@ -265,6 +265,30 @@
       font-family: var(--mono);
       margin-top: 8px;
     }
+    .debug-box {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.18);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #c5d9ce;
+    }
+    .frame-preview {
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #0c1116;
+    }
+    .frame-preview img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
 
     .note {
       font-size: 0.78rem;
@@ -509,6 +533,8 @@
       </div>
       <div class="scroll-box" id="jsonOut" aria-label="Structured thought JSON">{ }</div>
       <div class="metrics-mini" id="metricsOut"></div>
+      <div class="frame-preview"><img id="framePreview" alt="Live captured frame preview" /></div>
+      <div class="debug-box" id="debugOut">debug: waiting...</div>
     </section>
 
     <section class="panel" aria-labelledby="mind-h">
@@ -537,6 +563,8 @@
       var rationaleOut = document.getElementById("rationaleOut");
       var rationaleText = document.getElementById("rationaleText");
       var metricsOut = document.getElementById("metricsOut");
+      var framePreview = document.getElementById("framePreview");
+      var debugOut = document.getElementById("debugOut");
       var modeBanner = document.getElementById("modeBanner");
       var modeBannerText = document.getElementById("modeBannerText");
       var howtoDetails = document.getElementById("howtoDetails");
@@ -831,7 +859,17 @@
             " | motion=" + Number(c.motion_score || 0).toFixed(3) +
             " | brightness=" + Number(c.mean_brightness || 0).toFixed(3) +
             (c.error ? " | capture_error=" + c.error : "");
+          if (data.capture_preview_url && framePreview) {
+            framePreview.src = data.capture_preview_url;
+          }
         }
+        var dbg = {
+          agent_action: data.action || "",
+          control_preview: data.control_preview || {},
+          letta_trace: data.letta_trace || {},
+          thought_raw: data.thought_raw || "",
+        };
+        debugOut.textContent = JSON.stringify(dbg, null, 2);
       }
 
       function queryHud() {

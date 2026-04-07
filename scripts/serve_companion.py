@@ -25,6 +25,7 @@ if str(_ROOT) not in sys.path:
 
 from src.letta_tools import get_species_fast_facts, simulate_instinct_decision  # noqa: E402
 from src.config import default_pot_config  # noqa: E402
+from src.pot import ActionMapper  # noqa: E402
 from src.pot import ScreenCaptureWorker, frame_to_observation, primary_monitor_region  # noqa: E402
 
 
@@ -61,6 +62,8 @@ def make_handler(
     full_screen: bool = False,
 ):
     capture_worker = None
+    mapper = ActionMapper()
+    live_frame_file = project_root / "results" / "live_hud" / "latest.png"
     if live_capture:
         cfg = default_pot_config()
         if full_screen:
@@ -93,6 +96,9 @@ def make_handler(
             if path == "/api/hud":
                 self._api_hud(parse_qs(parsed.query))
                 return
+            if path == "/api/live_frame.png":
+                self._api_live_frame()
+                return
 
             super().do_GET()
 
@@ -112,7 +118,10 @@ def make_handler(
             use_live = capture_worker is not None and (qs.get("use_live") or ["1"])[0] != "0"
             live_frame = None
             if use_live:
-                live_frame = capture_worker.capture_once(timestamp_ms=int(time.time() * 1000))
+                live_frame = capture_worker.capture_once(
+                    timestamp_ms=int(time.time() * 1000),
+                    snapshot_path=live_frame_file,
+                )
                 obs = frame_to_observation(live_frame)
                 predator_probability = obs["predator_probability"]
                 prey_density = obs["prey_density"]
@@ -145,6 +154,7 @@ def make_handler(
             payload = {
                 "species": species,
                 "live_capture": bool(use_live),
+                "thought_raw": result["thought_log"],
                 "inputs": {
                     "predator_probability": predator_probability,
                     "prey_density": prey_density,
@@ -156,6 +166,17 @@ def make_handler(
                 "action": result["action"],
                 "thought": thought_obj,
                 "fast_facts": get_species_fast_facts(species),
+                "control_preview": {
+                    "keys": list(mapper.map_action(result["action"])),
+                    "mouse_delta": list(mapper.map_mouse(result["action"])),
+                    "mode": "preview_only",
+                },
+                "letta_trace": {
+                    "source": "local_tool_stub",
+                    "tool": "simulate_instinct_decision",
+                    "species": species,
+                    "ts_ms": int(time.time() * 1000),
+                },
             }
             if live_frame is not None:
                 payload["capture"] = {
@@ -169,7 +190,19 @@ def make_handler(
                     "source": live_frame.source,
                     "error": live_frame.error,
                 }
+                payload["capture_preview_url"] = f"/api/live_frame.png?ts={live_frame.timestamp_ms}"
             self._send_json(payload)
+
+        def _api_live_frame(self) -> None:
+            if not live_frame_file.is_file():
+                self._send_json({"ok": False, "error": "no live frame yet"}, status=404)
+                return
+            raw = live_frame_file.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", "image/png")
+            self.send_header("Content-Length", str(len(raw)))
+            self.end_headers()
+            self.wfile.write(raw)
 
     return CompanionRequestHandler
 

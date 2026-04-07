@@ -92,6 +92,7 @@ py -3 scripts/run_paleo_live.py
 
 This starts `serve_companion.py --live-capture --full-screen` and opens the HUD; `/api/hud` then uses `mss` frame stats from your full primary monitor.
 HUD now supports both options: live screen capture on/off toggle.
+HUD debug view includes: live frame preview image, raw thought JSON string, Letta trace metadata, and keyboard/mouse control preview outputs.
 
 ### Safe control loop (V1, no game API)
 
@@ -126,6 +127,11 @@ py -3 scripts/build_paleo_exe.py --target both
 ```
 
 Output: `dist/PALEO.exe` (live HUD) and `dist/PALEOOverlay.exe` (transparent on-top overlay).
+
+### Running the executables
+
+- `dist/PALEO.exe`: starts local HUD server and opens browser companion HUD.
+- `dist/PALEOOverlay.exe`: starts transparent always-on-top overlay window (Esc to close).
 
 **PALEO Profiles** (creature reference mini-site): use the **Profiles** tab from the main site on **GitHub Pages** — no need to run Python for that. Profiles load JSON + curve text via `fetch()`; avoid raw `file://`. Optionally open `http://127.0.0.1:8765/profiles/index.html` when already running `serve_companion.py` for the Companion HUD. (`serve_companion.py` is for HUD `/api/*`, not required for browsing Profiles.) For planning **distinct visuals per future creature** while sharing the same data model, see `docs/profiles_future_styles.md`.
 
