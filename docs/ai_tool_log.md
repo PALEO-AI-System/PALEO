@@ -80,6 +80,9 @@
 - Raised `KAGGLE_PIPELINE_ROW_COUNT_MAX_FILE_BYTES` to 100 MB so medium Kaggle CSVs (e.g. dino tactical) get full row counts in `run_pipeline` while huge accel-scale files stay deferred.
 - Earlier `run_pipeline` check: manifest ~334k records; with a 12 MB threshold both local Kaggle CSVs deferred; 100 MB threshold targets tactical counts + accel deferred.
 - Added `src/serengeti_image_paths.py` (shared naming with download script), `src/image_training.py` (ResNet-18 disk fine-tune on predator labels), `scripts/train_serengeti_images.py`, and `tests/test_serengeti_image_paths.py`; README section for JPEG training workflow.
+- Downloaded additional Snapshot Serengeti train JPEGs (`--max-images 64`, then `--max-images 256`) into `data/processed/serengeti_images/` without any large Kaggle downloads.
+- Installed `torch`/`torchvision` from `requirements.txt`, then ran `scripts/train_serengeti_images.py` (2-epoch smoke + 5-epoch run) producing checkpoints/metrics under `results/experiments/serengeti_disk_resnet18_*`.
+- Added `scripts/evaluate_serengeti_images.py` and ran it on the 5-epoch checkpoint; wrote `eval_metrics.json` with confusion matrix + classification report (accuracy and macro-F1) under `results/experiments/serengeti_disk_resnet18_e5_n256/eval/`.
 
 ## 2026-03-19
 - Added `scripts/serve_companion.py`: localhost static server for `pages/` plus `/api/hud`, `/api/species`, `/api/metrics` wired to `simulate_instinct_decision` and optional `results/experiments/default_run/metrics.json`.

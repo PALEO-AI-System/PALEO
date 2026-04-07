@@ -140,6 +140,16 @@ python scripts/train_serengeti_images.py --epochs 5 --batch-size 8
 
 Artifacts: `results/experiments/serengeti_disk_resnet18/resnet18_serengeti_disk.pt` and `metrics.json`.
 
+### Evaluate local JPEG baseline checkpoint
+
+Save confusion matrix + precision/recall/F1 on local eval images:
+
+```bash
+py -3 scripts/evaluate_serengeti_images.py --checkpoint results/experiments/serengeti_disk_resnet18_e5_n256/resnet18_serengeti_disk.pt
+```
+
+Artifact: `results/experiments/.../eval/eval_metrics.json`.
+
 ## Notes
 
 - No absolute paths are required.
