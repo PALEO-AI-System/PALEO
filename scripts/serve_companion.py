@@ -24,7 +24,8 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from src.letta_tools import get_species_fast_facts, simulate_instinct_decision  # noqa: E402
-from src.pot import ScreenCaptureWorker, frame_to_observation  # noqa: E402
+from src.config import default_pot_config  # noqa: E402
+from src.pot import ScreenCaptureWorker, frame_to_observation, primary_monitor_region  # noqa: E402
 
 
 def _float(qs: dict[str, list[str]], key: str, default: float) -> float:
@@ -53,8 +54,20 @@ def _species_ids(project_root: Path) -> list[str]:
     return sorted(p.stem for p in instinct.glob("*.json"))
 
 
-def make_handler(project_root: Path, pages_dir: Path, live_capture: bool = False):
-    capture_worker = ScreenCaptureWorker() if live_capture else None
+def make_handler(
+    project_root: Path,
+    pages_dir: Path,
+    live_capture: bool = False,
+    full_screen: bool = False,
+):
+    capture_worker = None
+    if live_capture:
+        cfg = default_pot_config()
+        if full_screen:
+            region = primary_monitor_region()
+            if region is not None:
+                cfg.capture_region = region
+        capture_worker = ScreenCaptureWorker(cfg)
 
     class CompanionRequestHandler(SimpleHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
@@ -174,18 +187,30 @@ def main() -> None:
         action="store_true",
         help="Use real-time screen capture (mss) for /api/hud inputs.",
     )
+    parser.add_argument(
+        "--full-screen",
+        action="store_true",
+        help="Capture the full primary monitor instead of fixed config region.",
+    )
     args = parser.parse_args()
 
     pages_dir = _ROOT / "pages"
     if not pages_dir.is_dir():
         raise SystemExit(f"Missing pages directory: {pages_dir}")
 
-    handler = make_handler(_ROOT, pages_dir, live_capture=args.live_capture)
+    handler = make_handler(
+        _ROOT,
+        pages_dir,
+        live_capture=args.live_capture,
+        full_screen=args.full_screen,
+    )
     httpd = HTTPServer((args.host, args.port), handler)
     print(f"Serving {pages_dir} at http://{args.host}:{args.port}/")
     print("Open Companion HUD: http://127.0.0.1:%s/companion-hud.html" % args.port)
     if args.live_capture:
         print("Live capture mode enabled: /api/hud uses real screen region metrics.")
+    if args.full_screen:
+        print("Capture region set to primary monitor bounds.")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

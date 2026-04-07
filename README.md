@@ -90,7 +90,7 @@ For live screen-derived inputs (no Path of Titans API/mod hooks), run:
 py -3 scripts/run_paleo_live.py
 ```
 
-This starts `serve_companion.py --live-capture` and opens the HUD; `/api/hud` then uses `mss` frame stats from your capture region.
+This starts `serve_companion.py --live-capture --full-screen` and opens the HUD; `/api/hud` then uses `mss` frame stats from your full primary monitor.
 HUD now supports both options: live screen capture on/off toggle.
 
 ### Safe control loop (V1, no game API)
@@ -98,7 +98,8 @@ HUD now supports both options: live screen capture on/off toggle.
 You can test this on any screen (Cursor, desktop, browser) before trying with Path of Titans.
 
 ```bash
-py -3 scripts/run_paleo_control_loop.py --mode advice --ticks 20 --snapshot-every 5
+py -3 scripts/run_paleo_control_loop.py --input-source live --full-screen --mode advice --ticks 20 --snapshot-every 5
+py -3 scripts/run_paleo_control_loop.py --input-source manual --manual-threat 0.8 --mode advice --ticks 5
 ```
 
 For guarded keyboard control (still no game API):
@@ -121,10 +122,10 @@ Close overlay with `Esc`; drag to reposition.
 
 ```bash
 py -3 -m pip install pyinstaller
-py -3 scripts/build_paleo_exe.py
+py -3 scripts/build_paleo_exe.py --target both
 ```
 
-Output: `dist/PALEO.exe`.
+Output: `dist/PALEO.exe` (live HUD) and `dist/PALEOOverlay.exe` (transparent on-top overlay).
 
 **PALEO Profiles** (creature reference mini-site): use the **Profiles** tab from the main site on **GitHub Pages** — no need to run Python for that. Profiles load JSON + curve text via `fetch()`; avoid raw `file://`. Optionally open `http://127.0.0.1:8765/profiles/index.html` when already running `serve_companion.py` for the Companion HUD. (`serve_companion.py` is for HUD `/api/*`, not required for browsing Profiles.) For planning **distinct visuals per future creature** while sharing the same data model, see `docs/profiles_future_styles.md`.
 

@@ -22,6 +22,11 @@ def main() -> None:
         help="Disable live mss capture and use slider/manual HUD inputs only.",
     )
     p.add_argument(
+        "--window-capture",
+        action="store_true",
+        help="Use configured fixed capture region (default is full primary monitor).",
+    )
+    p.add_argument(
         "--no-open-browser",
         action="store_true",
         help="Do not auto-open the HUD URL.",
@@ -38,6 +43,8 @@ def main() -> None:
     ]
     if not args.no_live_capture:
         cmd.append("--live-capture")
+        if not args.window_capture:
+            cmd.append("--full-screen")
 
     url = f"http://{args.host}:{args.port}/companion-hud.html"
     print(f"Starting PALEO HUD server: {' '.join(cmd)}")

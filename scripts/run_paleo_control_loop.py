@@ -21,7 +21,13 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from src.config import default_pot_config
 from src.letta_tools import simulate_instinct_decision
-from src.pot import ActionMapper, SafeInputController, ScreenCaptureWorker, frame_to_observation
+from src.pot import (
+    ActionMapper,
+    SafeInputController,
+    ScreenCaptureWorker,
+    frame_to_observation,
+    primary_monitor_region,
+)
 
 
 def main() -> None:
@@ -42,6 +48,11 @@ def main() -> None:
     p.add_argument("--ticks", type=int, default=0, help="0 means run forever.")
     p.add_argument("--fps", type=float, default=4.0)
     p.add_argument(
+        "--full-screen",
+        action="store_true",
+        help="Capture full primary monitor (live source only).",
+    )
+    p.add_argument(
         "--snapshot-every",
         type=int,
         default=0,
@@ -61,6 +72,10 @@ def main() -> None:
     args = p.parse_args()
 
     cfg = default_pot_config()
+    if args.input_source == "live" and args.full_screen:
+        region = primary_monitor_region()
+        if region is not None:
+            cfg.capture_region = region
     mapper = ActionMapper(cfg)
     capture = ScreenCaptureWorker(cfg)
     controller = SafeInputController(

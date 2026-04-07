@@ -31,6 +31,18 @@ except Exception:  # pragma: no cover - optional dependency
 from .config import PotConfig, default_pot_config
 
 
+def primary_monitor_region() -> Tuple[int, int, int, int] | None:
+    """Return (x, y, w, h) for primary monitor via mss."""
+    if mss is None:
+        return None
+    try:
+        with mss.mss() as sct:
+            mon = sct.monitors[1]
+            return (int(mon["left"]), int(mon["top"]), int(mon["width"]), int(mon["height"]))
+    except Exception:
+        return None
+
+
 @dataclass
 class CaptureFrame:
     """Single capture tick summary from the screen region."""

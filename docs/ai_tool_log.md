@@ -95,6 +95,8 @@
 - Added `scripts/build_paleo_exe.py` for PyInstaller-based `PALEO.exe` packaging instructions.
 - Verified both V1 input-source options in `run_paleo_control_loop.py`: `live` (mss capture) and `manual` (fixed values), and validated periodic screenshot output.
 - Installed `pyinstaller` and built `dist/PALEO.exe` from `scripts/run_paleo_live.py`.
+- Updated live launcher/capture path to support full-primary-monitor capture (`--full-screen`) so snapshots are not limited to the default 1280x720 region.
+- Updated `build_paleo_exe.py` to build separate executables: `PALEO.exe` (live HUD) and `PALEOOverlay.exe` (transparent overlay).
 
 ## 2026-03-19
 - Added `scripts/serve_companion.py`: localhost static server for `pages/` plus `/api/hud`, `/api/species`, `/api/metrics` wired to `simulate_instinct_decision` and optional `results/experiments/default_run/metrics.json`.
