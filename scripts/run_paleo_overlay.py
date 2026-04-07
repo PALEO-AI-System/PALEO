@@ -1,4 +1,8 @@
-"""Transparent always-on-top PALEO overlay (screen sidecar)."""
+"""Transparent always-on-top PALEO overlay (screen sidecar).
+
+Drag the green **drag bar** at the top to move the window (child widgets do not
+forward drag events on all platforms).
+"""
 
 from __future__ import annotations
 
@@ -7,6 +11,7 @@ import json
 import sys
 import tkinter as tk
 from pathlib import Path
+from tkinter import scrolledtext
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
@@ -14,7 +19,29 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from src.config import default_pot_config
 from src.letta_tools import simulate_instinct_decision
-from src.pot import ActionMapper, SafeInputController, ScreenCaptureWorker, frame_to_observation
+from src.pot import (
+    ActionMapper,
+    SafeInputController,
+    ScreenCaptureWorker,
+    frame_to_observation,
+    primary_monitor_region,
+)
+
+
+def _bind_drag(widget: tk.Misc, root: tk.Tk, drag: dict) -> None:
+    def on_down(event):
+        drag["x"] = event.x_root
+        drag["y"] = event.y_root
+
+    def on_move(event):
+        dx = event.x_root - drag["x"]
+        dy = event.y_root - drag["y"]
+        root.geometry(f"+{root.winfo_x() + dx}+{root.winfo_y() + dy}")
+        drag["x"] = event.x_root
+        drag["y"] = event.y_root
+
+    widget.bind("<ButtonPress-1>", on_down)
+    widget.bind("<B1-Motion>", on_move)
 
 
 def main() -> None:
@@ -25,10 +52,23 @@ def main() -> None:
     p.add_argument("--enable-control", action="store_true")
     p.add_argument("--x", type=int, default=24)
     p.add_argument("--y", type=int, default=24)
-    p.add_argument("--compact", action="store_true", help="Start in compact mode.")
+    p.add_argument("--compact", action="store_true", help="Shorter debug text.")
+    p.add_argument(
+        "--window-capture",
+        action="store_true",
+        help="Use fixed PotConfig region instead of full primary monitor.",
+    )
     args = p.parse_args()
 
+    if args.mode not in ("advice", "control"):
+        args.mode = "advice"
+
     cfg = default_pot_config()
+    if not args.window_capture:
+        region = primary_monitor_region()
+        if region is not None:
+            cfg.capture_region = region
+
     mapper = ActionMapper(cfg)
     capture = ScreenCaptureWorker(cfg)
     controller = SafeInputController(cfg, mode=args.mode, enable_control=args.enable_control)
@@ -37,31 +77,50 @@ def main() -> None:
     root.title("PALEO Overlay")
     sw = root.winfo_screenwidth()
     sh = root.winfo_screenheight()
-    width = max(520, min(820, int(sw * 0.38)))
-    height = max(260, min(520, int(sh * 0.34)))
+    width = max(480, min(900, int(sw * 0.42)))
+    height = max(280, min(560, int(sh * 0.38)))
     if args.compact:
-        width = max(420, int(width * 0.72))
-        height = max(180, int(height * 0.66))
+        width = max(380, int(width * 0.78))
+        height = max(220, int(height * 0.72))
     root.geometry(f"{width}x{height}+{args.x}+{args.y}")
     root.overrideredirect(True)
     root.attributes("-topmost", True)
-    key_color = "#00ff00"
-    root.configure(bg=key_color)
+
+    chroma = "#00ff00"
+    root.configure(bg=chroma)
     try:
-        root.wm_attributes("-transparentcolor", key_color)
-    except Exception:
-        root.attributes("-alpha", 0.88)
+        root.wm_attributes("-transparentcolor", chroma)
+    except tk.TclError:
+        root.attributes("-alpha", 0.9)
 
     panel = tk.Frame(root, bg="#101820", bd=1, relief="solid")
     panel.pack(fill="both", expand=True, padx=2, pady=2)
-    title = tk.Label(
+
+    drag = {"x": 0, "y": 0}
+
+    drag_bar = tk.Label(
         panel,
-        text="PALEO LIVE HUD  (drag to move, Esc close, +/- zoom, Tab compact)",
-        fg="#7ce0b8",
-        bg="#101820",
-        font=("Segoe UI", 11, "bold"),
+        text="  ≡ DRAG HERE to move  |  Esc=quit  |  +/- = font  |  Tab=toggle detail  ≡  ",
+        fg="#0a1a14",
+        bg=chroma,
+        font=("Segoe UI", 8, "bold"),
+        cursor="fleur",
     )
-    title.pack(anchor="w", padx=10, pady=(8, 0))
+    drag_bar.pack(fill="x", side="top")
+    _bind_drag(drag_bar, root, drag)
+    _bind_drag(panel, root, drag)
+
+    hint = tk.Label(
+        panel,
+        text="HUD shows: live capture stats → agent action → key/mouse preview → parsed thought + Letta stub trace (scroll)",
+        fg="#6a8f84",
+        bg="#101820",
+        font=("Segoe UI", 7),
+        wraplength=width - 40,
+        justify="left",
+    )
+    hint.pack(anchor="w", padx=8, pady=(4, 0))
+
     status_var = tk.StringVar(value="starting...")
     status = tk.Label(
         panel,
@@ -70,27 +129,37 @@ def main() -> None:
         bg="#101820",
         justify="left",
         anchor="w",
-        font=("Consolas", 10),
+        font=("Consolas", 8),
     )
-    status.pack(fill="x", padx=10, pady=(6, 0))
-    text_var = tk.StringVar(value="starting...")
-    body = tk.Label(
+    status.pack(fill="x", padx=8, pady=(4, 0))
+    _bind_drag(status, root, drag)
+
+    # Default body font smaller so more fits; user can +/- to zoom.
+    default_font = 8
+    state = {"verbose": not args.compact, "font": default_font}
+
+    body = scrolledtext.ScrolledText(
         panel,
-        textvariable=text_var,
         fg="#eaf8f2",
-        bg="#101820",
-        justify="left",
-        anchor="nw",
-        font=("Consolas", 12),
+        bg="#0c1418",
+        insertbackground="#eaf8f2",
+        wrap=tk.WORD,
+        font=("Consolas", state["font"]),
+        height=8,
+        relief="flat",
+        padx=6,
+        pady=6,
     )
-    body.pack(fill="both", expand=True, padx=10, pady=8)
+    body.pack(fill="both", expand=True, padx=8, pady=6)
+    _bind_drag(body, root, drag)
 
     dt_ms = int(1000.0 / max(args.fps, 0.5))
-    state = {"compact": bool(args.compact), "font": 12}
 
-    def set_font(size: int) -> None:
-        state["font"] = max(8, min(20, size))
+    def set_font(sz: int) -> None:
+        state["font"] = max(7, min(16, sz))
         body.configure(font=("Consolas", state["font"]))
+
+    set_font(default_font)
 
     def tick() -> None:
         frame = capture.capture_once()
@@ -100,54 +169,78 @@ def main() -> None:
         keys = mapper.map_action(action)
         mouse_delta = mapper.map_mouse(action)
         ctrl = controller.execute_action(action, keys, mouse_delta=mouse_delta)
-        payload = {
-            "mode": args.mode,
-            "control": args.enable_control,
-            "frame": frame.frame_id,
-            "src": frame.source,
-            "motion": round(frame.motion_score, 4),
-            "bright": round(frame.mean_brightness, 4),
-            "action": action,
+
+        thought_raw = result.get("thought_log") or ""
+        thought_parsed = {}
+        try:
+            thought_parsed = json.loads(thought_raw) if thought_raw else {}
+        except json.JSONDecodeError:
+            thought_parsed = {"_parse_error": "thought_log not JSON", "raw_head": thought_raw[:400]}
+
+        control_preview = {
             "keys": list(keys),
-            "mouse": list(mouse_delta),
-            "status": ctrl.status,
+            "mouse_delta": list(mouse_delta),
+            "executed_status": ctrl.status,
+            "detail": ctrl.detail,
         }
+        letta_trace = {
+            "source": "local_tool_stub",
+            "tool": "simulate_instinct_decision",
+            "species": args.species,
+            "note": "Real Letta ADE trace wired in a later step.",
+        }
+
+        region = list(frame.region)
+        summary = {
+            "capture_region_css": f"left,top,w,h = {region}",
+            "frame_id": frame.frame_id,
+            "src": frame.source,
+            "error": frame.error,
+            "motion": round(frame.motion_score, 4),
+            "brightness": round(frame.mean_brightness, 4),
+            "inputs_to_agent": obs,
+            "action": action,
+            "control_preview": control_preview,
+            "letta_trace": letta_trace,
+        }
+
         status_var.set(
-            f"Action={action} | keys={list(keys)} | mouse={list(mouse_delta)} | "
-            f"motion={payload['motion']} bright={payload['bright']}"
+            f"{action} | keys={list(keys)} mouse={list(mouse_delta)} | "
+            f"motion={summary['motion']} bright={summary['brightness']} | {ctrl.status}"
         )
-        if state["compact"]:
-            text_var.set(
-                f"{action}\n"
-                f"keys={list(keys)} mouse={list(mouse_delta)}\n"
-                f"motion={payload['motion']} bright={payload['bright']} status={ctrl.status}"
-            )
+
+        lines = ["=== SUMMARY (debug) ===", json.dumps(summary, indent=2)]
+
+        if state["verbose"]:
+            lines.append("\n=== THOUGHT (parsed) ===")
+            lines.append(json.dumps(thought_parsed, indent=2))
+            lines.append("\n=== THOUGHT_RAW (truncated) ===")
+            raw_show = thought_raw if len(thought_raw) <= 2500 else thought_raw[:2500] + "\n... [truncated]"
+            lines.append(raw_show)
         else:
-            text_var.set(json.dumps(payload, indent=2))
+            dec = thought_parsed.get("decision") if isinstance(thought_parsed, dict) else {}
+            if isinstance(dec, dict):
+                lines.append(
+                    "\n=== THOUGHT (short) ===\n"
+                    + json.dumps(
+                        {
+                            "action": dec.get("action"),
+                            "rationale": dec.get("rationale"),
+                            "confidence": dec.get("confidence"),
+                        },
+                        indent=2,
+                    )
+                )
+
+        text = "\n".join(lines)
+        body.delete("1.0", tk.END)
+        body.insert(tk.END, text)
+        body.see("1.0")
+
         if controller.emergency_stopped:
-            text_var.set(text_var.get() + "\n\nEMERGENCY STOP ACTIVE (f12).")
+            body.insert(tk.END, "\n\nEMERGENCY STOP (hold f12). Close overlay or restart.\n")
             return
         root.after(dt_ms, tick)
-
-    # Drag-to-move overlay.
-    drag = {"x": 0, "y": 0}
-
-    def on_down(event):
-        drag["x"] = event.x_root
-        drag["y"] = event.y_root
-
-    def on_move(event):
-        dx = event.x_root - drag["x"]
-        dy = event.y_root - drag["y"]
-        x = root.winfo_x() + dx
-        y = root.winfo_y() + dy
-        root.geometry(f"+{x}+{y}")
-        drag["x"] = event.x_root
-        drag["y"] = event.y_root
-
-    panel.bind("<ButtonPress-1>", on_down)
-    panel.bind("<B1-Motion>", on_move)
-    root.bind("<Escape>", lambda _e: root.destroy())
 
     def on_plus(_e=None):
         set_font(state["font"] + 1)
@@ -156,9 +249,10 @@ def main() -> None:
         set_font(state["font"] - 1)
 
     def on_tab(_e=None):
-        state["compact"] = not state["compact"]
+        state["verbose"] = not state["verbose"]
         return "break"
 
+    root.bind("<Escape>", lambda _e: root.destroy())
     root.bind("<plus>", on_plus)
     root.bind("<KP_Add>", on_plus)
     root.bind("<minus>", on_minus)
