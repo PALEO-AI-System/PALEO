@@ -24,6 +24,9 @@
       --shadow: rgba(0, 0, 0, 0.45);
       --font: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
       --mono: "IBM Plex Mono", ui-monospace, monospace;
+      --hud-debug-fs: 0.58rem;
+      --hud-scroll-fs: 0.64rem;
+      --hud-status-fs: 0.62rem;
     }
 
     * { box-sizing: border-box; }
@@ -204,9 +207,13 @@
       background: rgba(107, 196, 165, 0.08);
     }
     .status-line {
-      font-size: 0.8rem;
+      font-size: var(--hud-status-fs);
       color: var(--muted);
       font-family: var(--mono);
+      white-space: normal;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      max-width: 100%;
     }
     .status-line.err { color: var(--danger); }
 
@@ -214,7 +221,7 @@
       max-height: min(58vh, 520px);
       overflow: auto;
       font-family: var(--mono);
-      font-size: 0.78rem;
+      font-size: var(--hud-scroll-fs);
       line-height: 1.55;
       background: rgba(0, 0, 0, 0.25);
       border: 1px solid var(--border);
@@ -270,12 +277,16 @@
       padding: 10px;
       border: 1px solid var(--border);
       border-radius: 8px;
-      background: rgba(0, 0, 0, 0.18);
+      background: rgba(0, 0, 0, 0.22);
       font-family: var(--mono);
-      font-size: 0.75rem;
+      font-size: var(--hud-debug-fs);
+      line-height: 1.45;
       white-space: pre-wrap;
       word-break: break-word;
+      overflow-wrap: anywhere;
       color: #c5d9ce;
+      max-height: min(36vh, 280px);
+      overflow: auto;
     }
     .frame-preview {
       margin-top: 10px;
@@ -313,6 +324,45 @@
       background: rgba(212, 165, 116, 0.08);
       border-radius: 10px;
       padding: 10px 14px;
+    }
+
+    .exe-flow {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 18px 10px;
+    }
+    .exe-flow-inner {
+      margin: 0;
+      font-size: 0.72rem;
+      line-height: 1.5;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      background:
+        linear-gradient(135deg, rgba(74, 143, 120, 0.14) 0%, rgba(22, 30, 38, 0.85) 45%, rgba(10, 14, 18, 0.92) 100%);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    .exe-flow-inner strong { color: var(--accent); font-weight: 600; }
+    .exe-flow-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .exe-flow-tools button {
+      font-size: 0.7rem;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(107, 196, 165, 0.2), rgba(74, 143, 120, 0.12));
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--font);
+      font-weight: 600;
+    }
+    .exe-flow-tools button:hover {
+      border-color: var(--accent-dim);
     }
 
     .howto-wrap {
@@ -432,6 +482,21 @@
 
   <div class="mode-banner" id="modeBanner" hidden>
     <p id="modeBannerText"></p>
+  </div>
+
+  <div class="exe-flow" id="exeFlowPanel">
+    <div class="exe-flow-inner">
+      <strong>PALEO.exe workflow:</strong>
+      <code>PALEO.exe</code> runs this Companion HUD in your browser (local Python server + Instinct Agent).
+      Use sliders or <strong>live capture</strong> when enabled, then <strong>Run Instinct tick</strong> / Auto.
+      <code>PALEOOverlay.exe</code> is a separate always-on-top window for capture + debug beside the game; it does not replace this page.
+      Full keyboard/mouse control is optional via <code>run_paleo_control_loop.py</code> (see README) with F12 emergency stop.
+      <div class="exe-flow-tools">
+        <button type="button" id="hudFontDown" title="Shrink monospace panels">Smaller text</button>
+        <button type="button" id="hudFontUp" title="Enlarge monospace panels">Larger text</button>
+        <button type="button" id="howtoOpenBtn">Open full setup steps</button>
+      </div>
+    </div>
   </div>
 
   <div class="howto-wrap">
@@ -571,6 +636,41 @@
       var howtoSummary = document.getElementById("howtoSummary");
       var howtoLiveNote = document.getElementById("howtoLiveNote");
       var copyToast = document.getElementById("copyToast");
+
+      var hudFontStep = 0;
+      function applyHudFontStep() {
+        var r = document.documentElement;
+        var d = 0.58 + hudFontStep * 0.04;
+        var s = 0.64 + hudFontStep * 0.04;
+        var st = 0.62 + hudFontStep * 0.04;
+        r.style.setProperty("--hud-debug-fs", Math.max(0.5, Math.min(0.9, d)) + "rem");
+        r.style.setProperty("--hud-scroll-fs", Math.max(0.54, Math.min(0.95, s)) + "rem");
+        r.style.setProperty("--hud-status-fs", Math.max(0.54, Math.min(0.95, st)) + "rem");
+      }
+
+      (function wireHudChrome() {
+        var down = document.getElementById("hudFontDown");
+        var up = document.getElementById("hudFontUp");
+        var openHowto = document.getElementById("howtoOpenBtn");
+        if (down) {
+          down.addEventListener("click", function () {
+            hudFontStep = Math.max(-3, hudFontStep - 1);
+            applyHudFontStep();
+          });
+        }
+        if (up) {
+          up.addEventListener("click", function () {
+            hudFontStep = Math.min(3, hudFontStep + 1);
+            applyHudFontStep();
+          });
+        }
+        if (openHowto && howtoDetails) {
+          openHowto.addEventListener("click", function () {
+            howtoDetails.open = true;
+            howtoDetails.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        }
+      })();
 
       /** When GitHub Pages (or file://) cannot reach /api/*, we still show an interactive preview. */
       var liveApi = false;
@@ -864,6 +964,9 @@
           }
         }
         var dbg = {
+          companion_mode: liveApi ? "live_api" : "offline_preview",
+          live_capture: !!data.live_capture,
+          capture: data.capture || null,
           agent_action: data.action || "",
           control_preview: data.control_preview || {},
           letta_trace: data.letta_trace || {},

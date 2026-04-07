@@ -1,7 +1,6 @@
 """Transparent always-on-top PALEO overlay (screen sidecar).
 
-Drag the green **drag bar** at the top to move the window (child widgets do not
-forward drag events on all platforms).
+Drag the **gradient title bar** to move. Toolbar buttons mirror common hotkeys.
 """
 
 from __future__ import annotations
@@ -28,6 +27,28 @@ from src.pot import (
 )
 
 
+def _hex_rgb(h: str) -> tuple[int, int, int]:
+    h = h.lstrip("#")
+    return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+
+
+def _rgb_hex(r: float, g: float, b: float) -> str:
+    return f"#{int(r):02x}{int(g):02x}{int(b):02x}"
+
+
+def _paint_gradient(canvas: tk.Canvas, w: int, h: int, top: str, bottom: str) -> None:
+    canvas.delete("grad")
+    r1, g1, b1 = _hex_rgb(top)
+    r2, g2, b2 = _hex_rgb(bottom)
+    hm = max(h - 1, 1)
+    for i in range(h):
+        t = i / hm
+        r = r1 + (r2 - r1) * t
+        g = g1 + (g2 - g1) * t
+        b = b1 + (b2 - b1) * t
+        canvas.create_line(0, i, w, i, fill=_rgb_hex(r, g, b), tags="grad")
+
+
 def _bind_drag(widget: tk.Misc, root: tk.Tk, drag: dict) -> None:
     def on_down(event):
         drag["x"] = event.x_root
@@ -42,6 +63,21 @@ def _bind_drag(widget: tk.Misc, root: tk.Tk, drag: dict) -> None:
 
     widget.bind("<ButtonPress-1>", on_down)
     widget.bind("<B1-Motion>", on_move)
+
+
+def _style_btn(w: tk.Misc, bg: str, fg: str, active: str) -> None:
+    w.configure(
+        bg=bg,
+        fg=fg,
+        activebackground=active,
+        activeforeground=fg,
+        relief=tk.FLAT,
+        bd=0,
+        padx=10,
+        pady=4,
+        cursor="hand2",
+        font=("Segoe UI", 7, "bold"),
+    )
 
 
 def main() -> None:
@@ -77,11 +113,11 @@ def main() -> None:
     root.title("PALEO Overlay")
     sw = root.winfo_screenwidth()
     sh = root.winfo_screenheight()
-    width = max(480, min(900, int(sw * 0.42)))
-    height = max(280, min(560, int(sh * 0.38)))
+    width = max(520, min(920, int(sw * 0.44)))
+    height = max(320, min(620, int(sh * 0.42)))
     if args.compact:
-        width = max(380, int(width * 0.78))
-        height = max(220, int(height * 0.72))
+        width = max(400, int(width * 0.82))
+        height = max(240, int(height * 0.75))
     root.geometry(f"{width}x{height}+{args.x}+{args.y}")
     root.overrideredirect(True)
     root.attributes("-topmost", True)
@@ -91,75 +127,186 @@ def main() -> None:
     try:
         root.wm_attributes("-transparentcolor", chroma)
     except tk.TclError:
-        root.attributes("-alpha", 0.9)
+        root.attributes("-alpha", 0.92)
 
-    panel = tk.Frame(root, bg="#101820", bd=1, relief="solid")
+    # Bordered shell: outer rim visible against any backdrop
+    shell = tk.Frame(root, bg=chroma, highlightthickness=0)
+    shell.pack(fill="both", expand=True, padx=3, pady=3)
+    rim = tk.Frame(
+        shell,
+        bg="#1c2e28",
+        highlightbackground="#5bc4a8",
+        highlightthickness=2,
+        highlightcolor="#7dffe0",
+    )
+    rim.pack(fill="both", expand=True)
+
+    panel = tk.Frame(rim, bg="#0a1014", bd=0)
     panel.pack(fill="both", expand=True, padx=2, pady=2)
 
     drag = {"x": 0, "y": 0}
 
-    drag_bar = tk.Label(
-        panel,
-        text="  ≡ DRAG HERE to move  |  Esc=quit  |  +/- = font  |  Tab=toggle detail  ≡  ",
-        fg="#0a1a14",
-        bg=chroma,
-        font=("Segoe UI", 8, "bold"),
+    title_wrap = tk.Frame(panel, bg="#0a1014")
+    title_wrap.pack(fill="x", side="top")
+
+    title_canvas = tk.Canvas(
+        title_wrap,
+        height=52,
+        highlightthickness=0,
+        bd=0,
         cursor="fleur",
     )
-    drag_bar.pack(fill="x", side="top")
-    _bind_drag(drag_bar, root, drag)
-    _bind_drag(panel, root, drag)
+    title_canvas.pack(fill="x")
+
+    def redraw_title(_event=None):
+        title_canvas.update_idletasks()
+        tw = max(title_canvas.winfo_width(), 2)
+        th = 52
+        title_canvas.config(height=th)
+        _paint_gradient(title_canvas, tw, th, "#0d3d35", "#1a6b5c")
+        title_canvas.delete("title")
+        title_canvas.create_text(
+            12,
+            14,
+            anchor="w",
+            text="PALEO · live overlay",
+            fill="#e8fff8",
+            font=("Segoe UI", 9, "bold"),
+            tags="title",
+        )
+        title_canvas.create_text(
+            12,
+            34,
+            anchor="w",
+            text="Drag this bar to move  ·  Esc close",
+            fill="#a8e0d4",
+            font=("Segoe UI", 7),
+            tags="title",
+        )
+
+    title_canvas.bind("<Configure>", lambda e: redraw_title())
+    _bind_drag(title_canvas, root, drag)
+
+    toolbar = tk.Frame(panel, bg="#0f181c")
+    toolbar.pack(fill="x", padx=6, pady=(0, 4))
+
+    default_font = 7
+    state = {"verbose": not args.compact, "font": default_font, "help_open": False}
+
+    def set_font(sz: int) -> None:
+        state["font"] = max(6, min(14, sz))
+        body.configure(font=("Consolas", state["font"]))
+        status.configure(font=("Consolas", state["font"]))
+
+    def toggle_verbose() -> None:
+        state["verbose"] = not state["verbose"]
+        btn_detail.configure(text="Detail: on" if state["verbose"] else "Detail: off")
+
+    def toggle_help() -> None:
+        state["help_open"] = not state["help_open"]
+        if state["help_open"]:
+            help_frame.pack(fill="x", padx=6, pady=(0, 4), before=status_master)
+            btn_help.configure(text="Hide workflow")
+        else:
+            help_frame.pack_forget()
+            btn_help.configure(text="Workflow")
+
+    btn_smaller = tk.Button(toolbar, text="A−", command=lambda: set_font(state["font"] - 1))
+    btn_larger = tk.Button(toolbar, text="A+", command=lambda: set_font(state["font"] + 1))
+    btn_detail = tk.Button(toolbar, text="Detail: on" if state["verbose"] else "Detail: off", command=toggle_verbose)
+    btn_help = tk.Button(toolbar, text="Workflow", command=toggle_help)
+    btn_close = tk.Button(toolbar, text="Close", command=root.destroy)
+
+    accent = "#2a5a50"
+    accent_hi = "#3d7a6c"
+    for b in (btn_smaller, btn_larger, btn_detail, btn_help):
+        _style_btn(b, accent, "#dff8f0", accent_hi)
+    _style_btn(btn_close, "#5a3030", "#ffd0d0", "#7a4040")
+
+    btn_smaller.pack(side=tk.LEFT, padx=(0, 4))
+    btn_larger.pack(side=tk.LEFT, padx=(0, 8))
+    btn_detail.pack(side=tk.LEFT, padx=(0, 8))
+    btn_help.pack(side=tk.LEFT, padx=(0, 8))
+    btn_close.pack(side=tk.RIGHT)
+
+    help_frame = tk.Frame(panel, bg="#0d1618", highlightbackground="#3d5a52", highlightthickness=1)
+    workflow_txt = (
+        "PALEO workflow (exe / dev):\n"
+        "1) PALEO.exe — starts the local server and opens the browser Companion HUD "
+        "(Instinct Agent ticks + optional live screen stats).\n"
+        "2) PALEOOverlay.exe — this window: always-on-top debug beside your game; "
+        "same capture + stub agent; optional keyboard/mouse only if you run the "
+        "control loop with --enable-control (F12 emergency stop).\n"
+        "3) For training/models use the Python scripts from README; Letta ADE hooks "
+        "are not required for this HUD to run.\n"
+        "Hotkeys: +/− font, Tab toggles verbose debug (same as Detail button)."
+    )
+    tk.Label(
+        help_frame,
+        text=workflow_txt,
+        fg="#9cc4b8",
+        bg="#0d1618",
+        justify="left",
+        anchor="nw",
+        font=("Segoe UI", 7),
+        wraplength=width - 36,
+    ).pack(fill="x", padx=8, pady=6)
+
+    status_master = tk.Frame(panel, bg="#0a1014")
+    status_master.pack(fill="x", padx=6, pady=(2, 0))
+
+    status_var = tk.StringVar(value="starting…")
+    status = tk.Label(
+        status_master,
+        textvariable=status_var,
+        fg="#7dd4c4",
+        bg="#0a1014",
+        justify="left",
+        anchor="nw",
+        font=("Consolas", default_font),
+    )
+    status.pack(fill="x", anchor="w")
+
+    def on_panel_configure(event):
+        if event.widget is panel:
+            inner = max(event.width - 24, 80)
+            status.configure(wraplength=inner)
+
+    panel.bind("<Configure>", on_panel_configure)
 
     hint = tk.Label(
         panel,
-        text="HUD shows: live capture stats → agent action → key/mouse preview → parsed thought + Letta stub trace (scroll)",
-        fg="#6a8f84",
-        bg="#101820",
-        font=("Segoe UI", 7),
-        wraplength=width - 40,
+        text="Scroll for full JSON · capture → agent → keys/mouse · Letta trace stub",
+        fg="#5a7a72",
+        bg="#0a1014",
+        font=("Segoe UI", 6),
+        wraplength=width - 24,
         justify="left",
     )
-    hint.pack(anchor="w", padx=8, pady=(4, 0))
-
-    status_var = tk.StringVar(value="starting...")
-    status = tk.Label(
-        panel,
-        textvariable=status_var,
-        fg="#9dd9c3",
-        bg="#101820",
-        justify="left",
-        anchor="w",
-        font=("Consolas", 8),
-    )
-    status.pack(fill="x", padx=8, pady=(4, 0))
-    _bind_drag(status, root, drag)
-
-    # Default body font smaller so more fits; user can +/- to zoom.
-    default_font = 8
-    state = {"verbose": not args.compact, "font": default_font}
+    hint.pack(anchor="w", padx=8, pady=(2, 0))
 
     body = scrolledtext.ScrolledText(
         panel,
-        fg="#eaf8f2",
-        bg="#0c1418",
-        insertbackground="#eaf8f2",
+        fg="#d8ebe4",
+        bg="#060a0c",
+        insertbackground="#d8ebe4",
         wrap=tk.WORD,
         font=("Consolas", state["font"]),
-        height=8,
-        relief="flat",
-        padx=6,
-        pady=6,
+        height=10,
+        relief=tk.FLAT,
+        padx=8,
+        pady=8,
+        highlightthickness=1,
+        highlightbackground="#2a4540",
+        highlightcolor="#4a8070",
     )
-    body.pack(fill="both", expand=True, padx=8, pady=6)
+    body.pack(fill="both", expand=True, padx=6, pady=(4, 8))
     _bind_drag(body, root, drag)
 
-    dt_ms = int(1000.0 / max(args.fps, 0.5))
-
-    def set_font(sz: int) -> None:
-        state["font"] = max(7, min(16, sz))
-        body.configure(font=("Consolas", state["font"]))
-
     set_font(default_font)
+    redraw_title()
+
+    dt_ms = int(1000.0 / max(args.fps, 0.5))
 
     def tick() -> None:
         frame = capture.capture_once()
@@ -171,7 +318,7 @@ def main() -> None:
         ctrl = controller.execute_action(action, keys, mouse_delta=mouse_delta)
 
         thought_raw = result.get("thought_log") or ""
-        thought_parsed = {}
+        thought_parsed: dict
         try:
             thought_parsed = json.loads(thought_raw) if thought_raw else {}
         except json.JSONDecodeError:
@@ -205,8 +352,8 @@ def main() -> None:
         }
 
         status_var.set(
-            f"{action} | keys={list(keys)} mouse={list(mouse_delta)} | "
-            f"motion={summary['motion']} bright={summary['brightness']} | {ctrl.status}"
+            f"action={action}  |  keys={list(keys)}  |  mouse={list(mouse_delta)}  |  "
+            f"motion={summary['motion']}  bright={summary['brightness']}  |  {ctrl.status}"
         )
 
         lines = ["=== SUMMARY (debug) ===", json.dumps(summary, indent=2)]
@@ -249,7 +396,7 @@ def main() -> None:
         set_font(state["font"] - 1)
 
     def on_tab(_e=None):
-        state["verbose"] = not state["verbose"]
+        toggle_verbose()
         return "break"
 
     root.bind("<Escape>", lambda _e: root.destroy())

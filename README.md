@@ -117,7 +117,7 @@ Emergency stop key: `f12` (configurable in `src/config.py`).
 py -3 scripts/run_paleo_overlay.py --mode advice
 ```
 
-Close overlay with `Esc`; drag to reposition.
+Close overlay with `Esc` or **Close**; drag the **gradient title bar**; **Workflow** explains PALEO.exe vs overlay vs control loop; **A−/A+** and **Detail** mirror `+/−` and `Tab`.
 
 ### Build PALEO.exe (Windows)
 
@@ -131,7 +131,7 @@ Output: `dist/PALEO.exe` (live HUD) and `dist/PALEOOverlay.exe` (transparent on-
 ### Running the executables
 
 - `dist/PALEO.exe`: starts local HUD server and opens browser companion HUD.
-- `dist/PALEOOverlay.exe`: starts transparent always-on-top overlay window (Esc to close, `+/-` zoom text, `Tab` compact/full).
+- `dist/PALEOOverlay.exe`: transparent always-on-top overlay (bordered UI, gradient header, toolbar buttons, wrapped status text, `+/-` / `Tab` still work).
 
 **PALEO Profiles** (creature reference mini-site): use the **Profiles** tab from the main site on **GitHub Pages** — no need to run Python for that. Profiles load JSON + curve text via `fetch()`; avoid raw `file://`. Optionally open `http://127.0.0.1:8765/profiles/index.html` when already running `serve_companion.py` for the Companion HUD. (`serve_companion.py` is for HUD `/api/*`, not required for browsing Profiles.) For planning **distinct visuals per future creature** while sharing the same data model, see `docs/profiles_future_styles.md`.
 

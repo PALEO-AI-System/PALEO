@@ -114,3 +114,4 @@
 
 ## 2026-04-07
 - `run_paleo_overlay.py`: dedicated top **drag bar** + drag bindings on panel/status/body; **full primary monitor** capture by default (`primary_monitor_region`); debug in **scrollable** `ScrolledText` at **Consolas 8** with **+/-** font zoom and **Tab** compact/verbose toggle; structured sections (summary JSON, parsed thought, truncated thought_raw) so debug is not clipped.
+- Overlay UI pass: **teal gradient** title (two-line, no horizontal clip), **rim border**, toolbar (**A−/A+**, detail toggle, workflow blurb, close), **wraplength** on status line, default **Consolas 7** body; `companion-hud.html`: **PALEO.exe workflow** strip + text-size buttons, smaller default monospace, status/debug **wrap** + scroll, richer debug JSON (capture + mode).
