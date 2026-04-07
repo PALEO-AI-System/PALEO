@@ -33,6 +33,7 @@ high-level actions.
 - `scripts/evaluate_serengeti_images.py`: confusion matrix + class report for local checkpoint
 - `scripts/kaggle_stats.py`: column + row counts for CSVs under `data/raw/kaggle/`
 - `scripts/run_paleo_live.py`: one-command HUD launcher with optional live screen capture
+- `scripts/run_paleo_control_loop.py`: safe advice/control loop with kill switch + optional snapshots
 - `scripts/show_letta_tools.py`: print Letta tool schemas
 - `scripts/run_pipeline.py`: run integrated summary pipeline
 
@@ -88,6 +89,22 @@ py -3 scripts/run_paleo_live.py
 ```
 
 This starts `serve_companion.py --live-capture` and opens the HUD; `/api/hud` then uses `mss` frame stats from your capture region.
+
+### Safe control loop (V1, no game API)
+
+You can test this on any screen (Cursor, desktop, browser) before trying with Path of Titans.
+
+```bash
+py -3 scripts/run_paleo_control_loop.py --mode advice --ticks 20 --snapshot-every 5
+```
+
+For guarded keyboard control (still no game API):
+
+```bash
+py -3 scripts/run_paleo_control_loop.py --mode control --enable-control --fps 4
+```
+
+Emergency stop key: `f12` (configurable in `src/config.py`).
 
 **PALEO Profiles** (creature reference mini-site): use the **Profiles** tab from the main site on **GitHub Pages** — no need to run Python for that. Profiles load JSON + curve text via `fetch()`; avoid raw `file://`. Optionally open `http://127.0.0.1:8765/profiles/index.html` when already running `serve_companion.py` for the Companion HUD. (`serve_companion.py` is for HUD `/api/*`, not required for browsing Profiles.) For planning **distinct visuals per future creature** while sharing the same data model, see `docs/profiles_future_styles.md`.
 

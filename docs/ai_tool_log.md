@@ -87,6 +87,9 @@
 - Updated `scripts/serve_companion.py` with `--live-capture`; `/api/hud` can now derive instinct inputs from live screen frames and returns capture metadata.
 - Updated `pages/companion-hud.html` to request live capture (`use_live=1`) and display live frame diagnostics.
 - Added `scripts/run_paleo_live.py` to launch the local HUD server and auto-open browser in one command.
+- Added `SafeInputController` in `src/pot.py` (advice/control modes, emergency-stop key polling, action rate limiting, dry-run safety by default).
+- Added `scripts/run_paleo_control_loop.py` for V1 live capture -> instinct action -> optional keyboard output, with `--snapshot-every` periodic PNG dumps for quick verification.
+- Updated `README.md` with V1 safe-control and screenshot testing commands that work even without Path of Titans installed.
 
 ## 2026-03-19
 - Added `scripts/serve_companion.py`: localhost static server for `pages/` plus `/api/hud`, `/api/species`, `/api/metrics` wired to `simulate_instinct_decision` and optional `results/experiments/default_run/metrics.json`.

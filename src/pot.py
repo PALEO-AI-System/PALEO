@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from pathlib import Path
+from time import sleep
 from time import time
 from typing import Dict, List, Tuple
 
@@ -15,6 +17,11 @@ try:
     import mss
 except Exception:  # pragma: no cover - optional dependency
     mss = None
+
+try:
+    import keyboard
+except Exception:  # pragma: no cover - optional dependency
+    keyboard = None
 
 from .config import PotConfig, default_pot_config
 
@@ -43,7 +50,7 @@ class ScreenCaptureWorker:
         self._last_gray = None
         self._sct = mss.mss() if mss is not None else None
 
-    def capture_once(self, timestamp_ms: int = 0) -> CaptureFrame:
+    def capture_once(self, timestamp_ms: int = 0, snapshot_path: str | Path | None = None) -> CaptureFrame:
         ts = timestamp_ms or int(time() * 1000)
         x, y, w, h = self.config.capture_region
 
@@ -66,6 +73,10 @@ class ScreenCaptureWorker:
         monitor = {"left": x, "top": y, "width": w, "height": h}
         try:
             raw = self._sct.grab(monitor)
+            if snapshot_path:
+                out = Path(snapshot_path)
+                out.parent.mkdir(parents=True, exist_ok=True)
+                mss.tools.to_png(raw.rgb, raw.size, output=str(out))
             arr = np.asarray(raw, dtype=np.uint8)  # BGRA
             b = arr[:, :, 0].astype(np.float32)
             g = arr[:, :, 1].astype(np.float32)
@@ -119,6 +130,80 @@ def frame_to_observation(frame: CaptureFrame) -> Dict[str, float]:
         "hunger": 0.45,
         "thirst": 0.35,
     }
+
+
+@dataclass
+class ControlResult:
+    """Single input-control tick result."""
+
+    ok: bool
+    status: str
+    action: str
+    keys: Tuple[str, ...]
+    detail: str = ""
+
+
+class SafeInputController:
+    """Rate-limited, kill-switch guarded keyboard control helper."""
+
+    def __init__(
+        self,
+        config: PotConfig | None = None,
+        *,
+        mode: str = "advice",
+        enable_control: bool = False,
+        min_action_interval_sec: float = 0.35,
+        key_hold_sec: float = 0.08,
+    ) -> None:
+        self.config = config or default_pot_config()
+        self.mode = mode
+        self.enable_control = enable_control
+        self.min_action_interval_sec = float(min_action_interval_sec)
+        self.key_hold_sec = float(key_hold_sec)
+        self._last_action_at = 0.0
+        self._emergency_stop = False
+
+    @property
+    def emergency_stopped(self) -> bool:
+        return self._emergency_stop
+
+    def poll_emergency_stop(self) -> bool:
+        if keyboard is None:
+            return self._emergency_stop
+        try:
+            if keyboard.is_pressed(self.config.emergency_stop_key):
+                self._emergency_stop = True
+        except Exception:
+            pass
+        return self._emergency_stop
+
+    def clear_emergency_stop(self) -> None:
+        self._emergency_stop = False
+
+    def execute_action(self, action: str, keys: Tuple[str, ...]) -> ControlResult:
+        now = time()
+        if self.poll_emergency_stop():
+            return ControlResult(False, "blocked", action, keys, "emergency_stop_active")
+        if self.mode != "control":
+            return ControlResult(True, "advice_only", action, keys)
+        if not self.enable_control:
+            return ControlResult(True, "dry_run", action, keys, "enable_control_false")
+        if keyboard is None:
+            return ControlResult(False, "blocked", action, keys, "keyboard_module_missing")
+        if now - self._last_action_at < self.min_action_interval_sec:
+            return ControlResult(False, "rate_limited", action, keys)
+        if not keys:
+            return ControlResult(True, "noop", action, keys)
+        try:
+            for k in keys:
+                keyboard.press(k)
+            sleep(self.key_hold_sec)
+            for k in reversed(keys):
+                keyboard.release(k)
+            self._last_action_at = now
+            return ControlResult(True, "executed", action, keys)
+        except Exception as exc:
+            return ControlResult(False, "error", action, keys, str(exc))
 
 
 class ActionMapper:
