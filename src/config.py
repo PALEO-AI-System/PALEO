@@ -60,6 +60,14 @@ class PotConfig:
             "FORAGE": ("w",),
         }
     )
+    mousemap: Dict[str, Tuple[int, int]] = field(
+        default_factory=lambda: {
+            # Relative camera nudges (dx, dy) used only in explicit control mode.
+            "EXPLORE": (18, 0),
+            "HUNT": (10, 0),
+            "FOLLOW_HERD": (8, 0),
+        }
+    )
 
 
 @dataclass

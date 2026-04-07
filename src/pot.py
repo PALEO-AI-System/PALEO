@@ -23,6 +23,11 @@ try:
 except Exception:  # pragma: no cover - optional dependency
     keyboard = None
 
+try:
+    import mouse
+except Exception:  # pragma: no cover - optional dependency
+    mouse = None
+
 from .config import PotConfig, default_pot_config
 
 
@@ -140,6 +145,7 @@ class ControlResult:
     status: str
     action: str
     keys: Tuple[str, ...]
+    mouse_delta: Tuple[int, int] = (0, 0)
     detail: str = ""
 
 
@@ -180,30 +186,37 @@ class SafeInputController:
     def clear_emergency_stop(self) -> None:
         self._emergency_stop = False
 
-    def execute_action(self, action: str, keys: Tuple[str, ...]) -> ControlResult:
+    def execute_action(
+        self,
+        action: str,
+        keys: Tuple[str, ...],
+        mouse_delta: Tuple[int, int] = (0, 0),
+    ) -> ControlResult:
         now = time()
         if self.poll_emergency_stop():
-            return ControlResult(False, "blocked", action, keys, "emergency_stop_active")
+            return ControlResult(False, "blocked", action, keys, mouse_delta, "emergency_stop_active")
         if self.mode != "control":
-            return ControlResult(True, "advice_only", action, keys)
+            return ControlResult(True, "advice_only", action, keys, mouse_delta)
         if not self.enable_control:
-            return ControlResult(True, "dry_run", action, keys, "enable_control_false")
+            return ControlResult(True, "dry_run", action, keys, mouse_delta, "enable_control_false")
         if keyboard is None:
-            return ControlResult(False, "blocked", action, keys, "keyboard_module_missing")
+            return ControlResult(False, "blocked", action, keys, mouse_delta, "keyboard_module_missing")
         if now - self._last_action_at < self.min_action_interval_sec:
-            return ControlResult(False, "rate_limited", action, keys)
-        if not keys:
-            return ControlResult(True, "noop", action, keys)
+            return ControlResult(False, "rate_limited", action, keys, mouse_delta)
+        if not keys and mouse_delta == (0, 0):
+            return ControlResult(True, "noop", action, keys, mouse_delta)
         try:
             for k in keys:
                 keyboard.press(k)
             sleep(self.key_hold_sec)
             for k in reversed(keys):
                 keyboard.release(k)
+            if mouse is not None and mouse_delta != (0, 0):
+                mouse.move(mouse_delta[0], mouse_delta[1], absolute=False, duration=0)
             self._last_action_at = now
-            return ControlResult(True, "executed", action, keys)
+            return ControlResult(True, "executed", action, keys, mouse_delta)
         except Exception as exc:
-            return ControlResult(False, "error", action, keys, str(exc))
+            return ControlResult(False, "error", action, keys, mouse_delta, str(exc))
 
 
 class ActionMapper:
@@ -214,6 +227,9 @@ class ActionMapper:
 
     def map_action(self, action: str) -> Tuple[str, ...]:
         return self.config.keymap.get(action, ())
+
+    def map_mouse(self, action: str) -> Tuple[int, int]:
+        return self.config.mousemap.get(action, (0, 0))
 
 
 def describe_pot_integration_assumptions(config: PotConfig | None = None) -> Dict[str, object]:

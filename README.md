@@ -34,6 +34,8 @@ high-level actions.
 - `scripts/kaggle_stats.py`: column + row counts for CSVs under `data/raw/kaggle/`
 - `scripts/run_paleo_live.py`: one-command HUD launcher with optional live screen capture
 - `scripts/run_paleo_control_loop.py`: safe advice/control loop with kill switch + optional snapshots
+- `scripts/run_paleo_overlay.py`: transparent always-on-top overlay HUD
+- `scripts/build_paleo_exe.py`: build `dist/PALEO.exe` with PyInstaller
 - `scripts/show_letta_tools.py`: print Letta tool schemas
 - `scripts/run_pipeline.py`: run integrated summary pipeline
 
@@ -89,6 +91,7 @@ py -3 scripts/run_paleo_live.py
 ```
 
 This starts `serve_companion.py --live-capture` and opens the HUD; `/api/hud` then uses `mss` frame stats from your capture region.
+HUD now supports both options: live screen capture on/off toggle.
 
 ### Safe control loop (V1, no game API)
 
@@ -105,6 +108,23 @@ py -3 scripts/run_paleo_control_loop.py --mode control --enable-control --fps 4
 ```
 
 Emergency stop key: `f12` (configurable in `src/config.py`).
+
+### Transparent on-top overlay
+
+```bash
+py -3 scripts/run_paleo_overlay.py --mode advice
+```
+
+Close overlay with `Esc`; drag to reposition.
+
+### Build PALEO.exe (Windows)
+
+```bash
+py -3 -m pip install pyinstaller
+py -3 scripts/build_paleo_exe.py
+```
+
+Output: `dist/PALEO.exe`.
 
 **PALEO Profiles** (creature reference mini-site): use the **Profiles** tab from the main site on **GitHub Pages** — no need to run Python for that. Profiles load JSON + curve text via `fetch()`; avoid raw `file://`. Optionally open `http://127.0.0.1:8765/profiles/index.html` when already running `serve_companion.py` for the Companion HUD. (`serve_companion.py` is for HUD `/api/*`, not required for browsing Profiles.) For planning **distinct visuals per future creature** while sharing the same data model, see `docs/profiles_future_styles.md`.
 

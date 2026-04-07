@@ -90,6 +90,11 @@
 - Added `SafeInputController` in `src/pot.py` (advice/control modes, emergency-stop key polling, action rate limiting, dry-run safety by default).
 - Added `scripts/run_paleo_control_loop.py` for V1 live capture -> instinct action -> optional keyboard output, with `--snapshot-every` periodic PNG dumps for quick verification.
 - Updated `README.md` with V1 safe-control and screenshot testing commands that work even without Path of Titans installed.
+- Extended control loop for both input-source options (`live` capture or `manual` fixed inputs) and added mouse-delta support in safe control execution.
+- Added `scripts/run_paleo_overlay.py` (transparent always-on-top desktop overlay HUD) and HUD toggle for live capture on/off in `pages/companion-hud.html`.
+- Added `scripts/build_paleo_exe.py` for PyInstaller-based `PALEO.exe` packaging instructions.
+- Verified both V1 input-source options in `run_paleo_control_loop.py`: `live` (mss capture) and `manual` (fixed values), and validated periodic screenshot output.
+- Installed `pyinstaller` and built `dist/PALEO.exe` from `scripts/run_paleo_live.py`.
 
 ## 2026-03-19
 - Added `scripts/serve_companion.py`: localhost static server for `pages/` plus `/api/hud`, `/api/species`, `/api/metrics` wired to `simulate_instinct_decision` and optional `results/experiments/default_run/metrics.json`.

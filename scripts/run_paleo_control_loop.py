@@ -27,6 +27,12 @@ from src.pot import ActionMapper, SafeInputController, ScreenCaptureWorker, fram
 def main() -> None:
     p = argparse.ArgumentParser(description="PALEO safe control loop (screen capture -> action -> optional input).")
     p.add_argument("--species", default="allosaurus")
+    p.add_argument(
+        "--input-source",
+        choices=["live", "manual"],
+        default="live",
+        help="Use live screen capture stats or fixed manual values.",
+    )
     p.add_argument("--mode", choices=["advice", "control"], default="advice")
     p.add_argument(
         "--enable-control",
@@ -46,6 +52,12 @@ def main() -> None:
         default="results/live_capture_snaps",
         help="Directory for periodic screenshots.",
     )
+    p.add_argument("--manual-threat", type=float, default=0.35)
+    p.add_argument("--manual-prey", type=float, default=0.4)
+    p.add_argument("--manual-health", type=float, default=0.85)
+    p.add_argument("--manual-stamina", type=float, default=0.75)
+    p.add_argument("--manual-hunger", type=float, default=0.45)
+    p.add_argument("--manual-thirst", type=float, default=0.35)
     args = p.parse_args()
 
     cfg = default_pot_config()
@@ -60,7 +72,7 @@ def main() -> None:
     dt = 1.0 / max(args.fps, 0.5)
     tick = 0
     print(
-        f"PALEO loop started mode={args.mode} enable_control={args.enable_control} "
+        f"PALEO loop started source={args.input_source} mode={args.mode} enable_control={args.enable_control} "
         f"fps={args.fps} emergency_key={cfg.emergency_stop_key}"
     )
     while True:
@@ -70,21 +82,33 @@ def main() -> None:
         snap_path = None
         if args.snapshot_every > 0 and tick % args.snapshot_every == 0:
             snap_path = Path(args.snapshot_dir) / f"frame_{tick:06d}.png"
-        frame = capture.capture_once(snapshot_path=snap_path)
-        obs = frame_to_observation(frame)
+        frame = capture.capture_once(snapshot_path=snap_path) if args.input_source == "live" else None
+        if frame is not None:
+            obs = frame_to_observation(frame)
+        else:
+            obs = {
+                "predator_probability": max(0.0, min(1.0, args.manual_threat)),
+                "prey_density": max(0.0, min(1.0, args.manual_prey)),
+                "health": max(0.0, min(1.0, args.manual_health)),
+                "stamina": max(0.0, min(1.0, args.manual_stamina)),
+                "hunger": max(0.0, min(1.0, args.manual_hunger)),
+                "thirst": max(0.0, min(1.0, args.manual_thirst)),
+            }
         decision = simulate_instinct_decision(species=args.species, **obs)
         action = decision["action"]
         keys = mapper.map_action(action)
-        result = controller.execute_action(action, keys)
+        mouse_delta = mapper.map_mouse(action)
+        result = controller.execute_action(action, keys, mouse_delta=mouse_delta)
 
         row = {
             "tick": tick,
-            "frame_id": frame.frame_id,
-            "source": frame.source,
-            "motion": frame.motion_score,
-            "brightness": frame.mean_brightness,
+            "frame_id": frame.frame_id if frame else 0,
+            "source": frame.source if frame else "manual",
+            "motion": frame.motion_score if frame else 0.0,
+            "brightness": frame.mean_brightness if frame else 0.0,
             "action": action,
             "keys": keys,
+            "mouse_delta": mouse_delta,
             "control_status": result.status,
             "detail": result.detail,
             "snapshot": str(snap_path) if snap_path else "",

@@ -488,6 +488,9 @@
         <button type="button" class="primary" id="runBtn">Run Instinct tick</button>
         <button type="button" class="secondary" id="autoBtn">Auto: off</button>
       </div>
+      <label class="field" style="margin-top:10px;">
+        <input type="checkbox" id="useLive" checked /> Use live screen capture when available
+      </label>
       <p class="note">
         <strong>Full fidelity:</strong> use the <strong>“Run the real Instinct Agent”</strong> steps above (copy buttons + terminal).
         This panel is the offline preview when the API is missing.
@@ -526,6 +529,7 @@
       var speciesSel = document.getElementById("species");
       var runBtn = document.getElementById("runBtn");
       var autoBtn = document.getElementById("autoBtn");
+      var useLiveEl = document.getElementById("useLive");
       var statusLine = document.getElementById("statusLine");
       var actionOut = document.getElementById("actionOut");
       var jsonOut = document.getElementById("jsonOut");
@@ -837,7 +841,7 @@
           "/api/hud?" +
           [
             "species=" + encodeURIComponent(sp),
-            "use_live=1",
+            "use_live=" + (useLiveEl && useLiveEl.checked ? "1" : "0"),
             "predator_probability=" + inp.predator_probability,
             "prey_density=" + inp.prey_density,
             "health=" + inp.health,
