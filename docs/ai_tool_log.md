@@ -83,6 +83,10 @@
 - Downloaded additional Snapshot Serengeti train JPEGs (`--max-images 64`, then `--max-images 256`) into `data/processed/serengeti_images/` without any large Kaggle downloads.
 - Installed `torch`/`torchvision` from `requirements.txt`, then ran `scripts/train_serengeti_images.py` (2-epoch smoke + 5-epoch run) producing checkpoints/metrics under `results/experiments/serengeti_disk_resnet18_*`.
 - Added `scripts/evaluate_serengeti_images.py` and ran it on the 5-epoch checkpoint; wrote `eval_metrics.json` with confusion matrix + classification report (accuracy and macro-F1) under `results/experiments/serengeti_disk_resnet18_e5_n256/eval/`.
+- Implemented real screen capture in `src/pot.py` via `mss` (`CaptureFrame` now includes brightness/motion summaries) plus `frame_to_observation()` heuristics.
+- Updated `scripts/serve_companion.py` with `--live-capture`; `/api/hud` can now derive instinct inputs from live screen frames and returns capture metadata.
+- Updated `pages/companion-hud.html` to request live capture (`use_live=1`) and display live frame diagnostics.
+- Added `scripts/run_paleo_live.py` to launch the local HUD server and auto-open browser in one command.
 
 ## 2026-03-19
 - Added `scripts/serve_companion.py`: localhost static server for `pages/` plus `/api/hud`, `/api/species`, `/api/metrics` wired to `simulate_instinct_decision` and optional `results/experiments/default_run/metrics.json`.

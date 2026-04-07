@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
@@ -23,6 +24,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from src.letta_tools import get_species_fast_facts, simulate_instinct_decision  # noqa: E402
+from src.pot import ScreenCaptureWorker, frame_to_observation  # noqa: E402
 
 
 def _float(qs: dict[str, list[str]], key: str, default: float) -> float:
@@ -51,7 +53,9 @@ def _species_ids(project_root: Path) -> list[str]:
     return sorted(p.stem for p in instinct.glob("*.json"))
 
 
-def make_handler(project_root: Path, pages_dir: Path):
+def make_handler(project_root: Path, pages_dir: Path, live_capture: bool = False):
+    capture_worker = ScreenCaptureWorker() if live_capture else None
+
     class CompanionRequestHandler(SimpleHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, directory=str(pages_dir), **kwargs)
@@ -92,12 +96,24 @@ def make_handler(project_root: Path, pages_dir: Path):
             default_species = species_list[0] if species_list else "kto_pachyrhinosaurus"
             species = (qs.get("species") or [default_species])[0].strip() or default_species
 
-            predator_probability = max(0.0, min(1.0, _float(qs, "predator_probability", 0.35)))
-            prey_density = max(0.0, min(1.0, _float(qs, "prey_density", 0.4)))
-            health = max(0.0, min(1.0, _float(qs, "health", 0.85)))
-            stamina = max(0.0, min(1.0, _float(qs, "stamina", 0.75)))
-            hunger = max(0.0, min(1.0, _float(qs, "hunger", 0.45)))
-            thirst = max(0.0, min(1.0, _float(qs, "thirst", 0.35)))
+            use_live = capture_worker is not None and (qs.get("use_live") or ["1"])[0] != "0"
+            live_frame = None
+            if use_live:
+                live_frame = capture_worker.capture_once(timestamp_ms=int(time.time() * 1000))
+                obs = frame_to_observation(live_frame)
+                predator_probability = obs["predator_probability"]
+                prey_density = obs["prey_density"]
+                health = obs["health"]
+                stamina = obs["stamina"]
+                hunger = obs["hunger"]
+                thirst = obs["thirst"]
+            else:
+                predator_probability = max(0.0, min(1.0, _float(qs, "predator_probability", 0.35)))
+                prey_density = max(0.0, min(1.0, _float(qs, "prey_density", 0.4)))
+                health = max(0.0, min(1.0, _float(qs, "health", 0.85)))
+                stamina = max(0.0, min(1.0, _float(qs, "stamina", 0.75)))
+                hunger = max(0.0, min(1.0, _float(qs, "hunger", 0.45)))
+                thirst = max(0.0, min(1.0, _float(qs, "thirst", 0.35)))
 
             result = simulate_instinct_decision(
                 species=species,
@@ -115,6 +131,7 @@ def make_handler(project_root: Path, pages_dir: Path):
 
             payload = {
                 "species": species,
+                "live_capture": bool(use_live),
                 "inputs": {
                     "predator_probability": predator_probability,
                     "prey_density": prey_density,
@@ -127,6 +144,18 @@ def make_handler(project_root: Path, pages_dir: Path):
                 "thought": thought_obj,
                 "fast_facts": get_species_fast_facts(species),
             }
+            if live_frame is not None:
+                payload["capture"] = {
+                    "frame_id": live_frame.frame_id,
+                    "timestamp_ms": live_frame.timestamp_ms,
+                    "region": list(live_frame.region),
+                    "width": live_frame.width,
+                    "height": live_frame.height,
+                    "mean_brightness": live_frame.mean_brightness,
+                    "motion_score": live_frame.motion_score,
+                    "source": live_frame.source,
+                    "error": live_frame.error,
+                }
             self._send_json(payload)
 
     return CompanionRequestHandler
@@ -140,16 +169,23 @@ def main() -> None:
         help="Bind address (default: 127.0.0.1).",
     )
     parser.add_argument("--port", type=int, default=8765, help="Port (default: 8765).")
+    parser.add_argument(
+        "--live-capture",
+        action="store_true",
+        help="Use real-time screen capture (mss) for /api/hud inputs.",
+    )
     args = parser.parse_args()
 
     pages_dir = _ROOT / "pages"
     if not pages_dir.is_dir():
         raise SystemExit(f"Missing pages directory: {pages_dir}")
 
-    handler = make_handler(_ROOT, pages_dir)
+    handler = make_handler(_ROOT, pages_dir, live_capture=args.live_capture)
     httpd = HTTPServer((args.host, args.port), handler)
     print(f"Serving {pages_dir} at http://{args.host}:{args.port}/")
     print("Open Companion HUD: http://127.0.0.1:%s/companion-hud.html" % args.port)
+    if args.live_capture:
+        print("Live capture mode enabled: /api/hud uses real screen region metrics.")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

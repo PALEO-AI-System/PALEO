@@ -820,6 +820,14 @@
         } else {
           rationaleOut.hidden = true;
         }
+        if (data.live_capture && data.capture) {
+          var c = data.capture;
+          metricsOut.textContent =
+            "Live capture: frame " + c.frame_id +
+            " | motion=" + Number(c.motion_score || 0).toFixed(3) +
+            " | brightness=" + Number(c.mean_brightness || 0).toFixed(3) +
+            (c.error ? " | capture_error=" + c.error : "");
+        }
       }
 
       function queryHud() {
@@ -829,6 +837,7 @@
           "/api/hud?" +
           [
             "species=" + encodeURIComponent(sp),
+            "use_live=1",
             "predator_probability=" + inp.predator_probability,
             "prey_density=" + inp.prey_density,
             "health=" + inp.health,

@@ -29,7 +29,10 @@ high-level actions.
 - `src/pipeline.py`: end-to-end lightweight pipeline summary
 - `scripts/prepare_data.py`: manifest build command
 - `scripts/download_serengeti_images.py`: fetch a small subset of manifest image URLs locally
+- `scripts/train_serengeti_images.py`: fine-tune ResNet-18 on local Serengeti JPEGs
+- `scripts/evaluate_serengeti_images.py`: confusion matrix + class report for local checkpoint
 - `scripts/kaggle_stats.py`: column + row counts for CSVs under `data/raw/kaggle/`
+- `scripts/run_paleo_live.py`: one-command HUD launcher with optional live screen capture
 - `scripts/show_letta_tools.py`: print Letta tool schemas
 - `scripts/run_pipeline.py`: run integrated summary pipeline
 
@@ -77,6 +80,14 @@ python scripts/serve_companion.py
 ```
 
 Then open `http://127.0.0.1:8765/companion-hud.html` (avoid `file://`, which cannot reach `/api/*`).
+
+For live screen-derived inputs (no Path of Titans API/mod hooks), run:
+
+```bash
+py -3 scripts/run_paleo_live.py
+```
+
+This starts `serve_companion.py --live-capture` and opens the HUD; `/api/hud` then uses `mss` frame stats from your capture region.
 
 **PALEO Profiles** (creature reference mini-site): use the **Profiles** tab from the main site on **GitHub Pages** — no need to run Python for that. Profiles load JSON + curve text via `fetch()`; avoid raw `file://`. Optionally open `http://127.0.0.1:8765/profiles/index.html` when already running `serve_companion.py` for the Companion HUD. (`serve_companion.py` is for HUD `/api/*`, not required for browsing Profiles.) For planning **distinct visuals per future creature** while sharing the same data model, see `docs/profiles_future_styles.md`.
 
