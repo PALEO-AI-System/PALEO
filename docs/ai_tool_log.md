@@ -112,6 +112,15 @@
 - Profiles **Deinosuchus UX pass**: **centered full-width hero banner**; **sticky horizontal section tabs** under site nav (replaces in-page Contents list); **paleontology** outer block **collapsed by default**; **Font Awesome** column icons + extra numeric columns (bleed, bone-break, speed, mult, splinters) on abilities table; **pattern lab** skin **dropdown** + **preview thumb**; hero **class / curve prefix / copy control** row above group slot (dropped internal-key pill); `modIdToCopy` + hint in JSON; added `docs/profiles_future_styles.md` for per-creature style variants later; README links that doc from the Profiles blurb.
 - Profiles: KTO Deinosuchus `modIdToCopy` set to `UGC_M_43G76JQ0NR_SK` (user-supplied mod ID).
 
+## 2026-04-14
+- Added `docs/my_game_projects_backlog.md`: personal backlog table (PALEO, POT horse/UI mods, Escape the Soup, Breeze, Breeze Mobile, Wildtype+) plus external POT community links grouped by suspected developer and short notes on POT UI modding / UE AI tooling (no in-repo gameplay changes).
+- Ran `run_paleo_control_loop.py` manual FORAGE scenario: dry-run (`control_status=dry_run`) then `--enable-control` (all ticks `executed`, keys `w`) to verify keyboard path on Windows.
+- Refreshed `TODO.md` (in-game test steps, overlay audit, deferred datasets pointer, vision/Letta notes); README links to `TODO.md` for PoT testing.
+- `TODO.md`: restored original checklist with `[x]`/`[ ]`; added gaps section (LILA JSON, Kaggle unify, brainstorm depth, multi-agent, install polish); split vision vs multimodal Letta as future items.
+
 ## 2026-04-07
 - `run_paleo_overlay.py`: dedicated top **drag bar** + drag bindings on panel/status/body; **full primary monitor** capture by default (`primary_monitor_region`); debug in **scrollable** `ScrolledText` at **Consolas 8** with **+/-** font zoom and **Tab** compact/verbose toggle; structured sections (summary JSON, parsed thought, truncated thought_raw) so debug is not clipped.
 - Overlay UI pass: **teal gradient** title (two-line, no horizontal clip), **rim border**, toolbar (**A−/A+**, detail toggle, workflow blurb, close), **wraplength** on status line, default **Consolas 7** body; `companion-hud.html`: **PALEO.exe workflow** strip + text-size buttons, smaller default monospace, status/debug **wrap** + scroll, richer debug JSON (capture + mode).
+
+## 2026-04-08
+- `TODO.md`: added items for **PALEO.exe vs PALEOOverlay.exe** clarity, **overlay vs control-loop** documentation, **Letta → ActionMapper/SafeInputController** schema path, and **Windows keyboard/mouse injection** distributable notes.
