@@ -117,6 +117,7 @@
 - Ran `run_paleo_control_loop.py` manual FORAGE scenario: dry-run (`control_status=dry_run`) then `--enable-control` (all ticks `executed`, keys `w`) to verify keyboard path on Windows.
 - Refreshed `TODO.md` (in-game test steps, overlay audit, deferred datasets pointer, vision/Letta notes); README links to `TODO.md` for PoT testing.
 - `TODO.md`: restored original checklist with `[x]`/`[ ]`; added gaps section (LILA JSON, Kaggle unify, brainstorm depth, multi-agent, install polish); split vision vs multimodal Letta as future items.
+- Added `docs/vision_workflow.md` (mock workflow: shipped vs target, expanded Letta/RAG/vision/logging/memory/control); README links under **Design notes**.
 
 ## 2026-04-07
 - `run_paleo_overlay.py`: dedicated top **drag bar** + drag bindings on panel/status/body; **full primary monitor** capture by default (`primary_monitor_region`); debug in **scrollable** `ScrolledText` at **Consolas 8** with **+/-** font zoom and **Tab** compact/verbose toggle; structured sections (summary JSON, parsed thought, truncated thought_raw) so debug is not clipped.

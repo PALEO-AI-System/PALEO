@@ -17,6 +17,10 @@ high-level actions.
 - Path of Titans integration assumptions and action key mapping
 - Letta tool surface definitions and local stubs
 
+## Design notes
+
+- `docs/vision_workflow.md`: target perceive → think → remember → act loop vs what is implemented now (including Letta/RAG/vision detail).
+
 ## Project layout
 
 - `src/data.py`: ingestion, manifest generation, split logic
@@ -110,6 +114,8 @@ py -3 scripts/run_paleo_control_loop.py --mode control --enable-control --fps 4
 ```
 
 Emergency stop key: `f12` (configurable in `src/config.py`).
+
+Short **in-game** checklist and next tasks: `TODO.md`.
 
 ### Transparent on-top overlay
 
