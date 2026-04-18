@@ -131,3 +131,4 @@
 - Filled `docs/project_checkin2/response2.md` and `response2.txt` with a PALEO progress draft (reused check-in 1 framing; updated for Serengeti manifest/JPEG workflow, `run_experiments.py` sweep, Instinct Agent / Primal Mind / Letta stubs, evaluation and next-step plan).
 ## 2026-04-18
 - Rewrote `docs/project_checkin2/response2.md` and `response2.txt` to a cleaner PALEO-only Check-in 2 narrative (removed teammate-specific references, simplified wording, and aligned claims to implemented repo components/scripts).
+- Second pass on `response2.md` / `response2.txt`: shorter plain-language Check-in 2 aligned to repo (`serve_companion`, live capture, control loop, image train/eval/pipeline scripts, Letta stubs); expanded problem motivation (immersive NPCs, combat practice); ML+CV+RAG + Letta as main agent layer; current progress + PoT in-game testing called out as not yet done.
