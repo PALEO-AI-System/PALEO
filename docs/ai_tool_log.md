@@ -129,3 +129,5 @@
 ## 2026-04-17
 - Added `docs/project_checkin2/`: `checkin2.md` holds the course Check-in 2/2 prompt (`# Project-Checkin-2/2`, nine sections) in the same markdown style as `checkin1.md`; `response2.md` / `response2.txt` aligned to the same nine-section rubric with blank fields for drafts.
 - Filled `docs/project_checkin2/response2.md` and `response2.txt` with a PALEO progress draft (reused check-in 1 framing; updated for Serengeti manifest/JPEG workflow, `run_experiments.py` sweep, Instinct Agent / Primal Mind / Letta stubs, evaluation and next-step plan).
+## 2026-04-18
+- Rewrote `docs/project_checkin2/response2.md` and `response2.txt` to a cleaner PALEO-only Check-in 2 narrative (removed teammate-specific references, simplified wording, and aligned claims to implemented repo components/scripts).

@@ -11,64 +11,66 @@ PALEO (with Primal Mind)
 
 ## 3. Problem to Solve
 
-- What the problem is: Survival-style dinosaur games need agents that are less brittle than hand-scripted NPC loops. PALEO targets **Path of Titans**-style play where an **Instinct Agent** should read ongoing gameplay (especially pixels), infer useful high-level state (threat, urgency, risk), and produce **interpretable thought logs** plus safe, explainable actions instead of only reactive scripts.
-- Why it is important: More believable agents help **designers** stress-test maps and resources; they can also help **players** who want assistance or lower micromanagement load, if deployed ethically (private testing, advisor modes, no anti-cheat evasion).
-- Who is affected or who would benefit from a solution: **Developers** prototyping survival AI and **players** who want optional coaching-style help; the course project focuses on **research-style evaluation** (classification + agent loop metrics) rather than shipping a commercial cheat.
+- What the problem is: PALEO is building an Instinct Agent for dinosaur survival gameplay that can read screen-derived context, keep internal state, and output explainable high-level actions instead of only hardcoded reactions.
+- Why it is important: Survival-game behavior systems are often rigid and hard to debug. This project aims to make behavior more adaptive while still interpretable through structured thought/state outputs.
+- Who is affected or who would benefit from a solution: The primary audience is game/AI developers and researchers who want a practical, testable pipeline for vision + agent decision loops; secondarily, players can benefit from advisor-style assistance modes.
 
 ## 4. AI Functions to Be Developed
 
-- Machine learning: **Binary predator / non-predator** (and related behavior) classification from camera-trap–style images now, with a path toward **game-frame** features later. **ResNet-18** fine-tuning on disk-backed JPEGs is implemented; **`scripts/run_experiments.py`** sweeps learning rates and augmentation and logs JSON histories.
-- Search: Lightweight **retrieval / RAG-style** support for game wiki text (`src/wiki_rag.py`) to ground explanations and future agent context (not the core hot loop yet).
-- Computer vision: **Screen capture** hooks for live HUD / control-loop demos (`mss`), plus **manifest-linked Serengeti images** for supervised training; OpenCV-style **rule baselines** remain the transparent comparison point.
-- Neural network: **ResNet-18** backbone with a trainable head for the image classifier; training and eval scripts save checkpoints and **confusion-matrix / classification-report** metrics.
-- Optimization: **Training hyperparameters** (learning rate, augmentation on/off) explored via the experiment sweep script; future work can add clearer sensitivity plots from saved histories.
+- Machine learning: Binary predator-focused image classification pipeline using ResNet-18 fine-tuning on local Serengeti image subsets.
+- Search: Lightweight retrieval support for game/mechanics context via `src/wiki_rag.py`.
+- Computer Vision: Live screen capture + simple visual signal extraction for HUD/control-loop testing, plus disk-image training/evaluation scripts.
+- Neural network: ResNet-18 backbone with train/eval scripts for checkpointing and metrics output.
+- Optimization: Hyperparameter sweeps (learning rate + augmentation toggles) through `scripts/run_experiments.py`.
 
-**Please be specific about what your AI system is expected to do:** End-to-end, PALEO should **perceive** (pixels + simple stats), **classify / summarize** threat-relevant cues, **maintain** per-creature **Primal Mind** memory, and **decide** high-level actions that map to PoT keybindings—today mostly demonstrated with **local stubs**, **advice mode**, and **guarded control** prototypes rather than full online Letta deployment.
+Please be specific about what your AI system is expected to do:
+PALEO is expected to run a perceive -> think -> remember -> act loop where the Instinct Agent uses Primal Mind state and vision signals to select safe, explainable actions, first in advice mode and then in guarded control mode.
 
 ## 5. Use of Agentic AI
 
-- Will the system plan multi-step actions? **Yes, in intent:** the control loop runs repeated **ticks** (perceive → think → optional act); planning depth will grow as Letta integration matures.
-- Will it call tools or external APIs? **Planned:** Letta **tool schemas** exist (`src/letta_tools.py`, `scripts/show_letta_tools.py`); current repo uses **local stubs** and HTTP companion endpoints rather than a production Letta deployment.
-- Will it reason over memory or context? **Yes, in design:** the **Instinct Agent** uses **Primal Mind** structured state (personality, goals, recent experiences) so decisions stay consistent across ticks.
-- Will it coordinate multiple AI modules? **Yes, emerging:** vision / heuristics, classifier outputs, RAG/wiki context, and the agent policy are intended to compose; today the **companion HUD** and **overlay** demonstrate wiring between capture, thought JSON, and control preview.
-- Will it make decisions autonomously based on feedback? **Partially:** **`run_paleo_control_loop.py`** supports **advice** vs **guarded control** with a kill switch; autonomy is intentionally constrained for safety and course ethics.
+- Will the system plan multi-step actions? Yes, as an iterative tick-based loop with state carried across ticks.
+- Will it call tools or external APIs? Local tool-style endpoints and schemas are implemented; Letta-side wiring is scaffolded in `src/letta_tools.py`.
+- Will it reason over memory or context? Yes, via Instinct Agent + Primal Mind structured memory/state.
+- Will it coordinate multiple AI modules? Yes, the design combines vision signals, classifier outputs, memory/state, and action mapping.
+- Will it make decisions autonomously based on feedback? Partially; current control loop supports advice and guarded control with an emergency stop for safety.
 
 ## 6. Dataset(s)
 
-- Dataset name: **Snapshot Serengeti** (metadata via **Dryad CSV exports** in-repo); **Kaggle predator/prey** tabular/image bundles (**optional / deferred** for very large downloads per `docs/deferred_large_datasets.md`).
-- Source: Serengeti via **`https://lila.science/datasets/snapshot-serengeti`** (underlying data); this repo documents **Dryad CSV** joins. Kaggle discovery URL remains **`https://www.kaggle.com/datasets?search=predator+prey+animals`** for candidate packs placed under `data/raw/kaggle/`.
-- Data modality (image, text, audio, video, multimodal, etc.): **Image** (camera-trap JPEGs + future gameplay frames), **tabular metadata** (CSV manifests), **text** (wiki / RAG corpora), evolving toward **multimodal** agent inputs.
-- Approximate size: Full Serengeti is **very large**; we train on **small deterministic subsets** (manifest caps and `--max-images` downloads). Early teammate runs used on the order of **~200 labeled images** for quick sweeps—not the final dataset scale.
-- Preprocessing plan: **`scripts/prepare_data.py`** builds **JSONL manifests** with train/val/test splits and **`predator_label`**; **`scripts/download_serengeti_images.py`** materializes a **local JPEG folder** under `data/processed/serengeti_images/`; images are resized/normalized in the **PyTorch** training path; optional **augmentation** is now configurable in **`train_serengeti_predator_on_disk`**.
+- Dataset name: Snapshot Serengeti (primary); Kaggle predator/prey data remains optional/deferred.
+- Source: `https://lila.science/datasets/snapshot-serengeti` and Kaggle dataset search references documented in the repo.
+- Data modality (image, text, audio, video, multimodal, etc.): Image + tabular metadata now; text context via wiki/RAG components.
+- Approximate size: Full dataset is very large; current work uses reproducible smaller subsets for local experimentation.
+- Preprocessing plan: Build JSONL manifests and splits with `scripts/prepare_data.py`, download subset images with `scripts/download_serengeti_images.py`, then train/evaluate from `data/processed/serengeti_images`.
 
 If you are collecting your own data, also include:
 
-- Collection method: **Optional later:** self-captured **gameplay screenshots or clips** for domain adaptation if wildlife transfer is too brittle.
-- Annotation plan: **Minimal manual labels** only if needed for game-specific states.
-- Ethical considerations: **Public/permitted data only** for coursework; **disclose AI-assisted authoring**; **no unfair online automation**—keep **advisor / private test** posture and document limitations.
+- Collection method: Optional future self-captured gameplay screenshots/clips for domain adaptation.
+- Annotation plan: Minimal manual labeling for game-specific states only if needed.
+- Ethical considerations: Use permitted/public data, avoid personal data, disclose AI usage, and keep automation in safe private testing contexts.
 
 ## 7. Evaluation Plan
 
-- What metrics will you use? **Classification:** accuracy, **macro-F1**, per-class precision/recall (especially **predator / minority class** when imbalance inflates accuracy), confusion matrices from **`scripts/evaluate_serengeti_images.py`**. **Agent / system:** qualitative **thought-log** coherence, **action success** and **latency** in the control loop where measurable, robustness under noise/imbalance.
-- What baseline methods or comparison methods will you use? **Majority-class / heuristic validation accuracy** from **`run_experiments.py`** (zero training), **OpenCV-style rule baselines**, and **several ResNet-18 fine-tuning configs** (learning rate × augmentation). Future work adds **convergence curves** and **sensitivity plots** from saved **`training_histories.json`**.
-- How will you determine whether the project is successful? Meets course rubric: **reproducible scripts**, **baseline vs learned comparison**, honest discussion of **failure modes** (e.g., inflated accuracy under imbalance), and a **credible path** from wildlife pretraining to game-facing Instinct Agent behavior.
+- What metrics will you use? Accuracy, macro-F1, per-class precision/recall (especially predator-class recall), and confusion matrix metrics.
+- What baseline methods or comparison methods will you use? Rule/heuristic baselines (including no-training majority heuristic) vs trained ResNet-18 variants from experiment sweeps.
+- How will you determine whether the project is successful? Success means reproducible scripts, clear baseline-vs-trained comparisons, and evidence that the agent loop is usable, explainable, and safety-constrained.
 
 Examples may include accuracy, F1 score, mAP,  success rate, latency, user satisfaction, robustness, or other task-specific metrics.
 
 ## 8. Current Progress
 
-- Dataset downloaded or collected: **Serengeti metadata path is documented** (Dryad CSV workflow in `README.md`); **small JPEG subsets** can be fetched with **`download_serengeti_images.py`**. **Large Kaggle pulls** remain **optional/deferred**.
-- Preprocessing completed: **Manifest builder + splits + predator label mapping** are implemented; **processed image directory** workflow exists for local training.
-- Baseline model implemented: **OpenCV-style rule baseline**, **ResNet-18 training + eval scripts**, and a **no-training majority heuristic** inside **`scripts/run_experiments.py`**.
-- Initial experiments run: **Teammate-added experiment sweep** (merged PR) runs multiple ResNet configs and writes **`results/experiments/comparison_table.json`** and **`training_histories.json`**.
-- Preliminary results obtained: **Early small-subset runs** suggest **very high validation accuracy for the majority-class heuristic** (expected under imbalance); best **fine-tuned** config in informal runs favored **lower learning rate with augmentation**—we will emphasize **F1 / recall on the predator class** in the report to avoid misleading headline accuracy.
-- Early observations or failure cases identified: **Class imbalance** makes naive accuracy optimistic; **wildlife-to-game domain gap** will remain a risk; **Letta** is **stubbed**, not fully production-wired.
+- Dataset downloaded or collected: Serengeti CSV/manifest workflow is implemented and documented in `README.md`; subset image download script is in place.
+- Preprocessing completed: Deterministic manifest generation, train/val/test split logic, and predator label mapping are implemented.
+- Baseline model implemented: OpenCV-style rule baseline interfaces and ResNet-18 training/eval pipeline are implemented.
+- Initial experiments run: `scripts/run_experiments.py` is in repo to run multiple configs and a no-training heuristic baseline.
+- Preliminary results obtained: Early small-subset behavior indicates class-imbalance sensitivity; report focus is shifting toward F1/recall rather than headline accuracy alone.
+- Early observations or failure cases identified: Major risks are class imbalance, domain shift from wildlife images to game scenes, and incomplete production Letta wiring.
 
-Supporting evidence (screenshots, sample outputs, training curves, tables or visualizations): **JSON metrics and histories** under `results/experiments/` after running **`python scripts/run_experiments.py`** (requires local **`serengeti_images`** and **PyTorch**); **companion HUD / overlay** screenshots optional for agent demos; **figure generation from histories** is the next explicit plotting step.
+Supporting evidence (screenshots, sample outputs, training curves, tables or visualizations):
+Repo includes scripts and output paths for metrics/history generation (`scripts/run_experiments.py`, `scripts/evaluate_serengeti_images.py`, `results/experiments/...`) and runnable HUD/control demos (`scripts/run_paleo_live.py`, `scripts/run_paleo_control_loop.py`, `scripts/run_paleo_overlay.py`).
 
 ## 9. Next-Step Plan
 
-- What will be completed next? **Plot convergence + sensitivity** from **`training_histories.json`**; tighten **report tables** (baseline vs best model); optionally **expand labeled image count** and **log class-balanced metrics**; continue **Letta** integration beyond stubs if time allows.
-- What experiments will be run? **Larger Serengeti subset**, **confusion matrices** per checkpoint, **augmentation and LR grid** refinements; possible **Kaggle** merge experiments if bundle size is manageable.
-- What improvements will be made? **Clearer evaluation protocol** for imbalance, **game-frame** smoke tests, and **documentation** aligning **Instinct Agent / Primal Mind** behavior with shipped scripts (`docs/lexicon.md`, `docs/vision_workflow.md`).
-- What timeline do you expect for the next milestones? **Near term (days–1–2 weeks):** figures + tables for Check-in 2 / final report; **following weeks:** deeper agent integration and qualitative PoT sessions as hardware and deadlines allow.
+- What will be completed next? Generate report-ready experiment tables/figures and tighten metric tracking for the class deliverables.
+- What experiments will be run? Additional LR/augmentation sweep runs on larger local subsets with confusion-matrix checks.
+- What improvements will be made? Better imbalance-aware evaluation, more robust game-facing smoke tests, and clearer docs alignment between current code and project brief.
+- What timeline do you expect for the next milestones? Immediate next milestone is finishing Check-in 2 artifacts and reproducible experiment outputs; subsequent milestone is deeper agent-loop/vision integration.
