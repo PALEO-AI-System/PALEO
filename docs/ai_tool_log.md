@@ -132,3 +132,4 @@
 ## 2026-04-18
 - Rewrote `docs/project_checkin2/response2.md` and `response2.txt` to a cleaner PALEO-only Check-in 2 narrative (removed teammate-specific references, simplified wording, and aligned claims to implemented repo components/scripts).
 - Second pass on `response2.md` / `response2.txt`: shorter plain-language Check-in 2 aligned to repo (`serve_companion`, live capture, control loop, image train/eval/pipeline scripts, Letta stubs); expanded problem motivation (immersive NPCs, combat practice); ML+CV+RAG + Letta as main agent layer; current progress + PoT in-game testing called out as not yet done.
+- Added `pages/project-checkin-2.html` in the same visual style as `pages/project-checkin-1.html`, populated with Check-in 2 sections/content; intentionally not wired into site nav/index yet.

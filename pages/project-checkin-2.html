@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PALEO | Project Check-in 2</title>
+  <meta name="description" content="PALEO Project Check-in 2: concise update on current progress, gaps, and next-step plan." />
+  <meta name="keywords" content="PALEO check-in 2, dinosaur AI project update, instinct agent progress" />
+  <meta name="author" content="PALEO Team" />
+  <meta property="og:title" content="PALEO | Project Check-in 2" />
+  <meta property="og:description" content="PALEO check-in 2 progress update and next milestones." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://paleo-ai-system.github.io/PALEO/project-checkin-2.html" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="canonical" href="https://paleo-ai-system.github.io/PALEO/project-checkin-2.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f9f2;
+      --panel: rgba(255, 255, 255, 0.86);
+      --ink: #1f3b31;
+      --ink-soft: #35584b;
+      --line: #c7decd;
+      --accent: #4e9d92;
+      --accent-2: #56a984;
+      --shadow: rgba(30, 62, 50, 0.16);
+      --focus-ring: #1d7f67;
+    }
+    body.dark {
+      --bg: #0f1e1a;
+      --panel: rgba(23, 38, 32, 0.82);
+      --ink: #e5f5eb;
+      --ink-soft: #c6e2d5;
+      --line: #2b4e43;
+      --accent: #6bb9c3;
+      --accent-2: #75cb9f;
+      --shadow: rgba(5, 10, 8, 0.35);
+      --focus-ring: #9eead3;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Urbanist", "Segoe UI", sans-serif;
+      color: var(--ink);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 7% 3%, rgba(86, 169, 132, 0.18), transparent 33%),
+        radial-gradient(circle at 90% 5%, rgba(78, 157, 146, 0.16), transparent 31%),
+        repeating-radial-gradient(circle at 20% 20%, rgba(86, 169, 132, 0.04) 0 6px, transparent 6px 22px),
+        var(--bg);
+    }
+    .skip-link {
+      position: absolute; top: -44px; left: 10px; z-index: 120;
+      padding: 9px 12px; border-radius: 10px; background: #fff; color: #134c3c;
+      border: 2px solid var(--focus-ring); text-decoration: none; font-weight: 700;
+    }
+    .skip-link:focus { top: 8px; }
+    .progress {
+      position: fixed; top: 0; left: 0; width: 0; height: 5px; z-index: 100;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent), #89cf9a);
+      box-shadow: 0 0 16px rgba(96, 193, 141, 0.5);
+    }
+    .nav {
+      position: sticky; top: 0; z-index: 90; backdrop-filter: blur(9px);
+      background: rgba(244, 249, 242, 0.75); border-bottom: 1px solid var(--line);
+    }
+    body.dark .nav { background: rgba(15, 30, 26, 0.75); }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto; padding: 12px 18px;
+      display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    }
+    .brand { font-family: "Fraunces", serif; font-size: 1.3rem; font-weight: 700; }
+    .nav-links { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .btn {
+      text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: 999px;
+      padding: 8px 12px; font-weight: 600; background: rgba(255, 255, 255, 0.45);
+    }
+    .btn.active { background: rgba(86, 169, 132, 0.2); border-color: #86c6a3; }
+    .repo-btn {
+      color: #fff; border: 0;
+      background: linear-gradient(120deg, #63b884, #4e9d92, #8bcf9f, #66b5c4);
+      background-size: 300% 300%; animation: repoFlow 6s ease infinite;
+    }
+    .mode-toggle {
+      border: 1px solid var(--line); border-radius: 999px; background: transparent;
+      color: var(--ink); padding: 8px 12px; font-weight: 700; cursor: pointer;
+    }
+    a:focus-visible, button:focus-visible, summary:focus-visible {
+      outline: 3px solid var(--focus-ring); outline-offset: 2px;
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 22px 18px 56px; }
+    .hero, .card {
+      background: linear-gradient(125deg, var(--panel), rgba(249, 242, 226, 0.72));
+      border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 8px 22px var(--shadow);
+      padding: 18px; margin-bottom: 14px;
+    }
+    h1, h2, h3 { margin: 0 0 11px; }
+    h1, h2 { font-family: "Fraunces", serif; }
+    h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+    h2 { font-size: 1.35rem; color: var(--accent); }
+    h3 { font-size: 1.03rem; color: var(--accent); }
+    .muted { color: var(--ink-soft); }
+    p { margin: 0 0 10px; max-width: 70ch; line-height: 1.6; }
+    ul { margin: 0; padding-left: 18px; }
+    li { margin-bottom: 7px; line-height: 1.54; }
+    .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+    .status {
+      display: inline-block; font-size: 0.76rem; font-weight: 700; border: 1px solid;
+      border-radius: 999px; padding: 2px 8px; margin-right: 8px;
+    }
+    .done { background: #eaf6ee; border-color: #9ec8ad; color: #275a40; }
+    .planned { background: #fff4df; border-color: #d8bb84; color: #7e5920; }
+    .in-progress { background: #ebf6f3; border-color: #9dc8bf; color: #245f53; }
+    .qa-item {
+      border: 1px solid #d4e7d7; border-radius: 12px; background: rgba(252, 255, 251, 0.76);
+      margin-bottom: 11px; overflow: hidden;
+    }
+    .qa-item summary {
+      list-style: none; cursor: pointer; font-weight: 700; color: #245946;
+      padding: 10px 12px; background: #eff8f0; border-bottom: 1px solid #d7eadb;
+    }
+    .qa-content { padding: 13px; }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    @keyframes repoFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+      .reveal { opacity: 1 !important; transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
+  <div class="progress" id="scrollProgress" aria-hidden="true"></div>
+  <nav class="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <div class="brand">PALEO</div>
+      <div class="nav-links">
+        <a class="btn" href="index.html">Home</a>
+        <a class="btn" href="profiles/index.html">Profiles</a>
+        <a class="btn" href="technical.html">Technical</a>
+        <a class="btn" href="companion-hud.html" title="Requires python scripts/serve_companion.py for live API">Companion HUD</a>
+        <a class="btn" href="project-checkin-1.html">Check-in 1</a>
+        <a class="btn active" href="project-checkin-2.html" aria-current="page">Check-in 2</a>
+        <a class="btn repo-btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode" aria-pressed="false">Dark Mode</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="wrap" id="mainContent" aria-label="PALEO check-in 2 content">
+    <section class="hero reveal">
+      <h1>PALEO Project Check-in 2</h1>
+      <p class="muted">Short, honest progress report focused on what is actually implemented in the repo right now.</p>
+      <p>
+        <span class="status in-progress">IN PROGRESS</span>
+        Live capture + control prototypes are working; full Letta wiring is the main remaining gap.
+      </p>
+    </section>
+
+    <section class="grid reveal">
+      <article class="card">
+        <h2>Project Snapshot</h2>
+        <ul>
+          <li><strong>Title:</strong> PALEO (with Primal Mind)</li>
+          <li><strong>Team:</strong> World's Finest</li>
+          <li><strong>Members:</strong> Laura Wetherhold, Alexus Aguirre Arias</li>
+          <li><strong>Core aim:</strong> believable per-dinosaur behavior loops, not static NPC scripts.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>Status at a Glance</h2>
+        <p><span class="status done">WORKING</span> Live screen feed, HUD/overlay, and guarded keyboard path.</p>
+        <p><span class="status planned">NEXT</span> Real Letta session in the middle + in-game PoT smoke tests.</p>
+      </article>
+    </section>
+
+    <section class="card reveal">
+      <h2>Check-in Questions (1 to 9)</h2>
+
+      <details class="qa-item" open>
+        <summary>1-2) Project title and team</summary>
+        <div class="qa-content">
+          <p><strong>Project title:</strong> PALEO (with Primal Mind)</p>
+          <p><strong>Team:</strong> World's Finest (Laura Wetherhold, Alexus Aguirre Arias)</p>
+        </div>
+      </details>
+
+      <details class="qa-item" open>
+        <summary>3) Problem to solve</summary>
+        <div class="qa-content">
+          <p>
+            Many dinosaur-game NPCs feel stale and non-individual. PALEO focuses on agentic dinosaurs with different
+            personality thresholds that read your screen, form thoughts, and choose actions, so behavior feels more
+            immersive and less scripted. Stretch idea: quest autopilot. Main goal: believable animal-like behavior.
+          </p>
+        </div>
+      </details>
+
+      <details class="qa-item" open>
+        <summary>4-5) AI functions and agentic AI usage</summary>
+        <div class="qa-content">
+          <ul>
+            <li><strong>ML:</strong> Serengeti predator/non-predator training path with scripts for prepare, train, eval, and sweeps.</li>
+            <li><strong>CV:</strong> live screen capture + frame stats + HUD/overlay visibility.</li>
+            <li><strong>Search:</strong> wiki RAG path in <code>src/wiki_rag.py</code>.</li>
+            <li><strong>Letta role:</strong> planned main decision/memory layer; current repo has Letta-shaped tools/stubs.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="qa-item" open>
+        <summary>6) Datasets</summary>
+        <div class="qa-content">
+          <ul>
+            <li><strong>Primary:</strong> Snapshot Serengeti (Dryad CSV workflow documented in README).</li>
+            <li><strong>Optional later:</strong> larger Kaggle packs (deferred for size/bandwidth reasons).</li>
+            <li><strong>Modality:</strong> image + CSV metadata now; text for RAG; gameplay frames later.</li>
+            <li><strong>Preprocessing:</strong> <code>prepare_data</code> -> manifest/splits -> local JPEGs -> train/eval scripts.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="qa-item" open>
+        <summary>7) Evaluation plan</summary>
+        <div class="qa-content">
+          <ul>
+            <li><strong>Image metrics:</strong> accuracy, F1 (especially predator class), confusion matrix.</li>
+            <li><strong>Baselines:</strong> rule/heuristic + no-training majority baseline vs trained runs.</li>
+            <li><strong>Agent checks:</strong> loop stability, thought/action alignment, latency, and safe control behavior.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="qa-item" open>
+        <summary>8) Current progress</summary>
+        <div class="qa-content">
+          <ul>
+            <li><strong>Live screen feed:</strong> working via <code>run_paleo_live.py</code>, <code>serve_companion.py</code>, and overlay path.</li>
+            <li><strong>Keyboard output:</strong> prototype control path works with <code>--enable-control</code> + emergency stop.</li>
+            <li><strong>Agent loop code:</strong> Instinct Agent + Primal Mind + action mapping + scenario simulation exist.</li>
+            <li><strong>Training path:</strong> prepare/download/train/eval/experiment scripts are present; results are local-only when run.</li>
+            <li><strong>Main gap:</strong> real Letta session integration in the middle of the live loop.</li>
+            <li><strong>Still pending:</strong> full Path of Titans in-game smoke test (focused game window + simple walk control).</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="qa-item" open>
+        <summary>9) Next-step plan</summary>
+        <div class="qa-content">
+          <ul>
+            <li>Wire Letta as the real memory/reason/decision layer.</li>
+            <li>Run in-game tests: confirm capture sees PoT and control can perform simple movement safely.</li>
+            <li>Add report-ready experiment tables/figures from local runs.</li>
+            <li>Continue improving behavior quality and realism after Letta hookup is stable.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const body = document.body;
+      const modeToggle = document.getElementById("modeToggle");
+      const key = "paleo-mode";
+      const saved = localStorage.getItem(key);
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const bar = document.getElementById("scrollProgress");
+
+      function setMode(dark) {
+        body.classList.toggle("dark", dark);
+        modeToggle.textContent = dark ? "Light Mode" : "Dark Mode";
+        modeToggle.setAttribute("aria-pressed", dark ? "true" : "false");
+        localStorage.setItem(key, dark ? "dark" : "light");
+      }
+
+      setMode(saved === "dark");
+      modeToggle.addEventListener("click", function () {
+        setMode(!body.classList.contains("dark"));
+      });
+
+      let scrollTicking = false;
+      function updateScrollProgress() {
+        const top = window.scrollY;
+        const height = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = height <= 0 ? 0 : (top / height) * 100;
+        bar.style.width = pct + "%";
+        scrollTicking = false;
+      }
+      window.addEventListener("scroll", function () {
+        if (!scrollTicking) {
+          scrollTicking = true;
+          window.requestAnimationFrame(updateScrollProgress);
+        }
+      }, { passive: true });
+      updateScrollProgress();
+
+      const revealEls = document.querySelectorAll(".reveal");
+      if (reduceMotion) {
+        revealEls.forEach(function (section) { section.classList.add("in"); });
+      } else {
+        const observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) entry.target.classList.add("in");
+          });
+        }, { threshold: 0.15 });
+        revealEls.forEach(function (section) { observer.observe(section); });
+      }
+    })();
+  </script>
+</body>
+</html>
