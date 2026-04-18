@@ -109,6 +109,7 @@ def train_serengeti_predator_on_disk(
     val_fraction: float = 0.15,
     split_seed: int = 42,
     image_size: int = 224,
+    augment: bool = True,
 ) -> Dict[str, List[float]]:
     """Fine-tune ResNet-18 fc layer for binary predator classification."""
     if torch is None or resnet18 is None:
@@ -125,7 +126,7 @@ def train_serengeti_predator_on_disk(
         )
 
     train_recs, val_recs = _split_train_val(local, val_fraction=val_fraction, seed=split_seed)
-    train_ds = SerengetiDiskDataset(train_recs, images_root, image_size=image_size, augment=True)
+    train_ds = SerengetiDiskDataset(train_recs, images_root, image_size=image_size, augment=augment)
     val_ds = SerengetiDiskDataset(val_recs, images_root, image_size=image_size, augment=False)
 
     pin_memory = torch.cuda.is_available()
