@@ -141,6 +141,8 @@ Output: `dist/PALEO.exe` (live HUD) and `dist/PALEOOverlay.exe` (transparent on-
 
 **PALEO Profiles** (creature reference mini-site): use the **Profiles** tab from the main site on **GitHub Pages** — no need to run Python for that. Profiles load JSON + curve text via `fetch()`; avoid raw `file://`. Optionally open `http://127.0.0.1:8765/profiles/index.html` when already running `serve_companion.py` for the Companion HUD. (`serve_companion.py` is for HUD `/api/*`, not required for browsing Profiles.) For planning **distinct visuals per future creature** while sharing the same data model, see `docs/profiles_future_styles.md`.
 
+**Chroma Strata** (standalone 2D skin concept lab): open `pages/chroma-strata.html` from the site nav or `http://127.0.0.1:8765/chroma-strata.html` when `serve_companion.py` is running. Single-page tool: stack a base color or base image variants with transparent overlay regions, **Randomize** per-layer picks, **Download PNG** export — browser-only, no Instinct Agent API.
+
 **GitHub Pages:** you can open `companion-hud.html` from the site nav, but Pages only serves static files — there is no `/api/*`. The page falls back to an **offline preview** (browser-only heuristic). For the real **Instinct Agent** output matching the Python code, use `serve_companion.py` locally.
 
 ## Real dataset path (Dryad CSV exports of Snapshot Serengeti)

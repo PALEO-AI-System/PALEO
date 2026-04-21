@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chroma Strata · 2D skin layer lab</title>
+  <meta name="description" content="Stack transparent skin regions, upload color variants per layer, randomize combinations, export PNG. Local-only in the browser." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --void: #120e18;
+      --deep: #1e1830;
+      --panel: #f3eee6;
+      --panel-edge: #e0d8cc;
+      --ink: #1c1528;
+      --muted: #5c5368;
+      --coral: #e45641;
+      --coral-dim: #b63d2e;
+      --gold: #c9a227;
+      --wash: rgba(255, 248, 240, 0.06);
+      --radius: 14px;
+      --font: "Sora", system-ui, sans-serif;
+      --serif: "Instrument Serif", Georgia, serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      color: #e8e2f0;
+      background:
+        radial-gradient(ellipse 100% 80% at 50% -30%, rgba(228, 86, 65, 0.09), transparent 50%),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(201, 162, 39, 0.06), transparent 45%),
+        linear-gradient(165deg, var(--void) 0%, var(--deep) 55%, #151022 100%);
+    }
+
+    a { color: #f0a090; }
+    a:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 20px 48px;
+    }
+
+    header {
+      margin-bottom: 28px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 2.65rem);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      color: #fff;
+    }
+
+    header p {
+      margin: 0;
+      max-width: 52ch;
+      color: rgba(232, 226, 240, 0.72);
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .kbd {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #fff;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--panel);
+      color: var(--ink);
+      border-radius: var(--radius);
+      border: 1px solid var(--panel-edge);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: var(--ink);
+    }
+
+    .panel-inner { padding: 18px 20px 20px; }
+
+    .stage {
+      position: sticky;
+      top: 20px;
+    }
+
+    .preview-shell {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--panel-edge);
+      background: var(--panel);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    .preview-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 16px;
+      background: #ebe4d9;
+      border-bottom: 1px solid var(--panel-edge);
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .preview-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      background: repeating-conic-gradient(#ddd8cf 0% 25%, #e8e3da 0% 50%) 50% / 20px 20px;
+    }
+
+    .preview-stack {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 6%;
+    }
+
+    .preview-stack-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+    }
+
+    .layer-base {
+      position: absolute;
+      inset: 0;
+      border-radius: 8px;
+    }
+
+    .layer-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      pointer-events: none;
+    }
+
+    label.small {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    input[type="color"] {
+      width: 100%;
+      height: 44px;
+      padding: 4px;
+      border: 1px solid var(--panel-edge);
+      border-radius: 10px;
+      cursor: pointer;
+      background: #fff;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--panel-edge);
+      border-radius: 10px;
+      font-family: var(--font);
+      font-size: 0.9rem;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      font-size: 0.8rem;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    button {
+      font-family: var(--font);
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
+    }
+
+    button:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--coral) 0%, var(--coral-dim) 100%);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(228, 86, 65, 0.35);
+    }
+
+    .btn-primary:hover { filter: brightness(1.06); }
+
+    .btn-secondary {
+      background: #2a2438;
+      color: #f5f0e8;
+    }
+
+    .btn-secondary:hover { background: #3d3552; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px dashed var(--panel-edge);
+      padding: 8px 12px;
+    }
+
+    .btn-ghost:hover {
+      border-style: solid;
+      color: var(--ink);
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .btn-tiny {
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      border-radius: 8px;
+    }
+
+    .region-card {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 12px;
+      background: #fffcf7;
+      border: 1px solid var(--panel-edge);
+    }
+
+    .region-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .region-head .grow { flex: 1; min-width: 140px; }
+
+    .thumb-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      min-height: 0;
+    }
+
+    .thumb {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 2px solid transparent;
+      cursor: pointer;
+      background: repeating-conic-gradient(#e0dbd4 0% 25%, #f0ebe4 0% 50%) 50% / 10px 10px;
+    }
+
+    .thumb[data-active="1"] {
+      border-color: var(--coral);
+      box-shadow: 0 0 0 1px var(--coral);
+    }
+
+    .actions-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--panel-edge);
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.45;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(42, 36, 56, 0.08);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    footer {
+      margin-top: 36px;
+      font-size: 0.78rem;
+      color: rgba(232, 226, 240, 0.45);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Chroma Strata</h1>
+      <p>
+        Stack a <strong>base</strong> (flat color or full image variants), then <strong>transparent overlays</strong> per region.
+        Add multiple files per layer as color options; <span class="kbd">Randomize</span> picks one variant per layer.
+        Press <span class="kbd">R</span> anytime. Everything stays in your browser — nothing is uploaded.
+      </p>
+    </header>
+
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-inner">
+          <h2>Layers</h2>
+
+          <div class="region-card" style="margin-top:0;background:#fff;">
+            <div class="region-head">
+              <div class="grow">
+                <label class="small" for="base-label">Base (bottom)</label>
+                <input type="text" id="base-label" value="Base" maxlength="40" aria-label="Base layer name" />
+              </div>
+            </div>
+            <label class="small" for="base-color">Fallback color (when no base image is chosen)</label>
+            <input type="color" id="base-color" value="#b89a6f" />
+            <label class="small" for="base-files" style="margin-top:12px;">Base image variants (optional)</label>
+            <input type="file" id="base-files" accept="image/*" multiple />
+            <div class="thumb-strip" id="base-thumbs" hidden></div>
+            <p class="hint">If you add base images, randomize will pick among them; otherwise the swatch above shows through (overlays stack on top). Each file pick <strong>adds</strong> to this layer’s bank (use Clear to reset).</p>
+          </div>
+
+          <div id="regions"></div>
+
+          <div class="row" style="margin-top:14px;">
+            <button type="button" class="btn-ghost" id="add-region">+ Add overlay region</button>
+          </div>
+
+          <div class="actions-bar">
+            <button type="button" class="btn-primary" id="btn-random">Randomize stack</button>
+            <button type="button" class="btn-secondary" id="btn-export">Download PNG</button>
+            <button type="button" class="btn-ghost" id="btn-clear">Clear all images</button>
+          </div>
+          <p class="hint">Tip: keep every file the same pixel size for a tight composite; mixed sizes are centered with <em>contain</em>.</p>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="preview-shell">
+          <div class="preview-toolbar">
+            <span class="pill" id="pill-state">Ready</span>
+            <span>Live preview</span>
+          </div>
+          <div class="preview-frame" id="preview-frame">
+            <div class="preview-stack">
+              <div class="preview-stack-inner" id="preview-stack"></div>
+            </div>
+          </div>
+        </div>
+        <p class="hint" style="color:rgba(232,226,240,0.55);margin-top:12px;text-align:center;">
+          Chroma Strata is separate from PALEO’s main site, Profiles, and Companion HUD — local tool only.
+        </p>
+      </div>
+    </div>
+
+    <footer>Chroma Strata · PALEO repo · no server required (open via local server or Pages for consistent behavior)</footer>
+  </div>
+
+  <canvas id="export-canvas" width="1" height="1" hidden aria-hidden="true"></canvas>
+
+  <script>
+(function () {
+  "use strict";
+
+  /** @typedef {{ url: string, file: File }} Slot */
+  /** @typedef {{ id: string, name: string, slots: Slot[], chosen: number }} Region */
+
+  const baseColorInput = document.getElementById("base-color");
+  const baseFilesInput = document.getElementById("base-files");
+  const baseThumbs = document.getElementById("base-thumbs");
+  const regionsEl = document.getElementById("regions");
+  const previewStack = document.getElementById("preview-stack");
+  const pillState = document.getElementById("pill-state");
+  const exportCanvas = document.getElementById("export-canvas");
+
+  /** @type {Slot[]} */
+  let baseSlots = [];
+  /** @type {number} -1 = use color only */
+  let baseChosen = -1;
+
+  /** @type {Region[]} */
+  let regions = [];
+
+  function uid() {
+    return "r_" + Math.random().toString(36).slice(2, 10);
+  }
+
+  function revokeSlots(slots) {
+    slots.forEach(function (s) {
+      try { URL.revokeObjectURL(s.url); } catch (_) {}
+    });
+  }
+
+  function setPill(text) {
+    pillState.textContent = text;
+  }
+
+  function filesToSlots(fileList) {
+    const out = [];
+    for (let i = 0; i < fileList.length; i++) {
+      const f = fileList[i];
+      if (!f.type.startsWith("image/")) continue;
+      out.push({ url: URL.createObjectURL(f), file: f });
+    }
+    return out;
+  }
+
+  function renderBaseThumbs() {
+    baseThumbs.innerHTML = "";
+    if (baseSlots.length === 0) {
+      baseThumbs.hidden = true;
+      baseChosen = -1;
+      return;
+    }
+    baseThumbs.hidden = false;
+    if (baseChosen >= baseSlots.length) baseChosen = baseSlots.length - 1;
+    baseSlots.forEach(function (s, i) {
+      const img = document.createElement("img");
+      img.className = "thumb";
+      img.src = s.url;
+      img.alt = s.file.name;
+      img.dataset.active = i === baseChosen ? "1" : "0";
+      img.addEventListener("click", function () {
+        baseChosen = i;
+        renderBaseThumbs();
+        paintPreview();
+      });
+      baseThumbs.appendChild(img);
+    });
+  }
+
+  function renderRegions() {
+    regionsEl.innerHTML = "";
+    regions.forEach(function (reg, idx) {
+      const card = document.createElement("div");
+      card.className = "region-card";
+
+      const head = document.createElement("div");
+      head.className = "region-head";
+
+      const nameWrap = document.createElement("div");
+      nameWrap.className = "grow";
+      const lab = document.createElement("label");
+      lab.className = "small";
+      lab.textContent = "Overlay " + (idx + 1) + " (transparent PNG on top)";
+      lab.setAttribute("for", "name-" + reg.id);
+      const nameInput = document.createElement("input");
+      nameInput.type = "text";
+      nameInput.id = "name-" + reg.id;
+      nameInput.value = reg.name;
+      nameInput.maxLength = 48;
+      nameInput.addEventListener("input", function () {
+        reg.name = nameInput.value;
+      });
+      nameWrap.appendChild(lab);
+      nameWrap.appendChild(nameInput);
+
+      const move = document.createElement("div");
+      move.className = "row";
+      const up = document.createElement("button");
+      up.type = "button";
+      up.className = "btn-ghost btn-tiny";
+      up.textContent = "↑";
+      up.disabled = idx === 0;
+      up.title = "Move up (closer to top of stack)";
+      up.addEventListener("click", function () {
+        if (idx === 0) return;
+        const t = regions[idx - 1];
+        regions[idx - 1] = regions[idx];
+        regions[idx] = t;
+        renderRegions();
+        paintPreview();
+      });
+      const down = document.createElement("button");
+      down.type = "button";
+      down.className = "btn-ghost btn-tiny";
+      down.textContent = "↓";
+      down.disabled = idx === regions.length - 1;
+      down.title = "Move down";
+      down.addEventListener("click", function () {
+        if (idx >= regions.length - 1) return;
+        const t = regions[idx + 1];
+        regions[idx + 1] = regions[idx];
+        regions[idx] = t;
+        renderRegions();
+        paintPreview();
+      });
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "btn-ghost btn-tiny";
+      remove.textContent = "Remove region";
+      remove.addEventListener("click", function () {
+        revokeSlots(reg.slots);
+        regions = regions.filter(function (r) { return r.id !== reg.id; });
+        renderRegions();
+        paintPreview();
+      });
+      move.appendChild(up);
+      move.appendChild(down);
+      move.appendChild(remove);
+
+      head.appendChild(nameWrap);
+      head.appendChild(move);
+
+      const fileLab = document.createElement("label");
+      fileLab.className = "small";
+      fileLab.textContent = "Variants for this region (each pick adds to the bank)";
+      fileLab.setAttribute("for", "files-" + reg.id);
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.id = "files-" + reg.id;
+      fileInput.accept = "image/*";
+      fileInput.multiple = true;
+      fileInput.addEventListener("change", function () {
+        if (!fileInput.files || !fileInput.files.length) return;
+        const added = filesToSlots(fileInput.files);
+        reg.slots = reg.slots.concat(added);
+        if (reg.chosen < 0 && reg.slots.length) reg.chosen = 0;
+        fileInput.value = "";
+        renderThumbsForRegion(card, reg);
+        paintPreview();
+      });
+
+      const strip = document.createElement("div");
+      strip.className = "thumb-strip";
+
+      card.appendChild(head);
+      card.appendChild(fileLab);
+      card.appendChild(fileInput);
+      card.appendChild(strip);
+      regionsEl.appendChild(card);
+
+      renderThumbsForRegion(card, reg);
+    });
+  }
+
+  function renderThumbsForRegion(card, reg) {
+    const strip = card.querySelector(".thumb-strip");
+    strip.innerHTML = "";
+    reg.slots.forEach(function (s, i) {
+      const img = document.createElement("img");
+      img.className = "thumb";
+      img.src = s.url;
+      img.alt = s.file.name;
+      img.dataset.active = i === reg.chosen ? "1" : "0";
+      img.addEventListener("click", function () {
+        reg.chosen = i;
+        renderRegions();
+        paintPreview();
+      });
+      strip.appendChild(img);
+    });
+  }
+
+  function paintPreview() {
+    previewStack.innerHTML = "";
+    const color = baseColorInput.value;
+
+    const baseDiv = document.createElement("div");
+    baseDiv.className = "layer-base";
+    baseDiv.style.backgroundColor = color;
+    previewStack.appendChild(baseDiv);
+
+    if (baseSlots.length && baseChosen >= 0) {
+      const im = document.createElement("img");
+      im.className = "layer-img";
+      im.alt = "base";
+      im.src = baseSlots[baseChosen].url;
+      previewStack.appendChild(im);
+    }
+
+    regions.forEach(function (reg) {
+      if (reg.slots.length === 0 || reg.chosen < 0) return;
+      const im = document.createElement("img");
+      im.className = "layer-img";
+      im.alt = reg.name;
+      im.src = reg.slots[reg.chosen].url;
+      previewStack.appendChild(im);
+    });
+  }
+
+  function randomize() {
+    if (baseSlots.length) {
+      baseChosen = Math.floor(Math.random() * baseSlots.length);
+    } else {
+      baseChosen = -1;
+    }
+    regions.forEach(function (reg) {
+      if (!reg.slots.length) {
+        reg.chosen = -1;
+        return;
+      }
+      reg.chosen = Math.floor(Math.random() * reg.slots.length);
+    });
+    renderBaseThumbs();
+    renderRegions();
+    paintPreview();
+    setPill("Randomized");
+    window.setTimeout(function () { setPill("Ready"); }, 900);
+  }
+
+  function drawContain(ctx, img, cw, ch) {
+    const iw = img.naturalWidth || img.width;
+    const ih = img.naturalHeight || img.height;
+    if (!iw || !ih) return;
+    const scale = Math.min(cw / iw, ch / ih);
+    const w = iw * scale;
+    const h = ih * scale;
+    const x = (cw - w) / 2;
+    const y = (ch - h) / 2;
+    ctx.drawImage(img, x, y, w, h);
+  }
+
+  function loadImage(url) {
+    return new Promise(function (resolve, reject) {
+      const img = new Image();
+      img.onload = function () { resolve(img); };
+      img.onerror = reject;
+      img.src = url;
+    });
+  }
+
+  function exportPng() {
+    setPill("Exporting…");
+    const color = baseColorInput.value;
+    const list = [];
+    if (baseSlots.length && baseChosen >= 0) list.push(baseSlots[baseChosen].url);
+    regions.forEach(function (reg) {
+      if (reg.slots.length && reg.chosen >= 0) list.push(reg.slots[reg.chosen].url);
+    });
+
+    if (list.length === 0) {
+      exportCanvas.width = 1024;
+      exportCanvas.height = 1024;
+      const ctx = exportCanvas.getContext("2d");
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, 1024, 1024);
+      finishBlob();
+      return;
+    }
+
+    Promise.all(list.map(loadImage))
+      .then(function (images) {
+        const w = images[0].naturalWidth;
+        const h = images[0].naturalHeight;
+        exportCanvas.width = w;
+        exportCanvas.height = h;
+        const ctx = exportCanvas.getContext("2d");
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, w, h);
+        images.forEach(function (img) {
+          drawContain(ctx, img, w, h);
+        });
+        finishBlob();
+      })
+      .catch(function () {
+        setPill("Could not read images");
+        window.setTimeout(function () { setPill("Ready"); }, 1600);
+      });
+
+    function finishBlob() {
+      exportCanvas.toBlob(function (blob) {
+        if (!blob) {
+          setPill("Export failed");
+          return;
+        }
+        const a = document.createElement("a");
+        const u = URL.createObjectURL(blob);
+        a.href = u;
+        a.download = "chroma-strata-" + Date.now() + ".png";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(u);
+        setPill("Downloaded");
+        window.setTimeout(function () { setPill("Ready"); }, 1200);
+      }, "image/png");
+    }
+  }
+
+  document.getElementById("btn-export").addEventListener("click", exportPng);
+
+  baseFilesInput.addEventListener("change", function () {
+    if (!baseFilesInput.files || !baseFilesInput.files.length) return;
+    baseSlots = baseSlots.concat(filesToSlots(baseFilesInput.files));
+    if (baseChosen < 0 && baseSlots.length) baseChosen = 0;
+    baseFilesInput.value = "";
+    renderBaseThumbs();
+    paintPreview();
+  });
+
+  document.getElementById("add-region").addEventListener("click", function () {
+    regions.push({
+      id: uid(),
+      name: "Region " + (regions.length + 1),
+      slots: [],
+      chosen: -1
+    });
+    renderRegions();
+    paintPreview();
+  });
+
+  document.getElementById("btn-random").addEventListener("click", randomize);
+
+  document.getElementById("btn-clear").addEventListener("click", function () {
+    revokeSlots(baseSlots);
+    baseSlots = [];
+    baseChosen = -1;
+    baseFilesInput.value = "";
+    regions.forEach(function (r) { revokeSlots(r.slots); r.slots = []; r.chosen = -1; });
+    renderBaseThumbs();
+    renderRegions();
+    paintPreview();
+    setPill("Cleared");
+    window.setTimeout(function () { setPill("Ready"); }, 800);
+  });
+
+  baseColorInput.addEventListener("input", paintPreview);
+
+  document.addEventListener("keydown", function (e) {
+    if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+    if (e.key === "r" || e.key === "R") {
+      e.preventDefault();
+      randomize();
+    }
+  });
+
+  // Initial regions
+  regions = [
+    { id: uid(), name: "Pattern A", slots: [], chosen: -1 },
+    { id: uid(), name: "Pattern B", slots: [], chosen: -1 }
+  ];
+  renderRegions();
+  paintPreview();
+})();
+  </script>
+</body>
+</html>
