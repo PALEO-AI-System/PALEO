@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chroma Strata · 2D skin layer lab</title>
-  <meta name="description" content="Stack transparent skin regions, upload color variants per layer, randomize combinations, export PNG. Local-only in the browser." />
+  <title>Chroma Strata · PoT-style skin lab</title>
+  <meta name="description" content="Path of Titans–style color slots (1–6), pattern variants, tint masks or image options, randomize modes, skin-db manifests, local custom colors." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -18,15 +18,11 @@
       --muted: #5c5368;
       --coral: #e45641;
       --coral-dim: #b63d2e;
-      --gold: #c9a227;
-      --wash: rgba(255, 248, 240, 0.06);
       --radius: 14px;
       --font: "Sora", system-ui, sans-serif;
       --serif: "Instrument Serif", Georgia, serif;
     }
-
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
     body {
       margin: 0;
       min-height: 100vh;
@@ -34,264 +30,207 @@
       color: #e8e2f0;
       background:
         radial-gradient(ellipse 100% 80% at 50% -30%, rgba(228, 86, 65, 0.09), transparent 50%),
-        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(201, 162, 39, 0.06), transparent 45%),
         linear-gradient(165deg, var(--void) 0%, var(--deep) 55%, #151022 100%);
     }
-
     a { color: #f0a090; }
-    a:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
-
-    .wrap {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 28px 20px 48px;
-    }
-
-    header {
-      margin-bottom: 28px;
-      padding-bottom: 22px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
+    .wrap { max-width: 1220px; margin: 0 auto; padding: 24px 18px 40px; }
+    header { margin-bottom: 22px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
     header h1 {
       margin: 0 0 6px;
       font-family: var(--serif);
-      font-size: clamp(2rem, 4vw, 2.65rem);
+      font-size: clamp(1.85rem, 3.5vw, 2.5rem);
       font-weight: 400;
-      letter-spacing: 0.02em;
       color: #fff;
     }
-
-    header p {
-      margin: 0;
-      max-width: 52ch;
-      color: rgba(232, 226, 240, 0.72);
-      font-size: 0.95rem;
-      line-height: 1.55;
-    }
-
+    header p { margin: 0; max-width: 62ch; color: rgba(232,226,240,0.74); font-size: 0.92rem; line-height: 1.55; }
     .kbd {
       display: inline-block;
       padding: 1px 7px;
       border-radius: 6px;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 600;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      color: #fff;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.14);
     }
-
     .layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
-      gap: 24px;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+      gap: 22px;
       align-items: start;
     }
-
-    @media (max-width: 900px) {
-      .layout { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } }
 
     .panel {
       background: var(--panel);
       color: var(--ink);
       border-radius: var(--radius);
       border: 1px solid var(--panel-edge);
-      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.35);
     }
-
+    .panel-inner { padding: 16px 18px 18px; }
     .panel h2 {
-      margin: 0 0 12px;
+      margin: 0 0 10px;
       font-family: var(--serif);
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       font-weight: 400;
+    }
+    label.small {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid var(--panel-edge);
+      font-family: var(--font);
+      font-size: 0.88rem;
+    }
+    button {
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 14px;
+      cursor: pointer;
+    }
+    button:active { transform: scale(0.98); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--coral) 0%, var(--coral-dim) 100%);
+      color: #fff;
+    }
+    .btn-secondary { background: #2a2438; color: #f5f0e8; }
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px dashed var(--panel-edge);
+      padding: 7px 11px;
+    }
+    .btn-ghost:hover { border-style: solid; color: var(--ink); background: rgba(0,0,0,0.04); }
+    .btn-tiny { padding: 6px 9px; font-size: 0.76rem; border-radius: 8px; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+    .slot-card {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fffcf7;
+      border: 1px solid var(--panel-edge);
+    }
+    .slot-card h3 { margin: 0 0 8px; font-size: 0.95rem; font-weight: 600; }
+    .swatches { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+    .sw {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12);
+      position: relative;
+    }
+    .sw[data-on="1"] { border-color: var(--coral); box-shadow: 0 0 0 1px var(--coral); }
+    .sw.custom::after {
+      content: "★";
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      font-size: 9px;
+      color: var(--coral);
+    }
+    .sw .rm {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: none;
+      background: #2a2438;
+      color: #fff;
+      font-size: 10px;
+      line-height: 1;
+      padding: 0;
+      cursor: pointer;
+      display: none;
+    }
+    .sw.custom:hover .rm { display: block; }
+
+    .pattern-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill-btn {
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #ebe4d9;
+      border: 2px solid transparent;
       color: var(--ink);
+      font-weight: 600;
+      cursor: pointer;
     }
-
-    .panel-inner { padding: 18px 20px 20px; }
-
-    .stage {
-      position: sticky;
-      top: 20px;
-    }
+    .pill-btn[data-on="1"] { border-color: var(--coral); background: #fff; }
 
     .preview-shell {
       border-radius: var(--radius);
       overflow: hidden;
       border: 1px solid var(--panel-edge);
       background: var(--panel);
-      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
     }
-
     .preview-toolbar {
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      padding: 12px 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 14px;
       background: #ebe4d9;
-      border-bottom: 1px solid var(--panel-edge);
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--muted);
     }
-
     .preview-frame {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 1;
-      background: repeating-conic-gradient(#ddd8cf 0% 25%, #e8e3da 0% 50%) 50% / 20px 20px;
+      padding: 10px;
+      background: repeating-conic-gradient(#ddd8cf 0% 25%, #e8e3da 0% 50%) 50% / 18px 18px;
     }
-
-    .preview-stack {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      padding: 6%;
-    }
-
-    .preview-stack-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
-    }
-
-    .layer-base {
-      position: absolute;
-      inset: 0;
-      border-radius: 8px;
-    }
-
-    .layer-img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: center;
-      pointer-events: none;
-    }
-
-    label.small {
+    #preview-canvas {
       display: block;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    input[type="color"] {
       width: 100%;
-      height: 44px;
-      padding: 4px;
-      border: 1px solid var(--panel-edge);
-      border-radius: 10px;
-      cursor: pointer;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
       background: #fff;
     }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--panel-edge);
+    .info-box {
+      margin-top: 12px;
+      padding: 12px;
       border-radius: 10px;
-      font-family: var(--font);
-      font-size: 0.9rem;
-    }
-
-    input[type="file"] {
-      width: 100%;
+      background: #ebe4d9;
       font-size: 0.8rem;
-    }
-
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-
-    button {
-      font-family: var(--font);
-      font-size: 0.88rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 16px;
-      cursor: pointer;
-      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
-    }
-
-    button:active { transform: scale(0.98); }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--coral) 0%, var(--coral-dim) 100%);
-      color: #fff;
-      box-shadow: 0 4px 16px rgba(228, 86, 65, 0.35);
-    }
-
-    .btn-primary:hover { filter: brightness(1.06); }
-
-    .btn-secondary {
-      background: #2a2438;
-      color: #f5f0e8;
-    }
-
-    .btn-secondary:hover { background: #3d3552; }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      border: 1px dashed var(--panel-edge);
-      padding: 8px 12px;
-    }
-
-    .btn-ghost:hover {
-      border-style: solid;
       color: var(--ink);
-      background: rgba(0, 0, 0, 0.04);
+      max-height: 200px;
+      overflow: auto;
+      white-space: pre-wrap;
     }
-
-    .btn-tiny {
-      padding: 6px 10px;
-      font-size: 0.78rem;
+    .hint { font-size: 0.78rem; color: var(--muted); margin-top: 8px; line-height: 1.45; }
+    .warn { font-size: 0.82rem; color: #8b4513; margin-top: 8px; }
+    footer { margin-top: 28px; font-size: 0.75rem; color: rgba(232,226,240,0.45); text-align: center; }
+    .thumb-opt {
+      width: 44px;
+      height: 44px;
       border-radius: 8px;
+      object-fit: cover;
+      border: 2px solid transparent;
+      cursor: pointer;
     }
+    .thumb-opt[data-on="1"] { border-color: var(--coral); }
+    input[type="color"].wheel { width: 36px; height: 36px; padding: 0; border: none; border-radius: 50%; cursor: pointer; }
 
-    .region-card {
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 12px;
-      background: #fffcf7;
-      border: 1px solid var(--panel-edge);
-    }
-
-    .region-head {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: flex-end;
-      margin-bottom: 10px;
-    }
-
-    .region-head .grow { flex: 1; min-width: 140px; }
-
-    .thumb-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 10px;
-      min-height: 0;
-    }
-
+    .mode-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .mode-tabs .pill-btn { cursor: pointer; }
+    .mode-tabs .pill-btn[aria-selected="true"] { border-color: var(--coral); background: #fff; }
+    .thumb-strip { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; min-height: 0; }
     .thumb {
       width: 48px;
       height: 48px;
@@ -301,45 +240,42 @@
       cursor: pointer;
       background: repeating-conic-gradient(#e0dbd4 0% 25%, #f0ebe4 0% 50%) 50% / 10px 10px;
     }
-
-    .thumb[data-active="1"] {
-      border-color: var(--coral);
-      box-shadow: 0 0 0 1px var(--coral);
+    .thumb[data-active="1"] { border-color: var(--coral); box-shadow: 0 0 0 1px var(--coral); }
+    .region-card {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fffcf7;
+      border: 1px solid var(--panel-edge);
     }
-
-    .actions-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 18px;
-      padding-top: 16px;
-      border-top: 1px solid var(--panel-edge);
+    .region-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; margin-bottom: 10px; }
+    .region-head .grow { flex: 1; min-width: 140px; }
+    .layer-base { position: absolute; inset: 0; border-radius: 8px; }
+    .layer-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      pointer-events: none;
     }
-
-    .hint {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 8px;
-      line-height: 1.45;
+    .preview-stack-inner-free {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
     }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(42, 36, 56, 0.08);
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--muted);
-    }
-
-    footer {
-      margin-top: 36px;
-      font-size: 0.78rem;
-      color: rgba(232, 226, 240, 0.45);
-      text-align: center;
+    .free-stack-wrap {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 6%;
     }
   </style>
 </head>
@@ -348,120 +284,710 @@
     <header>
       <h1>Chroma Strata</h1>
       <p>
-        Stack a <strong>base</strong> (flat color or full image variants), then <strong>transparent overlays</strong> per region.
-        Add multiple files per layer as color options; <span class="kbd">Randomize</span> picks one variant per layer.
-        Press <span class="kbd">R</span> anytime. Everything stays in your browser — nothing is uploaded.
+        <strong>PoT skin</strong> loads <span class="kbd">pages/skin-db/Yang/AsagiYang/</span> (see tab below). <strong>Free stack</strong> keeps the original upload workflow (phone-friendly color picker, layers, arrows).
+        Manifest mode: <span class="kbd">R</span> = colors + patterns · <span class="kbd">Shift+R</span> = colors only. Pattern count comes from <code>manifest.json</code> (1, 3, 6+ files all OK).
       </p>
     </header>
 
     <div class="layout">
       <div class="panel">
         <div class="panel-inner">
-          <h2>Layers</h2>
+          <h2 id="main-h2">Skin &amp; controls</h2>
+          <div class="mode-tabs" role="tablist" aria-label="Lab mode">
+            <button type="button" class="pill-btn" id="tab-manifest" role="tab" aria-selected="true">PoT skin (manifest)</button>
+            <button type="button" class="pill-btn" id="tab-free" role="tab" aria-selected="false">Free stack (uploads)</button>
+          </div>
 
-          <div class="region-card" style="margin-top:0;background:#fff;">
-            <div class="region-head">
-              <div class="grow">
-                <label class="small" for="base-label">Base (bottom)</label>
-                <input type="text" id="base-label" value="Base" maxlength="40" aria-label="Base layer name" />
-              </div>
+          <div id="pane-manifest" role="tabpanel">
+          <label class="small" for="skin-select">Skin (manifest)</label>
+          <div class="row" style="margin-bottom:12px;">
+            <select id="skin-select" style="flex:1;min-width:200px;"></select>
+            <button type="button" class="btn-ghost" id="btn-reload">Reload</button>
+          </div>
+
+          <div class="slot-card" style="margin-top:0;">
+            <h3>Pattern</h3>
+            <p class="hint" style="margin-top:0;" id="pattern-hint">—</p>
+            <div class="pattern-pills" id="pattern-pills"></div>
+          </div>
+
+          <div id="slots-mount"></div>
+
+          <div class="row" style="margin-top:14px;gap:10px;">
+            <button type="button" class="btn-secondary" id="btn-rand-colors">Randomize colors only</button>
+            <button type="button" class="btn-primary" id="btn-rand-all">Randomize colors + patterns</button>
+          </div>
+          <div class="row" style="margin-top:10px;">
+            <button type="button" class="btn-ghost" id="btn-export">Download PNG</button>
+          </div>
+          <p id="load-status" class="warn" hidden></p>
+          </div>
+
+          <div id="pane-free" role="tabpanel" hidden>
+            <p class="hint" style="margin-top:0;">Upload PNGs per layer (append files). Base = color or image bank; overlays stack on top. Nothing here is saved to GitHub.</p>
+            <div class="slot-card" style="margin-top:0;">
+              <h3>Base (bottom)</h3>
+              <label class="small" for="free-base-color">Fallback color</label>
+              <input type="color" id="free-base-color" value="#b89a6f" />
+              <label class="small" style="margin-top:10px;">Base image variants (optional)</label>
+              <input type="file" id="free-base-files" accept="image/*" multiple />
+              <div class="thumb-strip" id="free-base-thumbs" hidden></div>
             </div>
-            <label class="small" for="base-color">Fallback color (when no base image is chosen)</label>
-            <input type="color" id="base-color" value="#b89a6f" />
-            <label class="small" for="base-files" style="margin-top:12px;">Base image variants (optional)</label>
-            <input type="file" id="base-files" accept="image/*" multiple />
-            <div class="thumb-strip" id="base-thumbs" hidden></div>
-            <p class="hint">If you add base images, randomize will pick among them; otherwise the swatch above shows through (overlays stack on top). Each file pick <strong>adds</strong> to this layer’s bank (use Clear to reset).</p>
+            <div id="free-regions"></div>
+            <div class="row" style="margin-top:10px;">
+              <button type="button" class="btn-ghost" id="free-add-region">+ Add overlay region</button>
+            </div>
+            <div class="row" style="margin-top:14px;gap:10px;">
+              <button type="button" class="btn-primary" id="free-random">Randomize stack</button>
+              <button type="button" class="btn-ghost" id="free-export">Download PNG</button>
+              <button type="button" class="btn-ghost" id="free-clear">Clear all images</button>
+            </div>
           </div>
-
-          <div id="regions"></div>
-
-          <div class="row" style="margin-top:14px;">
-            <button type="button" class="btn-ghost" id="add-region">+ Add overlay region</button>
-          </div>
-
-          <div class="actions-bar">
-            <button type="button" class="btn-primary" id="btn-random">Randomize stack</button>
-            <button type="button" class="btn-secondary" id="btn-export">Download PNG</button>
-            <button type="button" class="btn-ghost" id="btn-clear">Clear all images</button>
-          </div>
-          <p class="hint">Tip: keep every file the same pixel size for a tight composite; mixed sizes are centered with <em>contain</em>.</p>
         </div>
       </div>
 
-      <div class="stage">
+      <div id="col-manifest">
         <div class="preview-shell">
           <div class="preview-toolbar">
-            <span class="pill" id="pill-state">Ready</span>
-            <span>Live preview</span>
+            <span id="pill-dim">—</span>
+            <span>Preview</span>
           </div>
-          <div class="preview-frame" id="preview-frame">
-            <div class="preview-stack">
-              <div class="preview-stack-inner" id="preview-stack"></div>
+          <div class="preview-frame">
+            <canvas id="preview-canvas" width="1024" height="1024" aria-label="Composited skin preview"></canvas>
+          </div>
+        </div>
+        <label class="small" style="margin-top:14px;color:rgba(232,226,240,0.7);">Skin info (optional)</label>
+        <div class="info-box" id="info-text">—</div>
+      </div>
+
+      <div id="col-free" hidden>
+        <div class="preview-shell">
+          <div class="preview-toolbar">
+            <span>Free stack preview</span>
+          </div>
+          <div class="preview-frame">
+            <div class="free-stack-wrap">
+              <div class="preview-stack-inner-free" id="free-preview-stack"></div>
             </div>
           </div>
         </div>
-        <p class="hint" style="color:rgba(232,226,240,0.55);margin-top:12px;text-align:center;">
-          Chroma Strata is separate from PALEO’s main site, Profiles, and Companion HUD — local tool only.
-        </p>
+        <p class="hint" style="color:rgba(232,226,240,0.65);margin-top:12px;">Uses the same live stacking idea as the first Chroma Strata build: object URLs in this tab only.</p>
       </div>
     </div>
 
-    <footer>Chroma Strata · PALEO repo · no server required (open via local server or Pages for consistent behavior)</footer>
+    <footer>Assets: <code>pages/skin-db/</code> · see <code>skin-db/README.md</code> for filenames, tint vs options, and exact hex on masks.</footer>
   </div>
 
-  <canvas id="export-canvas" width="1" height="1" hidden aria-hidden="true"></canvas>
+  <input type="color" id="custom-picker" hidden aria-hidden="true" />
+  <canvas id="free-export-canvas" width="1024" height="1024" hidden aria-hidden="true"></canvas>
 
   <script>
 (function () {
   "use strict";
 
-  /** @typedef {{ url: string, file: File }} Slot */
-  /** @typedef {{ id: string, name: string, slots: Slot[], chosen: number }} Region */
+  var LS_CUSTOM = "chromaStrata_customHex.v1";
+  var LS_LAST_SKIN = "chromaStrata_lastSkin.v1";
 
-  const baseColorInput = document.getElementById("base-color");
-  const baseFilesInput = document.getElementById("base-files");
-  const baseThumbs = document.getElementById("base-thumbs");
-  const regionsEl = document.getElementById("regions");
-  const previewStack = document.getElementById("preview-stack");
-  const pillState = document.getElementById("pill-state");
-  const exportCanvas = document.getElementById("export-canvas");
+  var skinSelect = document.getElementById("skin-select");
+  var btnReload = document.getElementById("btn-reload");
+  var patternPills = document.getElementById("pattern-pills");
+  var slotsMount = document.getElementById("slots-mount");
+  var previewCanvas = document.getElementById("preview-canvas");
+  var pillDim = document.getElementById("pill-dim");
+  var infoText = document.getElementById("info-text");
+  var loadStatus = document.getElementById("load-status");
+  var customPicker = document.getElementById("custom-picker");
 
-  /** @type {Slot[]} */
-  let baseSlots = [];
-  /** @type {number} -1 = use color only */
-  let baseChosen = -1;
+  var customTarget = null;
 
-  /** @type {Region[]} */
-  let regions = [];
+  var state = {
+    skinPath: "",
+    manifest: null,
+    images: new Map(),
+    patternIndex: 0,
+    slotChoice: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0 },
+    canvasW: 1024,
+    canvasH: 1024
+  };
+
+  function assetUrl(skinPath, file) {
+    if (!file) return "";
+    return "skin-db/" + skinPath + "/" + file.replace(/^\/+/, "");
+  }
+
+  function readCustomStore() {
+    try {
+      return JSON.parse(localStorage.getItem(LS_CUSTOM) || "{}");
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function writeCustomStore(obj) {
+    localStorage.setItem(LS_CUSTOM, JSON.stringify(obj));
+  }
+
+  function getCustomHexes(skinPath, slotKey) {
+    var st = readCustomStore();
+    var sub = st[skinPath] && st[skinPath][slotKey];
+    return Array.isArray(sub) ? sub.slice() : [];
+  }
+
+  function addCustomHex(skinPath, slotKey, hex) {
+    if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) return;
+    var st = readCustomStore();
+    if (!st[skinPath]) st[skinPath] = {};
+    var arr = st[skinPath][slotKey] || [];
+    if (arr.indexOf(hex) === -1) arr.push(hex);
+    st[skinPath][slotKey] = arr;
+    writeCustomStore(st);
+  }
+
+  function removeCustomHex(skinPath, slotKey, hex) {
+    var st = readCustomStore();
+    if (!st[skinPath] || !st[skinPath][slotKey]) return;
+    st[skinPath][slotKey] = st[skinPath][slotKey].filter(function (h) { return h !== hex; });
+    writeCustomStore(st);
+  }
+
+  function basePalette(slotKey) {
+    var spec = state.manifest.colorSlots[slotKey];
+    if (!spec) return [];
+    if (spec.kind === "tintMask" || spec.kind === "patternTint") {
+      return (spec.palette || []).slice();
+    }
+    return [];
+  }
+
+  function effectiveColors(slotKey) {
+    return basePalette(slotKey).concat(getCustomHexes(state.skinPath, slotKey));
+  }
+
+  function effectiveImageOptions(slotKey) {
+    var spec = state.manifest.colorSlots[slotKey];
+    if (!spec || spec.kind !== "imageOptions") return [];
+    return spec.options || [];
+  }
+
+  function loadImage(url) {
+    return new Promise(function (resolve) {
+      var im = new Image();
+      im.crossOrigin = "anonymous";
+      im.onload = function () { resolve({ url: url, img: im, ok: true }); };
+      im.onerror = function () { resolve({ url: url, img: null, ok: false }); };
+      im.src = url;
+    });
+  }
+
+  function drawTintMask(ctx, maskImg, hex, w, h) {
+    if (!maskImg || !maskImg.naturalWidth) return;
+    ctx.save();
+    ctx.drawImage(maskImg, 0, 0, w, h);
+    ctx.globalCompositeOperation = "source-atop";
+    ctx.fillStyle = hex;
+    ctx.fillRect(0, 0, w, h);
+    ctx.restore();
+    ctx.globalCompositeOperation = "source-over";
+  }
+
+  function drawImageContain(ctx, img, cw, ch) {
+    if (!img || !img.naturalWidth) return;
+    var iw = img.naturalWidth;
+    var ih = img.naturalHeight;
+    var scale = Math.min(cw / iw, ch / ih);
+    var w = iw * scale;
+    var h = ih * scale;
+    var x = (cw - w) / 2;
+    var y = (ch - h) / 2;
+    ctx.drawImage(img, x, y, w, h);
+  }
+
+  function drawImageCover(ctx, img, cw, ch) {
+    if (!img || !img.naturalWidth) return;
+    var iw = img.naturalWidth;
+    var ih = img.naturalHeight;
+    var scale = Math.max(cw / iw, ch / ih);
+    var w = iw * scale;
+    var h = ih * scale;
+    var x = (cw - w) / 2;
+    var y = (ch - h) / 2;
+    ctx.drawImage(img, x, y, w, h);
+  }
+
+  function computeCanvasSize() {
+    var c = state.manifest.constants || {};
+    var bgUrl = assetUrl(state.skinPath, c.background);
+    var bg = state.images.get(bgUrl);
+    if (bg && bg.naturalWidth) {
+      return { w: bg.naturalWidth, h: bg.naturalHeight };
+    }
+    var w = 0;
+    var h = 0;
+    state.images.forEach(function (img) {
+      if (img && img.naturalWidth) {
+        w = Math.max(w, img.naturalWidth);
+        h = Math.max(h, img.naturalHeight);
+      }
+    });
+    if (w) return { w: w, h: h };
+    return { w: 1024, h: 1024 };
+  }
+
+  function hexForSlot(slotKey) {
+    var cols = effectiveColors(slotKey);
+    var i = state.slotChoice[slotKey] || 0;
+    if (!cols.length) return "#888888";
+    i = Math.max(0, Math.min(cols.length - 1, i));
+    return cols[i];
+  }
+
+  function compose() {
+    if (!state.manifest) return;
+    var sz = computeCanvasSize();
+    state.canvasW = sz.w;
+    state.canvasH = sz.h;
+    var W = sz.w;
+    var H = sz.h;
+    previewCanvas.width = W;
+    previewCanvas.height = H;
+    var ctx = previewCanvas.getContext("2d");
+    ctx.clearRect(0, 0, W, H);
+
+    var cst = state.manifest.constants || {};
+
+    function getImg(rel) {
+      if (!rel) return null;
+      return state.images.get(assetUrl(state.skinPath, rel));
+    }
+
+    var bg = getImg(cst.background);
+    if (bg) drawImageCover(ctx, bg, W, H);
+    else {
+      ctx.fillStyle = "#c8c4bc";
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#666";
+      ctx.font = "24px sans-serif";
+      ctx.fillText("Add " + (cst.background || "background") + " to skin folder", 24, 48);
+    }
+
+    ["1", "2", "3", "4"].forEach(function (key) {
+      var spec = state.manifest.colorSlots[key];
+      if (!spec) return;
+      if (spec.kind === "tintMask") {
+        var mask = getImg(spec.mask);
+        drawTintMask(ctx, mask, hexForSlot(key), W, H);
+      } else if (spec.kind === "imageOptions") {
+        var opts = effectiveImageOptions(key);
+        var idx = Math.min(state.slotChoice[key] || 0, Math.max(0, opts.length - 1));
+        if (!opts.length) return;
+        var img = state.images.get(assetUrl(state.skinPath, opts[idx]));
+        drawImageContain(ctx, img, W, H);
+      }
+    });
+
+    var patterns = state.manifest.patterns || [];
+    if (patterns.length) {
+      var pi = Math.min(state.patternIndex, patterns.length - 1);
+      var pImg = getImg(patterns[pi]);
+      var hex5 = hexForSlot("5");
+      if (pImg) drawTintMask(ctx, pImg, hex5, W, H);
+    }
+
+    var spec6 = state.manifest.colorSlots["6"];
+    if (spec6 && spec6.kind === "tintMask") {
+      var m6 = getImg(spec6.mask);
+      drawTintMask(ctx, m6, hexForSlot("6"), W, H);
+    } else if (spec6 && spec6.kind === "imageOptions") {
+      var o6 = effectiveImageOptions("6");
+      var j = Math.min(state.slotChoice["6"] || 0, Math.max(0, o6.length - 1));
+      if (o6.length) {
+        var im6 = state.images.get(assetUrl(state.skinPath, o6[j]));
+        drawImageContain(ctx, im6, W, H);
+      }
+    }
+
+    var line = getImg(cst.lineart);
+    if (line) drawImageContain(ctx, line, W, H);
+    var det = getImg(cst.details);
+    if (det) drawImageContain(ctx, det, W, H);
+
+    pillDim.textContent = W + " × " + H + " px";
+  }
+
+  function collectUrls(manifest, skinPath) {
+    var urls = [];
+    var c = manifest.constants || {};
+    ["background", "lineart", "details"].forEach(function (k) {
+      if (c[k]) urls.push(assetUrl(skinPath, c[k]));
+    });
+    (manifest.patterns || []).forEach(function (p) {
+      urls.push(assetUrl(skinPath, p));
+    });
+    ["1", "2", "3", "4", "5", "6"].forEach(function (key) {
+      var spec = manifest.colorSlots[key];
+      if (!spec) return;
+      if (spec.kind === "tintMask" && spec.mask) urls.push(assetUrl(skinPath, spec.mask));
+      if (spec.kind === "imageOptions" && spec.options) {
+        spec.options.forEach(function (o) {
+          urls.push(assetUrl(skinPath, o));
+        });
+      }
+    });
+    return urls.filter(function (u, i, a) { return u && a.indexOf(u) === i; });
+  }
+
+  function loadSkin(skinPath) {
+    state.skinPath = skinPath;
+    state.images.clear();
+    loadStatus.hidden = true;
+    return fetch(assetUrl(skinPath, "manifest.json"), { cache: "no-store" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("manifest " + r.status);
+        return r.json();
+      })
+      .then(function (manifest) {
+        state.manifest = manifest;
+        var urls = collectUrls(manifest, skinPath);
+        return Promise.all(urls.map(loadImage));
+      })
+      .then(function (results) {
+        results.forEach(function (r) {
+          if (r.ok && r.img) state.images.set(r.url, r.img);
+        });
+        var missing = results.filter(function (r) { return !r.ok; }).length;
+        if (missing) {
+          loadStatus.hidden = false;
+          loadStatus.textContent = missing + " asset(s) missing — drop PNGs into skin-db/" + skinPath + "/ (see manifest).";
+        }
+        state.patternIndex = 0;
+        ["1", "2", "3", "4", "5", "6"].forEach(function (k) {
+          var n = choiceCount(k);
+          state.slotChoice[k] = n ? 0 : 0;
+        });
+        buildPatternPills();
+        buildSlotCards();
+        loadInfoMd();
+        compose();
+        localStorage.setItem(LS_LAST_SKIN, skinPath);
+      })
+      .catch(function (e) {
+        loadStatus.hidden = false;
+        loadStatus.textContent = String(e.message || e);
+        infoText.textContent = "Could not load manifest.";
+      });
+  }
+
+  function choiceCount(slotKey) {
+    var spec = state.manifest.colorSlots[slotKey];
+    if (!spec) return 0;
+    if (spec.kind === "tintMask" || spec.kind === "patternTint") return effectiveColors(slotKey).length;
+    if (spec.kind === "imageOptions") return effectiveImageOptions(slotKey).length;
+    return 0;
+  }
+
+  function buildPatternPills() {
+    patternPills.innerHTML = "";
+    var n = (state.manifest.patterns || []).length;
+    if (n && state.patternIndex >= n) state.patternIndex = n - 1;
+    if (!n) state.patternIndex = 0;
+    var ph = document.getElementById("pattern-hint");
+    if (ph) {
+      ph.textContent = n === 0
+        ? "No pattern files listed in manifest — add any number to the patterns array; color 5 tints whichever is selected."
+        : (n + " pattern file(s). Color 5 tints the selected pattern.");
+    }
+    if (!n) {
+      patternPills.textContent = "No patterns in manifest.";
+      return;
+    }
+    for (var i = 0; i < n; i++) {
+      (function (idx) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "pill-btn";
+        b.textContent = "Pattern " + (idx + 1);
+        b.dataset.on = idx === state.patternIndex ? "1" : "0";
+        b.addEventListener("click", function () {
+          state.patternIndex = idx;
+          buildPatternPills();
+          compose();
+        });
+        patternPills.appendChild(b);
+      })(i);
+    }
+  }
+
+  function buildSlotCards() {
+    slotsMount.innerHTML = "";
+    ["1", "2", "3", "4", "5", "6"].forEach(function (key) {
+      var spec = state.manifest.colorSlots[key];
+      if (!spec) return;
+      var card = document.createElement("div");
+      card.className = "slot-card";
+      var h3 = document.createElement("h3");
+      h3.textContent = spec.label || ("Color " + key);
+      card.appendChild(h3);
+
+      if (spec.kind === "tintMask" || spec.kind === "patternTint") {
+        var sw = document.createElement("div");
+        sw.className = "swatches";
+        var colors = effectiveColors(key);
+        if (!colors.length) {
+          var p = document.createElement("p");
+          p.className = "hint";
+          p.textContent = spec.kind === "patternTint" ? "Add a palette array in manifest for color 5." : "Add palette or mask in manifest.";
+          card.appendChild(p);
+        }
+        colors.forEach(function (hex, idx) {
+          var baseLen = basePalette(key).length;
+          var isCustom = idx >= baseLen;
+          var d = document.createElement("button");
+          d.type = "button";
+          d.className = "sw" + (isCustom ? " custom" : "");
+          d.style.background = hex;
+          d.title = hex;
+          d.dataset.on = state.slotChoice[key] === idx ? "1" : "0";
+          d.addEventListener("click", function () {
+            state.slotChoice[key] = idx;
+            buildSlotCards();
+            compose();
+          });
+          if (isCustom) {
+            var rm = document.createElement("button");
+            rm.type = "button";
+            rm.className = "rm";
+            rm.textContent = "×";
+            rm.title = "Remove custom color";
+            rm.addEventListener("click", function (ev) {
+              ev.stopPropagation();
+              removeCustomHex(state.skinPath, key, hex);
+              state.slotChoice[key] = 0;
+              buildSlotCards();
+              compose();
+            });
+            d.appendChild(rm);
+          }
+          sw.appendChild(d);
+        });
+        card.appendChild(sw);
+
+        var addRow = document.createElement("div");
+        addRow.className = "row";
+        addRow.style.marginTop = "10px";
+        var addBtn = document.createElement("button");
+        addBtn.type = "button";
+        addBtn.className = "btn-ghost";
+        addBtn.textContent = "+ Custom color (wheel)";
+        addBtn.addEventListener("click", function () {
+          customTarget = key;
+          customPicker.value = colors[state.slotChoice[key]] || "#ffffff";
+          customPicker.click();
+        });
+        addRow.appendChild(addBtn);
+        card.appendChild(addRow);
+      }
+
+      if (spec.kind === "imageOptions") {
+        var opts = effectiveImageOptions(key);
+        if (!opts.length) {
+          var p2 = document.createElement("p");
+          p2.className = "hint";
+          p2.textContent = "Add options[] PNG paths in manifest.";
+          card.appendChild(p2);
+        }
+        var row = document.createElement("div");
+        row.className = "swatches";
+        opts.forEach(function (rel, idx) {
+          var url = assetUrl(state.skinPath, rel);
+          var imgEl = document.createElement("img");
+          imgEl.className = "thumb-opt";
+          imgEl.src = url;
+          imgEl.alt = rel;
+          imgEl.dataset.on = state.slotChoice[key] === idx ? "1" : "0";
+          imgEl.addEventListener("click", function () {
+            state.slotChoice[key] = idx;
+            buildSlotCards();
+            compose();
+          });
+          row.appendChild(imgEl);
+        });
+        card.appendChild(row);
+      }
+
+      slotsMount.appendChild(card);
+    });
+  }
+
+  customPicker.addEventListener("input", function () {
+    if (!customTarget) return;
+    addCustomHex(state.skinPath, customTarget, customPicker.value);
+    var cols = effectiveColors(customTarget);
+    state.slotChoice[customTarget] = cols.length - 1;
+    customTarget = null;
+    buildSlotCards();
+    compose();
+  });
+
+  function loadInfoMd() {
+    var infoFile = state.manifest.constants && state.manifest.constants.info;
+    if (!infoFile) {
+      infoText.textContent = "No info file in manifest.";
+      return;
+    }
+    fetch(assetUrl(state.skinPath, infoFile), { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.text() : ""; })
+      .then(function (t) {
+        infoText.textContent = t || "(empty)";
+      })
+      .catch(function () {
+        infoText.textContent = "Could not load info file.";
+      });
+  }
+
+  function randomizeColorsOnly() {
+    ["1", "2", "3", "4", "5", "6"].forEach(function (k) {
+      var n = choiceCount(k);
+      if (n > 0) state.slotChoice[k] = Math.floor(Math.random() * n);
+    });
+    buildPatternPills();
+    buildSlotCards();
+    compose();
+  }
+
+  function randomizeAll() {
+    randomizeColorsOnly();
+    var pn = (state.manifest.patterns || []).length;
+    if (pn > 0) state.patternIndex = Math.floor(Math.random() * pn);
+    buildPatternPills();
+    compose();
+  }
+
+  function exportPng() {
+    previewCanvas.toBlob(function (blob) {
+      if (!blob) return;
+      var a = document.createElement("a");
+      var u = URL.createObjectURL(blob);
+      a.href = u;
+      a.download = "chroma-strata-" + (state.manifest.id || "skin") + "-" + Date.now() + ".png";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(u);
+    }, "image/png");
+  }
+
+  function populateSkinIndex() {
+    return fetch("skin-db/index.json", { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        skinSelect.innerHTML = "";
+        (data.skins || []).forEach(function (s) {
+          var o = document.createElement("option");
+          o.value = s.path;
+          o.textContent = (s.species ? s.species + " · " : "") + (s.displayName || s.path);
+          skinSelect.appendChild(o);
+        });
+        var last = localStorage.getItem(LS_LAST_SKIN);
+        if (last && Array.prototype.some.call(skinSelect.options, function (o) { return o.value === last; })) {
+          skinSelect.value = last;
+        }
+      });
+  }
+
+  skinSelect.addEventListener("change", function () {
+    loadSkin(skinSelect.value);
+  });
+  btnReload.addEventListener("click", function () {
+    loadSkin(skinSelect.value);
+  });
+  document.getElementById("btn-rand-colors").addEventListener("click", randomizeColorsOnly);
+  document.getElementById("btn-rand-all").addEventListener("click", randomizeAll);
+  document.getElementById("btn-export").addEventListener("click", exportPng);
+
+  document.addEventListener("keydown", function (e) {
+    if (localStorage.getItem("chromaStrata_uiMode.v1") === "free") return;
+    if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA")) return;
+    if (e.key === "r" || e.key === "R") {
+      e.preventDefault();
+      if (e.shiftKey) randomizeColorsOnly();
+      else randomizeAll();
+    }
+  });
+
+  var qp = new URLSearchParams(location.search).get("skin");
+  populateSkinIndex().then(function () {
+    if (qp && Array.prototype.some.call(skinSelect.options, function (o) { return o.value === qp; })) {
+      skinSelect.value = qp;
+    }
+    if (skinSelect.value) loadSkin(skinSelect.value);
+  });
+})();
+  </script>
+  <script>
+(function () {
+  "use strict";
+
+  var LS_MODE = "chromaStrata_uiMode.v1";
+
+  var tabM = document.getElementById("tab-manifest");
+  var tabF = document.getElementById("tab-free");
+  var paneM = document.getElementById("pane-manifest");
+  var paneF = document.getElementById("pane-free");
+  var colM = document.getElementById("col-manifest");
+  var colF = document.getElementById("col-free");
+  var mainH2 = document.getElementById("main-h2");
+
+  function setMode(mode) {
+    var isFree = mode === "free";
+    localStorage.setItem(LS_MODE, isFree ? "free" : "manifest");
+    tabM.setAttribute("aria-selected", isFree ? "false" : "true");
+    tabF.setAttribute("aria-selected", isFree ? "true" : "false");
+    paneM.hidden = isFree;
+    paneF.hidden = !isFree;
+    colM.hidden = isFree;
+    colF.hidden = !isFree;
+    mainH2.textContent = isFree ? "Free layer stack (uploads)" : "Skin & controls";
+    if (isFree) paintFreePreview();
+  }
+
+  tabM.addEventListener("click", function () { setMode("manifest"); });
+  tabF.addEventListener("click", function () { setMode("free"); });
+
+  var baseColor = document.getElementById("free-base-color");
+  var baseFiles = document.getElementById("free-base-files");
+  var baseThumbs = document.getElementById("free-base-thumbs");
+  var freeRegionsEl = document.getElementById("free-regions");
+  var freePreviewStack = document.getElementById("free-preview-stack");
+  var freeExportCanvas = document.getElementById("free-export-canvas");
+
+  var baseSlots = [];
+  var baseChosen = -1;
+  var regions = [];
 
   function uid() {
-    return "r_" + Math.random().toString(36).slice(2, 10);
+    return "fr_" + Math.random().toString(36).slice(2, 9);
   }
 
   function revokeSlots(slots) {
     slots.forEach(function (s) {
-      try { URL.revokeObjectURL(s.url); } catch (_) {}
+      try { URL.revokeObjectURL(s.url); } catch (x) {}
     });
   }
 
-  function setPill(text) {
-    pillState.textContent = text;
-  }
-
   function filesToSlots(fileList) {
-    const out = [];
-    for (let i = 0; i < fileList.length; i++) {
-      const f = fileList[i];
-      if (!f.type.startsWith("image/")) continue;
-      out.push({ url: URL.createObjectURL(f), file: f });
+    var out = [];
+    for (var i = 0; i < fileList.length; i++) {
+      var f = fileList[i];
+      if (f.type && f.type.indexOf("image/") === 0) {
+        out.push({ url: URL.createObjectURL(f), file: f });
+      }
     }
     return out;
   }
 
   function renderBaseThumbs() {
     baseThumbs.innerHTML = "";
-    if (baseSlots.length === 0) {
+    if (!baseSlots.length) {
       baseThumbs.hidden = true;
       baseChosen = -1;
       return;
@@ -469,7 +995,7 @@
     baseThumbs.hidden = false;
     if (baseChosen >= baseSlots.length) baseChosen = baseSlots.length - 1;
     baseSlots.forEach(function (s, i) {
-      const img = document.createElement("img");
+      var img = document.createElement("img");
       img.className = "thumb";
       img.src = s.url;
       img.alt = s.file.name;
@@ -477,168 +1003,147 @@
       img.addEventListener("click", function () {
         baseChosen = i;
         renderBaseThumbs();
-        paintPreview();
+        paintFreePreview();
       });
       baseThumbs.appendChild(img);
     });
   }
 
-  function renderRegions() {
-    regionsEl.innerHTML = "";
-    regions.forEach(function (reg, idx) {
-      const card = document.createElement("div");
-      card.className = "region-card";
-
-      const head = document.createElement("div");
-      head.className = "region-head";
-
-      const nameWrap = document.createElement("div");
-      nameWrap.className = "grow";
-      const lab = document.createElement("label");
-      lab.className = "small";
-      lab.textContent = "Overlay " + (idx + 1) + " (transparent PNG on top)";
-      lab.setAttribute("for", "name-" + reg.id);
-      const nameInput = document.createElement("input");
-      nameInput.type = "text";
-      nameInput.id = "name-" + reg.id;
-      nameInput.value = reg.name;
-      nameInput.maxLength = 48;
-      nameInput.addEventListener("input", function () {
-        reg.name = nameInput.value;
-      });
-      nameWrap.appendChild(lab);
-      nameWrap.appendChild(nameInput);
-
-      const move = document.createElement("div");
-      move.className = "row";
-      const up = document.createElement("button");
-      up.type = "button";
-      up.className = "btn-ghost btn-tiny";
-      up.textContent = "↑";
-      up.disabled = idx === 0;
-      up.title = "Move up (closer to top of stack)";
-      up.addEventListener("click", function () {
-        if (idx === 0) return;
-        const t = regions[idx - 1];
-        regions[idx - 1] = regions[idx];
-        regions[idx] = t;
-        renderRegions();
-        paintPreview();
-      });
-      const down = document.createElement("button");
-      down.type = "button";
-      down.className = "btn-ghost btn-tiny";
-      down.textContent = "↓";
-      down.disabled = idx === regions.length - 1;
-      down.title = "Move down";
-      down.addEventListener("click", function () {
-        if (idx >= regions.length - 1) return;
-        const t = regions[idx + 1];
-        regions[idx + 1] = regions[idx];
-        regions[idx] = t;
-        renderRegions();
-        paintPreview();
-      });
-      const remove = document.createElement("button");
-      remove.type = "button";
-      remove.className = "btn-ghost btn-tiny";
-      remove.textContent = "Remove region";
-      remove.addEventListener("click", function () {
-        revokeSlots(reg.slots);
-        regions = regions.filter(function (r) { return r.id !== reg.id; });
-        renderRegions();
-        paintPreview();
-      });
-      move.appendChild(up);
-      move.appendChild(down);
-      move.appendChild(remove);
-
-      head.appendChild(nameWrap);
-      head.appendChild(move);
-
-      const fileLab = document.createElement("label");
-      fileLab.className = "small";
-      fileLab.textContent = "Variants for this region (each pick adds to the bank)";
-      fileLab.setAttribute("for", "files-" + reg.id);
-      const fileInput = document.createElement("input");
-      fileInput.type = "file";
-      fileInput.id = "files-" + reg.id;
-      fileInput.accept = "image/*";
-      fileInput.multiple = true;
-      fileInput.addEventListener("change", function () {
-        if (!fileInput.files || !fileInput.files.length) return;
-        const added = filesToSlots(fileInput.files);
-        reg.slots = reg.slots.concat(added);
-        if (reg.chosen < 0 && reg.slots.length) reg.chosen = 0;
-        fileInput.value = "";
-        renderThumbsForRegion(card, reg);
-        paintPreview();
-      });
-
-      const strip = document.createElement("div");
-      strip.className = "thumb-strip";
-
-      card.appendChild(head);
-      card.appendChild(fileLab);
-      card.appendChild(fileInput);
-      card.appendChild(strip);
-      regionsEl.appendChild(card);
-
-      renderThumbsForRegion(card, reg);
-    });
-  }
-
   function renderThumbsForRegion(card, reg) {
-    const strip = card.querySelector(".thumb-strip");
+    var strip = card.querySelector(".thumb-strip");
     strip.innerHTML = "";
     reg.slots.forEach(function (s, i) {
-      const img = document.createElement("img");
+      var img = document.createElement("img");
       img.className = "thumb";
       img.src = s.url;
-      img.alt = s.file.name;
       img.dataset.active = i === reg.chosen ? "1" : "0";
       img.addEventListener("click", function () {
         reg.chosen = i;
         renderRegions();
-        paintPreview();
+        paintFreePreview();
       });
       strip.appendChild(img);
     });
   }
 
-  function paintPreview() {
-    previewStack.innerHTML = "";
-    const color = baseColorInput.value;
+  function renderRegions() {
+    freeRegionsEl.innerHTML = "";
+    regions.forEach(function (reg, idx) {
+      var card = document.createElement("div");
+      card.className = "region-card";
+      var head = document.createElement("div");
+      head.className = "region-head";
+      var nw = document.createElement("div");
+      nw.className = "grow";
+      var lab = document.createElement("label");
+      lab.className = "small";
+      lab.textContent = "Overlay " + (idx + 1);
+      lab.setAttribute("for", "nm-" + reg.id);
+      var inp = document.createElement("input");
+      inp.type = "text";
+      inp.id = "nm-" + reg.id;
+      inp.value = reg.name;
+      inp.maxLength = 48;
+      inp.addEventListener("input", function () { reg.name = inp.value; });
+      nw.appendChild(lab);
+      nw.appendChild(inp);
+      var move = document.createElement("div");
+      move.className = "row";
+      var up = document.createElement("button");
+      up.type = "button";
+      up.className = "btn-ghost btn-tiny";
+      up.textContent = "↑";
+      up.disabled = idx === 0;
+      up.addEventListener("click", function () {
+        if (idx === 0) return;
+        var t = regions[idx - 1];
+        regions[idx - 1] = regions[idx];
+        regions[idx] = t;
+        renderRegions();
+        paintFreePreview();
+      });
+      var dn = document.createElement("button");
+      dn.type = "button";
+      dn.className = "btn-ghost btn-tiny";
+      dn.textContent = "↓";
+      dn.disabled = idx >= regions.length - 1;
+      dn.addEventListener("click", function () {
+        if (idx >= regions.length - 1) return;
+        var t = regions[idx + 1];
+        regions[idx + 1] = regions[idx];
+        regions[idx] = t;
+        renderRegions();
+        paintFreePreview();
+      });
+      var rm = document.createElement("button");
+      rm.type = "button";
+      rm.className = "btn-ghost btn-tiny";
+      rm.textContent = "Remove region";
+      rm.addEventListener("click", function () {
+        revokeSlots(reg.slots);
+        regions = regions.filter(function (r) { return r.id !== reg.id; });
+        renderRegions();
+        paintFreePreview();
+      });
+      move.appendChild(up);
+      move.appendChild(dn);
+      move.appendChild(rm);
+      head.appendChild(nw);
+      head.appendChild(move);
 
-    const baseDiv = document.createElement("div");
-    baseDiv.className = "layer-base";
-    baseDiv.style.backgroundColor = color;
-    previewStack.appendChild(baseDiv);
-
-    if (baseSlots.length && baseChosen >= 0) {
-      const im = document.createElement("img");
-      im.className = "layer-img";
-      im.alt = "base";
-      im.src = baseSlots[baseChosen].url;
-      previewStack.appendChild(im);
-    }
-
-    regions.forEach(function (reg) {
-      if (reg.slots.length === 0 || reg.chosen < 0) return;
-      const im = document.createElement("img");
-      im.className = "layer-img";
-      im.alt = reg.name;
-      im.src = reg.slots[reg.chosen].url;
-      previewStack.appendChild(im);
+      var fl = document.createElement("label");
+      fl.className = "small";
+      fl.textContent = "Variants (each pick adds)";
+      fl.setAttribute("for", "fi-" + reg.id);
+      var fi = document.createElement("input");
+      fi.type = "file";
+      fi.id = "fi-" + reg.id;
+      fi.multiple = true;
+      fi.accept = "image/*";
+      fi.addEventListener("change", function () {
+        if (!fi.files || !fi.files.length) return;
+        var added = filesToSlots(fi.files);
+        reg.slots = reg.slots.concat(added);
+        if (reg.chosen < 0 && reg.slots.length) reg.chosen = 0;
+        fi.value = "";
+        renderThumbsForRegion(card, reg);
+        paintFreePreview();
+      });
+      var strip = document.createElement("div");
+      strip.className = "thumb-strip";
+      card.appendChild(head);
+      card.appendChild(fl);
+      card.appendChild(fi);
+      card.appendChild(strip);
+      freeRegionsEl.appendChild(card);
+      renderThumbsForRegion(card, reg);
     });
   }
 
-  function randomize() {
-    if (baseSlots.length) {
-      baseChosen = Math.floor(Math.random() * baseSlots.length);
-    } else {
-      baseChosen = -1;
+  function paintFreePreview() {
+    freePreviewStack.innerHTML = "";
+    var bdiv = document.createElement("div");
+    bdiv.className = "layer-base";
+    bdiv.style.backgroundColor = baseColor.value;
+    freePreviewStack.appendChild(bdiv);
+    if (baseSlots.length && baseChosen >= 0) {
+      var im = document.createElement("img");
+      im.className = "layer-img";
+      im.src = baseSlots[baseChosen].url;
+      freePreviewStack.appendChild(im);
     }
+    regions.forEach(function (reg) {
+      if (!reg.slots.length || reg.chosen < 0) return;
+      var im2 = document.createElement("img");
+      im2.className = "layer-img";
+      im2.src = reg.slots[reg.chosen].url;
+      freePreviewStack.appendChild(im2);
+    });
+  }
+
+  function randomizeFree() {
+    if (baseSlots.length) baseChosen = Math.floor(Math.random() * baseSlots.length);
+    else baseChosen = -1;
     regions.forEach(function (reg) {
       if (!reg.slots.length) {
         reg.chosen = -1;
@@ -648,144 +1153,112 @@
     });
     renderBaseThumbs();
     renderRegions();
-    paintPreview();
-    setPill("Randomized");
-    window.setTimeout(function () { setPill("Ready"); }, 900);
+    paintFreePreview();
   }
 
-  function drawContain(ctx, img, cw, ch) {
-    const iw = img.naturalWidth || img.width;
-    const ih = img.naturalHeight || img.height;
-    if (!iw || !ih) return;
-    const scale = Math.min(cw / iw, ch / ih);
-    const w = iw * scale;
-    const h = ih * scale;
-    const x = (cw - w) / 2;
-    const y = (ch - h) / 2;
+  function drawContainCtx(ctx, img, cw, ch) {
+    if (!img || !img.naturalWidth) return;
+    var iw = img.naturalWidth;
+    var ih = img.naturalHeight;
+    var scale = Math.min(cw / iw, ch / ih);
+    var w = iw * scale;
+    var h = ih * scale;
+    var x = (cw - w) / 2;
+    var y = (ch - h) / 2;
     ctx.drawImage(img, x, y, w, h);
   }
 
-  function loadImage(url) {
+  function loadImgUrl(url) {
     return new Promise(function (resolve, reject) {
-      const img = new Image();
-      img.onload = function () { resolve(img); };
-      img.onerror = reject;
-      img.src = url;
+      var im = new Image();
+      im.onload = function () { resolve(im); };
+      im.onerror = reject;
+      im.src = url;
     });
   }
 
-  function exportPng() {
-    setPill("Exporting…");
-    const color = baseColorInput.value;
-    const list = [];
-    if (baseSlots.length && baseChosen >= 0) list.push(baseSlots[baseChosen].url);
+  function exportFree() {
+    var urls = [];
+    if (baseSlots.length && baseChosen >= 0) urls.push(baseSlots[baseChosen].url);
     regions.forEach(function (reg) {
-      if (reg.slots.length && reg.chosen >= 0) list.push(reg.slots[reg.chosen].url);
+      if (reg.slots.length && reg.chosen >= 0) urls.push(reg.slots[reg.chosen].url);
     });
-
-    if (list.length === 0) {
-      exportCanvas.width = 1024;
-      exportCanvas.height = 1024;
-      const ctx = exportCanvas.getContext("2d");
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, 1024, 1024);
-      finishBlob();
-      return;
-    }
-
-    Promise.all(list.map(loadImage))
-      .then(function (images) {
-        const w = images[0].naturalWidth;
-        const h = images[0].naturalHeight;
-        exportCanvas.width = w;
-        exportCanvas.height = h;
-        const ctx = exportCanvas.getContext("2d");
-        ctx.fillStyle = color;
-        ctx.fillRect(0, 0, w, h);
-        images.forEach(function (img) {
-          drawContain(ctx, img, w, h);
-        });
-        finishBlob();
-      })
-      .catch(function () {
-        setPill("Could not read images");
-        window.setTimeout(function () { setPill("Ready"); }, 1600);
+    var W = 1024;
+    var H = 1024;
+    var p;
+    if (urls.length) {
+      p = loadImgUrl(urls[0]).then(function (im0) {
+        W = im0.naturalWidth;
+        H = im0.naturalHeight;
+        return Promise.all(urls.map(loadImgUrl));
       });
-
-    function finishBlob() {
-      exportCanvas.toBlob(function (blob) {
-        if (!blob) {
-          setPill("Export failed");
-          return;
-        }
-        const a = document.createElement("a");
-        const u = URL.createObjectURL(blob);
-        a.href = u;
-        a.download = "chroma-strata-" + Date.now() + ".png";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(u);
-        setPill("Downloaded");
-        window.setTimeout(function () { setPill("Ready"); }, 1200);
-      }, "image/png");
+    } else {
+      p = Promise.resolve([]);
     }
+    p.then(function (imgs) {
+      freeExportCanvas.width = W;
+      freeExportCanvas.height = H;
+      var ctx = freeExportCanvas.getContext("2d");
+      ctx.fillStyle = baseColor.value;
+      ctx.fillRect(0, 0, W, H);
+      (imgs || []).forEach(function (img) {
+        drawContainCtx(ctx, img, W, H);
+      });
+      freeExportCanvas.toBlob(function (blob) {
+        if (!blob) return;
+        var a = document.createElement("a");
+        var u = URL.createObjectURL(blob);
+        a.href = u;
+        a.download = "chroma-strata-free-" + Date.now() + ".png";
+        a.click();
+        URL.revokeObjectURL(u);
+      }, "image/png");
+    }).catch(function () {});
   }
 
-  document.getElementById("btn-export").addEventListener("click", exportPng);
-
-  baseFilesInput.addEventListener("change", function () {
-    if (!baseFilesInput.files || !baseFilesInput.files.length) return;
-    baseSlots = baseSlots.concat(filesToSlots(baseFilesInput.files));
+  baseFiles.addEventListener("change", function () {
+    if (!baseFiles.files || !baseFiles.files.length) return;
+    baseSlots = baseSlots.concat(filesToSlots(baseFiles.files));
     if (baseChosen < 0 && baseSlots.length) baseChosen = 0;
-    baseFilesInput.value = "";
+    baseFiles.value = "";
     renderBaseThumbs();
-    paintPreview();
+    paintFreePreview();
   });
+  baseColor.addEventListener("input", paintFreePreview);
 
-  document.getElementById("add-region").addEventListener("click", function () {
-    regions.push({
-      id: uid(),
-      name: "Region " + (regions.length + 1),
-      slots: [],
-      chosen: -1
-    });
+  document.getElementById("free-add-region").addEventListener("click", function () {
+    regions.push({ id: uid(), name: "Region " + (regions.length + 1), slots: [], chosen: -1 });
     renderRegions();
-    paintPreview();
+    paintFreePreview();
   });
-
-  document.getElementById("btn-random").addEventListener("click", randomize);
-
-  document.getElementById("btn-clear").addEventListener("click", function () {
+  document.getElementById("free-random").addEventListener("click", randomizeFree);
+  document.getElementById("free-export").addEventListener("click", exportFree);
+  document.getElementById("free-clear").addEventListener("click", function () {
     revokeSlots(baseSlots);
     baseSlots = [];
     baseChosen = -1;
-    baseFilesInput.value = "";
+    baseFiles.value = "";
     regions.forEach(function (r) { revokeSlots(r.slots); r.slots = []; r.chosen = -1; });
     renderBaseThumbs();
     renderRegions();
-    paintPreview();
-    setPill("Cleared");
-    window.setTimeout(function () { setPill("Ready"); }, 800);
+    paintFreePreview();
   });
 
-  baseColorInput.addEventListener("input", paintPreview);
-
   document.addEventListener("keydown", function (e) {
+    if (localStorage.getItem(LS_MODE) !== "free") return;
     if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
     if (e.key === "r" || e.key === "R") {
       e.preventDefault();
-      randomize();
+      randomizeFree();
     }
   });
 
-  // Initial regions
-  regions = [
-    { id: uid(), name: "Pattern A", slots: [], chosen: -1 },
-    { id: uid(), name: "Pattern B", slots: [], chosen: -1 }
-  ];
+  regions.push({ id: uid(), name: "Overlay A", slots: [], chosen: -1 });
+  regions.push({ id: uid(), name: "Overlay B", slots: [], chosen: -1 });
   renderRegions();
-  paintPreview();
+  paintFreePreview();
+
+  setMode(localStorage.getItem(LS_MODE) === "free" ? "free" : "manifest");
 })();
   </script>
 </body>

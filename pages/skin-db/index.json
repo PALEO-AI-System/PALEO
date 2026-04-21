@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skins": [
+    {
+      "path": "Yang/AsagiYang",
+      "displayName": "Asagi",
+      "species": "Yang"
+    }
+  ]
+}
