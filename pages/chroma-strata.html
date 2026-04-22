@@ -656,17 +656,15 @@
     ctx.fillStyle = "#c8c4bc";
     ctx.fillRect(0, 0, W, H);
 
-    var tintMult = state.manifest.tintComposite === "multiply";
-    function tintBlendForSlot() {
-      return tintMult ? "multiply" : "source-over";
-    }
+    /* Color slots 1–6 + pattern: white-mask layers recolored and stacked bottom→top with normal alpha (no multiply between tints). */
+    var tintOntoStack = "source-over";
 
     ["1", "2", "3", "4"].forEach(function (key) {
       var spec = state.manifest.colorSlots[key];
       if (!spec) return;
       if (spec.kind === "tintMask") {
         var mask = getImg(spec.mask);
-        drawTintMask(ctx, mask, hexForSlot(key), W, H, tintBlendForSlot());
+        drawTintMask(ctx, mask, hexForSlot(key), W, H, tintOntoStack);
       } else if (spec.kind === "imageOptions") {
         var opts = effectiveImageOptions(key);
         var idx = Math.min(state.slotChoice[key] || 0, Math.max(0, opts.length - 1));
@@ -681,13 +679,13 @@
       var pi = Math.min(state.patternIndex, patterns.length - 1);
       var pImg = getImg(patterns[pi]);
       var hex5 = hexForSlot("5");
-      if (pImg) drawTintMask(ctx, pImg, hex5, W, H, tintMult ? "multiply" : "source-over");
+      if (pImg) drawTintMask(ctx, pImg, hex5, W, H, tintOntoStack);
     }
 
     var spec6 = state.manifest.colorSlots["6"];
     if (spec6 && spec6.kind === "tintMask") {
       var m6 = getImg(spec6.mask);
-      drawTintMask(ctx, m6, hexForSlot("6"), W, H, tintMult ? "multiply" : "source-over");
+      drawTintMask(ctx, m6, hexForSlot("6"), W, H, tintOntoStack);
     } else if (spec6 && spec6.kind === "imageOptions") {
       var o6 = effectiveImageOptions("6");
       var j = Math.min(state.slotChoice["6"] || 0, Math.max(0, o6.length - 1));

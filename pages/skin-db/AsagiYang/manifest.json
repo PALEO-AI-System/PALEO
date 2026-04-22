@@ -2,7 +2,6 @@
   "id": "AsagiYang",
   "displayName": "Asagi",
   "canvasSize": [3400, 1156],
-  "tintComposite": "multiply",
   "constantsBlend": {
     "lineart": "multiply",
     "infoLayer": "soft-light"

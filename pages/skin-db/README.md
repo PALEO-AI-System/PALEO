@@ -9,8 +9,8 @@ Put files in **`pages/skin-db/AsagiYang/`** (one folder per skin id).
 Optional in **`manifest.json`**:
 
 - **`canvasSize`**: `[3400, 1156]` forces export/preview pixel size (otherwise inferred from Color1 or max image).
-- **`tintComposite`**: `"multiply"` tints **colors 1–4, pattern, and color 6** onto the gray base with **multiply** (PoT-style mask stack). Omit or use anything other than `"multiply"` for all–`source-over` tints.
 - **`constantsBlend`**: per constant, a [canvas `globalCompositeOperation`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation) string, e.g. `{ "lineart": "multiply", "infoLayer": "soft-light" }`. PNGs do **not** carry Photoshop blend modes; this reapplies a chosen mode in the browser. Transparent pixels stay transparent; the mode affects how non-transparent pixels combine with what is underneath.
+- **Color slots 1–6** (including **pattern** via color 5): in Chroma Strata they are **recolored white-mask layers** drawn **bottom → top** with **normal** stacking (`source-over` only between those layers), matching flat PoT color layers—not multiply between tints.
 - **`palette`**: `constants.palette` → e.g. `AsagiYang_Palette.png` (reference swatches on canvas). Optional blend via **`constantsBlend.palette`**.
 - **`infoLayer`**: top branding / labels PNG. Optional blend (e.g. **`constantsBlend.infoLayer`**: `"soft-light"`). **`infoNotes`**: optional `.md` for the sidebar only.
 
