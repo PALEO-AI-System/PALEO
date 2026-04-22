@@ -6,7 +6,14 @@ Static files live under **`pages/skin-db/`** next to `chroma-strata.html`. Commi
 
 Put files in **`pages/skin-db/AsagiYang/`** (one folder per skin id).
 
-Optional in **`manifest.json`**: `"canvasSize": [3400, 1156]` forces export/preview pixel size (otherwise inferred from Color1 or max image). **`infoLayer`** is a PNG drawn **on top of everything**; **`infoNotes`** is optional markdown for the sidebar only.
+Optional in **`manifest.json`**:
+
+- **`canvasSize`**: `[3400, 1156]` forces export/preview pixel size (otherwise inferred from Color1 or max image).
+- **`tintComposite`**: `"multiply"` tints **color 2–4, pattern, and color 6** onto the stack with **multiply** (good for multiply-style PSD masks). Color **1** stays **normal** on the gray base. Omit or use anything other than `"multiply"` for the older all–source-over tint.
+- **`constantsBlend`**: per constant, a [canvas `globalCompositeOperation`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation) string, e.g. `{ "lineart": "multiply", "infoLayer": "soft-light" }`. PNGs do **not** carry Photoshop blend modes; this reapplies a chosen mode in the browser. Transparent pixels stay transparent; the mode affects how non-transparent pixels combine with what is underneath.
+- **`infoLayer`**: PNG drawn last (before optional blend). **`infoNotes`**: optional `.md` for the sidebar only.
+
+The Chroma Strata **Preview size** control scales the wide canvas (fit / 100% / 125% / …) with scroll when needed.
 
 **Bottom → top draw order** (matches PoT-style stacking for this skin):
 

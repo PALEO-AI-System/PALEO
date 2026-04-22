@@ -2,6 +2,11 @@
   "id": "AsagiYang",
   "displayName": "Asagi",
   "canvasSize": [3400, 1156],
+  "tintComposite": "multiply",
+  "constantsBlend": {
+    "lineart": "multiply",
+    "infoLayer": "soft-light"
+  },
   "constants": {
     "background": "AsagiYang_Background.png",
     "lineart": "AsagiYang_Lineart.png",
@@ -9,11 +14,7 @@
     "infoLayer": "AsagiYang_Info.png",
     "infoNotes": "AsagiYang_Info.md"
   },
-  "patterns": [
-    "AsagiYang_Color5-Pattern1.png",
-    "AsagiYang_Color5-Pattern2.png",
-    "AsagiYang_Color5-Pattern3.png"
-  ],
+  "patterns": ["AsagiYang_Color5-Pattern1.png"],
   "colorSlots": {
     "1": {
       "label": "Color 1",

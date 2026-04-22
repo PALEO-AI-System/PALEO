@@ -191,16 +191,26 @@
       color: var(--muted);
     }
     .preview-frame {
-      padding: 10px;
+      padding: 0;
       background: repeating-conic-gradient(#ddd8cf 0% 25%, #e8e3da 0% 50%) 50% / 18px 18px;
+    }
+    .preview-scroll {
+      overflow: auto;
+      max-height: min(88vh, 1400px);
+      padding: 10px;
+      border-radius: 0 0 8px 8px;
+    }
+    #preview-scale-wrap {
+      transform-origin: 0 0;
+      display: inline-block;
+      line-height: 0;
     }
     #preview-canvas {
       display: block;
-      width: 100%;
-      height: auto;
       border-radius: 8px;
       box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
       background: #fff;
+      vertical-align: top;
     }
     .info-box {
       margin-top: 12px;
@@ -350,10 +360,21 @@
         <div class="preview-shell">
           <div class="preview-toolbar">
             <span id="pill-dim">—</span>
-            <span>Preview</span>
+            <label class="small" for="preview-zoom" style="margin:0;">Preview size</label>
+            <select id="preview-zoom" aria-label="Preview zoom" style="width:auto;min-width:140px;">
+              <option value="fit" selected>Fit in panel</option>
+              <option value="100">100% (scroll)</option>
+              <option value="125">125%</option>
+              <option value="150">150%</option>
+              <option value="200">200%</option>
+            </select>
           </div>
           <div class="preview-frame">
-            <canvas id="preview-canvas" width="1024" height="1024" aria-label="Composited skin preview"></canvas>
+            <div class="preview-scroll" id="preview-scroll">
+              <div id="preview-scale-wrap">
+                <canvas id="preview-canvas" width="1024" height="1024" aria-label="Composited skin preview"></canvas>
+              </div>
+            </div>
           </div>
         </div>
         <label class="small" style="margin-top:14px;color:rgba(232,226,240,0.7);">Notes only (<code>infoNotes</code> .md)</label>
@@ -393,6 +414,10 @@
   var patternPills = document.getElementById("pattern-pills");
   var slotsMount = document.getElementById("slots-mount");
   var previewCanvas = document.getElementById("preview-canvas");
+  var previewScroll = document.getElementById("preview-scroll");
+  var previewScaleWrap = document.getElementById("preview-scale-wrap");
+  var previewZoom = document.getElementById("preview-zoom");
+  var tintSlab = document.createElement("canvas");
   var pillDim = document.getElementById("pill-dim");
   var infoText = document.getElementById("info-text");
   var loadStatus = document.getElementById("load-status");
@@ -479,15 +504,41 @@
     });
   }
 
-  function drawTintMask(ctx, maskImg, hex, w, h) {
+  function drawTintMask(ctx, maskImg, hex, w, h, blendOntoMain) {
+    blendOntoMain = blendOntoMain || "source-over";
     if (!maskImg || !maskImg.naturalWidth) return;
+    if (tintSlab.width !== w || tintSlab.height !== h) {
+      tintSlab.width = w;
+      tintSlab.height = h;
+    }
+    var t = tintSlab.getContext("2d");
+    t.globalCompositeOperation = "source-over";
+    t.clearRect(0, 0, w, h);
+    t.drawImage(maskImg, 0, 0, w, h);
+    t.globalCompositeOperation = "source-atop";
+    t.fillStyle = hex;
+    t.fillRect(0, 0, w, h);
     ctx.save();
-    ctx.drawImage(maskImg, 0, 0, w, h);
-    ctx.globalCompositeOperation = "source-atop";
-    ctx.fillStyle = hex;
-    ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = blendOntoMain;
+    ctx.drawImage(tintSlab, 0, 0);
     ctx.restore();
-    ctx.globalCompositeOperation = "source-over";
+  }
+
+  function layoutPreviewZoom() {
+    if (!previewCanvas || !previewScroll || !previewScaleWrap || !previewZoom) return;
+    if (!previewCanvas.width) return;
+    var cw = previewCanvas.width;
+    var ch = previewCanvas.height;
+    var mode = previewZoom.value;
+    var availW = Math.max(160, previewScroll.clientWidth - 16);
+    var availH = Math.min(window.innerHeight * 0.88, 1600);
+    var fit = Math.min(availW / cw, availH / ch, 1);
+    var s = mode === "fit" ? fit : parseInt(mode, 10) / 100;
+    if (!(s > 0) || s > 8) s = fit;
+    previewScaleWrap.style.width = cw + "px";
+    previewScaleWrap.style.height = ch + "px";
+    previewScaleWrap.style.transform = "scale(" + s + ")";
+    previewScroll.style.minHeight = Math.ceil(ch * s + 24) + "px";
   }
 
   function drawImageContain(ctx, img, cw, ch) {
@@ -571,12 +622,17 @@
     ctx.fillStyle = "#c8c4bc";
     ctx.fillRect(0, 0, W, H);
 
+    var tintMult = state.manifest.tintComposite === "multiply";
+    function tintBlendForSlot(key) {
+      return key === "1" || !tintMult ? "source-over" : "multiply";
+    }
+
     ["1", "2", "3", "4"].forEach(function (key) {
       var spec = state.manifest.colorSlots[key];
       if (!spec) return;
       if (spec.kind === "tintMask") {
         var mask = getImg(spec.mask);
-        drawTintMask(ctx, mask, hexForSlot(key), W, H);
+        drawTintMask(ctx, mask, hexForSlot(key), W, H, tintBlendForSlot(key));
       } else if (spec.kind === "imageOptions") {
         var opts = effectiveImageOptions(key);
         var idx = Math.min(state.slotChoice[key] || 0, Math.max(0, opts.length - 1));
@@ -591,13 +647,13 @@
       var pi = Math.min(state.patternIndex, patterns.length - 1);
       var pImg = getImg(patterns[pi]);
       var hex5 = hexForSlot("5");
-      if (pImg) drawTintMask(ctx, pImg, hex5, W, H);
+      if (pImg) drawTintMask(ctx, pImg, hex5, W, H, tintMult ? "multiply" : "source-over");
     }
 
     var spec6 = state.manifest.colorSlots["6"];
     if (spec6 && spec6.kind === "tintMask") {
       var m6 = getImg(spec6.mask);
-      drawTintMask(ctx, m6, hexForSlot("6"), W, H);
+      drawTintMask(ctx, m6, hexForSlot("6"), W, H, tintMult ? "multiply" : "source-over");
     } else if (spec6 && spec6.kind === "imageOptions") {
       var o6 = effectiveImageOptions("6");
       var j = Math.min(state.slotChoice["6"] || 0, Math.max(0, o6.length - 1));
@@ -607,16 +663,36 @@
       }
     }
 
+    var cblend = state.manifest.constantsBlend || {};
+    function safeComposite(name) {
+      var ok = "source-over,multiply,screen,overlay,darken,lighten,color-dodge,color-burn,hard-light,soft-light,difference,exclusion,hue,saturation,color,luminosity";
+      if (!name || name === "normal") return null;
+      return ok.indexOf(name) >= 0 ? name : null;
+    }
+
     var det = getImg(cst.details);
     if (det) drawImageContain(ctx, det, W, H);
     var line = getImg(cst.lineart);
-    if (line) drawImageContain(ctx, line, W, H);
+    if (line) {
+      var lb = safeComposite(cblend.lineart);
+      ctx.save();
+      if (lb) ctx.globalCompositeOperation = lb;
+      drawImageContain(ctx, line, W, H);
+      ctx.restore();
+    }
     var bgTop = getImg(cst.background);
     if (bgTop) drawImageCover(ctx, bgTop, W, H);
     var infoL = getImg(cst.infoLayer);
-    if (infoL) drawImageContain(ctx, infoL, W, H);
+    if (infoL) {
+      var ib = safeComposite(cblend.infoLayer);
+      ctx.save();
+      if (ib) ctx.globalCompositeOperation = ib;
+      drawImageContain(ctx, infoL, W, H);
+      ctx.restore();
+    }
 
     pillDim.textContent = W + " × " + H + " px";
+    window.requestAnimationFrame(function () { layoutPreviewZoom(); });
   }
 
   function collectUrls(manifest, skinPath) {
@@ -911,6 +987,15 @@
   document.getElementById("btn-rand-all").addEventListener("click", randomizeAll);
   document.getElementById("btn-export").addEventListener("click", exportPng);
 
+  if (previewZoom) {
+    previewZoom.addEventListener("change", function () {
+      layoutPreviewZoom();
+    });
+  }
+  window.addEventListener("resize", function () {
+    layoutPreviewZoom();
+  });
+
   document.addEventListener("keydown", function (e) {
     if (localStorage.getItem("chromaStrata_uiMode.v1") === "free") return;
     if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA")) return;
@@ -920,6 +1005,8 @@
       else randomizeAll();
     }
   });
+
+  window.__chromaLayoutPreview = layoutPreviewZoom;
 
   var qp = new URLSearchParams(location.search).get("skin");
   if (qp === "Yang/AsagiYang") qp = "AsagiYang";
@@ -956,6 +1043,9 @@
     colF.hidden = !isFree;
     mainH2.textContent = isFree ? "Free layer stack (uploads)" : "Skin & controls";
     if (isFree) paintFreePreview();
+    if (!isFree && typeof window.__chromaLayoutPreview === "function") {
+      window.requestAnimationFrame(function () { window.__chromaLayoutPreview(); });
+    }
   }
 
   tabM.addEventListener("click", function () { setMode("manifest"); });
