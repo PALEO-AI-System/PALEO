@@ -822,13 +822,18 @@
     if (!devkitImportText || !state.manifest || !state.manifest.colorSlots) return;
     var entries = [];
     ["1", "2", "3", "4", "5", "6", "7"].forEach(function (k) {
-      if (!state.manifest.colorSlots[k]) return;
-      var cols = effectiveColors(k);
-      if (!cols.length) return;
-      var arr = cols.map(function (hx) {
-        var c = hexToLinearParts(hx);
-        return "(R=" + c.r + ",G=" + c.g + ",B=" + c.b + ",A=1.000000)";
-      });
+      var arr;
+      if (k === "7") {
+        arr = ["(R=0.500000,G=0.500000,B=0.500000,A=1.000000)"];
+      } else {
+        if (!state.manifest.colorSlots[k]) return;
+        var cols = effectiveColors(k);
+        if (!cols.length) return;
+        arr = cols.map(function (hx) {
+          var c = hexToLinearParts(hx);
+          return "(R=" + c.r + ",G=" + c.g + ",B=" + c.b + ",A=1.000000)";
+        });
+      }
       var list = arr.join(",");
       entries.push("(Color" + k + ", (MaleColors=(" + list + "),FemaleColors=(" + list + ")))");
     });
