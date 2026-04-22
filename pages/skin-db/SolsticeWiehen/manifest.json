@@ -1,7 +1,7 @@
 {
   "id": "SolsticeWiehen",
   "displayName": "Solstice",
-  "canvasSize": [3400, 1156],
+  "canvasSize": [9262, 3102],
   "constantsBlend": {
     "lineart": "multiply",
     "infoLayer": "soft-light"
@@ -11,7 +11,8 @@
     "lineart": "SolsticeWiehen_Lineart.png",
     "details": "SolsticeWiehen_Details.png",
     "palette": "SolsticeWiehen_Palette.png",
-    "infoLayer": "SolsticeWiehen_Info.png"
+    "infoLayer": "SolsticeWiehen_Info.png",
+    "infoNotes": "SolsticeWiehen_Info.md"
   },
   "patterns": ["SolsticeWiehen_Color5-Pattern1.png"],
   "colorSlots": {
