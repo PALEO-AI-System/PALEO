@@ -20,7 +20,7 @@
       "label": "Color 1",
       "kind": "tintMask",
       "mask": "AsagiYang_Color1.png",
-      "palette": ["#932314", "#9E2937", "#934D14", "#935E14", "#B76400", "#ED9B0F", "#91A147"]
+      "palette": ["#932314", "#9E2937", "#65472F", "#934D14", "#935E14", "#B76400", "#ED9B0F", "#91A147"]
     },
     "2": {
       "label": "Color 2",
@@ -41,7 +41,7 @@
       "palette": ["#DFCF77", "#FFF69D"]
     },
     "5": {
-      "label": "Color 5 (pattern tint)",
+      "label": "Color 5 (pattern)",
       "kind": "patternTint",
       "palette": ["#401A11"]
     },

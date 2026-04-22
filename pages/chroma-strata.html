@@ -46,7 +46,7 @@
       margin: 0 0 26px;
     }
     .preview-hero .preview-scroll {
-      max-height: min(34vh, 420px);
+      max-height: min(80vh, 980px);
     }
     header { margin-bottom: 22px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
     header h1 {
@@ -56,7 +56,7 @@
       font-weight: 400;
       color: #fff;
     }
-    header p { margin: 0; max-width: 62ch; color: rgba(232,226,240,0.74); font-size: 0.92rem; line-height: 1.55; }
+    header p { margin: 0; max-width: none; width: 100%; color: rgba(232,226,240,0.82); font-size: 0.95rem; line-height: 1.6; }
     .kbd {
       display: inline-block;
       padding: 1px 7px;
@@ -67,15 +67,56 @@
       border: 1px solid rgba(255,255,255,0.14);
     }
     .layout-below {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
-      gap: 22px;
-      align-items: start;
+      display: block;
       max-width: 1320px;
       margin: 0 auto;
     }
-    @media (max-width: 960px) { .layout-below { grid-template-columns: 1fr; } }
-    .notes-aside .info-box { margin-top: 8px; }
+    .mini-controls {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(243, 238, 230, 0.14);
+      border: 1px solid rgba(224, 216, 204, 0.24);
+      backdrop-filter: blur(3px);
+    }
+    .mini-controls .mini-btn {
+      background: #ebe4d9;
+      color: var(--ink);
+      border: 1px solid var(--panel-edge);
+      min-width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      padding: 0 10px;
+      font-size: 1rem;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mini-controls .mini-btn.primary {
+      background: linear-gradient(135deg, var(--coral) 0%, var(--coral-dim) 100%);
+      color: #fff;
+      border: none;
+    }
+    .mini-controls .mini-skin {
+      min-width: 170px;
+      max-width: 260px;
+      width: min(40vw, 260px);
+      background: #fff;
+    }
+    @media (min-width: 1180px) {
+      .mini-controls {
+        position: fixed;
+        left: 12px;
+        top: 110px;
+        z-index: 20;
+        max-width: 320px;
+      }
+    }
 
     .panel {
       background: var(--panel);
@@ -213,13 +254,20 @@
     }
     .preview-scroll {
       overflow: hidden;
-      max-height: min(34vh, 420px);
+      max-height: min(80vh, 980px);
       padding: 8px;
       border-radius: 0 0 8px 8px;
       display: flex;
       justify-content: center;
       align-items: flex-start;
       box-sizing: border-box;
+    }
+    @media (max-width: 900px) {
+      .preview-scroll {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible;
+      }
     }
     #preview-scale-viewport {
       overflow: hidden;
@@ -322,8 +370,7 @@
     <header>
       <h1>Chroma Strata</h1>
       <p>
-        <strong>Preview</strong> is full width <strong>above</strong> controls for a larger view. <strong>PoT skin</strong> loads <span class="kbd">pages/skin-db/AsagiYang/</span>. <strong>Free stack</strong> uses the same top preview when selected.
-        <span class="kbd">R</span> / <span class="kbd">Shift+R</span> randomize in manifest mode; pattern count comes from <code>manifest.json</code>.
+        Chroma Strata lets you recolor layered Path of Titans style skins directly in-browser. Pick a skin, tweak Color slots 1-6, randomize looks, and export a PNG. You can also use Uploads mode to build a quick custom layered stack from your own images.
       </p>
     </header>
 
@@ -331,7 +378,7 @@
       <div id="block-manifest-preview">
         <div class="preview-shell">
           <div class="preview-toolbar">
-            <span class="small" style="opacity:0.85;">Preview fits the panel (wide canvas scaled down).</span>
+            <span class="small" id="pill-skin" style="opacity:0.9;">Asagi Yang</span>
             <span id="pill-dim" style="margin-left:auto;">—</span>
           </div>
           <div class="preview-frame">
@@ -358,19 +405,25 @@
         </div>
         <p class="hint" style="color:rgba(232,226,240,0.65);margin-top:12px;">Object URLs in this tab only — not saved to GitHub.</p>
       </div>
+      <div class="mini-controls" id="mini-controls">
+        <select id="mini-skin-select" class="mini-skin" aria-label="Quick skin selector"></select>
+        <button type="button" class="mini-btn" id="mini-rand-colors" title="Randomize colors" aria-label="Randomize colors">R</button>
+        <button type="button" class="mini-btn primary" id="mini-rand-all" title="Randomize colors and pattern" aria-label="Randomize colors and pattern">R+</button>
+        <button type="button" class="mini-btn" id="mini-export" title="Download PNG" aria-label="Download PNG">DL</button>
+      </div>
     </div>
 
     <div class="layout-below">
       <div class="panel">
         <div class="panel-inner">
-          <h2 id="main-h2">Skin &amp; controls</h2>
+          <h2 id="main-h2">Skin controls</h2>
           <div class="mode-tabs" role="tablist" aria-label="Lab mode">
-            <button type="button" class="pill-btn" id="tab-manifest" role="tab" aria-selected="true">PoT skin (manifest)</button>
-            <button type="button" class="pill-btn" id="tab-free" role="tab" aria-selected="false">Free stack (uploads)</button>
+            <button type="button" class="pill-btn" id="tab-manifest" role="tab" aria-selected="true">PoT Skin</button>
+            <button type="button" class="pill-btn" id="tab-free" role="tab" aria-selected="false">Uploads</button>
           </div>
 
           <div id="pane-manifest" role="tabpanel">
-          <label class="small" for="skin-select">Skin (manifest)</label>
+          <label class="small" for="skin-select">Skin</label>
           <div class="row" style="margin-bottom:12px;">
             <select id="skin-select" style="flex:1;min-width:200px;"></select>
             <button type="button" class="btn-ghost" id="btn-reload">Reload</button>
@@ -417,16 +470,12 @@
         </div>
       </div>
 
-      <aside class="notes-aside" id="notes-aside">
-        <label class="small" style="color:rgba(232,226,240,0.78);margin-top:0;">Notes (<code>infoNotes</code> .md)</label>
-        <div class="info-box" id="info-text">—</div>
-      </aside>
     </div>
 
-    <footer>Assets: <code>pages/skin-db/</code> · see <code>skin-db/README.md</code> for filenames, tint vs options, and exact hex on masks.</footer>
+    <footer>Chroma Strata for Path of Titans skin workflows. Credits: FluffShady.</footer>
   </div>
 
-  <input type="color" id="custom-picker" hidden aria-hidden="true" />
+  <input type="color" id="custom-picker" aria-label="Custom color picker" style="position:fixed;left:-9999px;bottom:0;opacity:0;width:1px;height:1px;pointer-events:none;" />
   <canvas id="free-export-canvas" width="1024" height="1024" hidden aria-hidden="true"></canvas>
 
   <script>
@@ -444,9 +493,10 @@
   var previewScroll = document.getElementById("preview-scroll");
   var previewScaleViewport = document.getElementById("preview-scale-viewport");
   var previewScaleWrap = document.getElementById("preview-scale-wrap");
+  var miniSkinSelect = document.getElementById("mini-skin-select");
+  var pillSkin = document.getElementById("pill-skin");
   var tintSlab = document.createElement("canvas");
   var pillDim = document.getElementById("pill-dim");
-  var infoText = document.getElementById("info-text");
   var loadStatus = document.getElementById("load-status");
   var customPicker = document.getElementById("custom-picker");
 
@@ -556,7 +606,8 @@
     if (!previewCanvas.width) return;
     var cw = previewCanvas.width;
     var ch = previewCanvas.height;
-    var capH = Math.min(window.innerHeight * 0.34, 420);
+    var isMobile = window.matchMedia("(max-width: 900px)").matches;
+    var capH = isMobile ? Math.min(window.innerHeight * 0.86, 920) : Math.min(window.innerHeight * 0.8, 980);
     var pad = 16;
     var availW = Math.max(160, previewScroll.clientWidth - pad);
     var availH = Math.max(120, capH - pad);
@@ -571,8 +622,13 @@
     previewScaleViewport.style.height = vh + "px";
     previewScaleViewport.style.overflow = "hidden";
     previewScroll.style.minHeight = "";
-    previewScroll.style.height = (vh + pad) + "px";
-    previewScroll.style.maxHeight = (capH + pad) + "px";
+    if (isMobile) {
+      previewScroll.style.height = "";
+      previewScroll.style.maxHeight = "";
+    } else {
+      previewScroll.style.height = (vh + pad) + "px";
+      previewScroll.style.maxHeight = (capH + pad) + "px";
+    }
   }
 
   function drawImageContain(ctx, img, cw, ch) {
@@ -787,14 +843,13 @@
         });
         buildPatternPills();
         buildSlotCards();
-        loadInfoMd();
         compose();
         localStorage.setItem(LS_LAST_SKIN, skinPath);
+        syncSkinName();
       })
       .catch(function (e) {
         loadStatus.hidden = false;
         loadStatus.textContent = String(e.message || e);
-        infoText.textContent = "Could not load manifest.";
       });
   }
 
@@ -814,8 +869,8 @@
     var ph = document.getElementById("pattern-hint");
     if (ph) {
       ph.textContent = n === 0
-        ? "No pattern files listed in manifest — add any number to the patterns array; color 5 tints whichever is selected."
-        : (n + " pattern file(s). Color 5 tints the selected pattern.");
+        ? "No pattern files listed in manifest."
+        : (n + " pattern file(s).");
     }
     if (!n) {
       patternPills.textContent = "No patterns in manifest.";
@@ -898,11 +953,13 @@
         var addBtn = document.createElement("button");
         addBtn.type = "button";
         addBtn.className = "btn-ghost";
-        addBtn.textContent = "+ Custom color (wheel)";
+        addBtn.textContent = "+ Custom color";
         addBtn.addEventListener("click", function () {
           customTarget = key;
           customPicker.value = colors[state.slotChoice[key]] || "#ffffff";
-          customPicker.click();
+          customPicker.focus();
+          if (typeof customPicker.showPicker === "function") customPicker.showPicker();
+          else customPicker.click();
         });
         addRow.appendChild(addBtn);
         card.appendChild(addRow);
@@ -939,7 +996,7 @@
     });
   }
 
-  customPicker.addEventListener("input", function () {
+  customPicker.addEventListener("change", function () {
     if (!customTarget) return;
     addCustomHex(state.skinPath, customTarget, customPicker.value);
     var cols = effectiveColors(customTarget);
@@ -948,22 +1005,14 @@
     buildSlotCards();
     compose();
   });
+  customPicker.addEventListener("blur", function () {
+    customTarget = null;
+  });
 
-  function loadInfoMd() {
-    var c = state.manifest.constants || {};
-    var infoFile = c.infoNotes || c.info;
-    if (!infoFile) {
-      infoText.textContent = c.infoLayer ? "Notes optional — info image is on the canvas." : "No notes file in manifest.";
-      return;
-    }
-    fetch(assetUrl(state.skinPath, infoFile), { cache: "no-store" })
-      .then(function (r) { return r.ok ? r.text() : ""; })
-      .then(function (t) {
-        infoText.textContent = t || "(empty)";
-      })
-      .catch(function () {
-        infoText.textContent = "Could not load info file.";
-      });
+  function syncSkinName() {
+    if (!pillSkin || !skinSelect) return;
+    var txt = skinSelect.options[skinSelect.selectedIndex] ? skinSelect.options[skinSelect.selectedIndex].textContent : "Skin";
+    pillSkin.textContent = txt.replace(" · ", " ");
   }
 
   function randomizeColorsOnly() {
@@ -1014,18 +1063,31 @@
         if (last && Array.prototype.some.call(skinSelect.options, function (o) { return o.value === last; })) {
           skinSelect.value = last;
         }
+        if (miniSkinSelect) miniSkinSelect.innerHTML = skinSelect.innerHTML;
+        if (miniSkinSelect) miniSkinSelect.value = skinSelect.value;
+        syncSkinName();
       });
   }
 
   skinSelect.addEventListener("change", function () {
+    if (miniSkinSelect) miniSkinSelect.value = skinSelect.value;
     loadSkin(skinSelect.value);
   });
+  if (miniSkinSelect) {
+    miniSkinSelect.addEventListener("change", function () {
+      skinSelect.value = miniSkinSelect.value;
+      loadSkin(skinSelect.value);
+    });
+  }
   btnReload.addEventListener("click", function () {
     loadSkin(skinSelect.value);
   });
   document.getElementById("btn-rand-colors").addEventListener("click", randomizeColorsOnly);
   document.getElementById("btn-rand-all").addEventListener("click", randomizeAll);
   document.getElementById("btn-export").addEventListener("click", exportPng);
+  document.getElementById("mini-rand-colors").addEventListener("click", randomizeColorsOnly);
+  document.getElementById("mini-rand-all").addEventListener("click", randomizeAll);
+  document.getElementById("mini-export").addEventListener("click", exportPng);
 
   window.addEventListener("resize", function () {
     layoutPreviewFit();
@@ -1065,8 +1127,8 @@
   var paneF = document.getElementById("pane-free");
   var blockManifestPreview = document.getElementById("block-manifest-preview");
   var blockFreePreview = document.getElementById("block-free-preview");
-  var notesAside = document.getElementById("notes-aside");
   var mainH2 = document.getElementById("main-h2");
+  var miniControls = document.getElementById("mini-controls");
 
   function setMode(mode) {
     var isFree = mode === "free";
@@ -1077,8 +1139,8 @@
     paneF.hidden = !isFree;
     if (blockManifestPreview) blockManifestPreview.hidden = isFree;
     if (blockFreePreview) blockFreePreview.hidden = !isFree;
-    if (notesAside) notesAside.hidden = isFree;
-    mainH2.textContent = isFree ? "Free layer stack (uploads)" : "Skin & controls";
+    if (miniControls) miniControls.hidden = isFree;
+    mainH2.textContent = isFree ? "Uploads controls" : "Skin controls";
     if (isFree) paintFreePreview();
     if (!isFree && typeof window.__chromaLayoutPreview === "function") {
       window.requestAnimationFrame(function () { window.__chromaLayoutPreview(); });
