@@ -820,22 +820,19 @@
 
   function renderDevkitImportBlock() {
     if (!devkitImportText || !state.manifest || !state.manifest.colorSlots) return;
-    var lines = [];
-    lines.push("; Starter block for UE/PoT DevKit color import");
-    lines.push("SkinId=" + (state.manifest.id || state.skinPath || "Skin"));
-    ["Male", "Female"].forEach(function (sex) {
-      lines.push(sex + "Colors=(");
-      ["1", "2", "3", "4", "5", "6"].forEach(function (k) {
-        var cols = effectiveColors(k);
-        var arr = cols.map(function (hx) {
-          var c = hexToLinearParts(hx);
-          return "(R=" + c.r + ",G=" + c.g + ",B=" + c.b + ",A=1.000000)";
-        });
-        lines.push("  Color" + k + "=(" + arr.join(",") + "),");
+    var entries = [];
+    ["1", "2", "3", "4", "5", "6", "7"].forEach(function (k) {
+      if (!state.manifest.colorSlots[k]) return;
+      var cols = effectiveColors(k);
+      if (!cols.length) return;
+      var arr = cols.map(function (hx) {
+        var c = hexToLinearParts(hx);
+        return "(R=" + c.r + ",G=" + c.g + ",B=" + c.b + ",A=1.000000)";
       });
-      lines.push(")");
+      var list = arr.join(",");
+      entries.push("(Color" + k + ", (MaleColors=(" + list + "),FemaleColors=(" + list + ")))");
     });
-    devkitImportText.value = lines.join("\n");
+    devkitImportText.value = "(" + entries.join(",") + ")";
   }
 
   function basePalette(slotKey) {
