@@ -1,3 +1,3 @@
 # Asagi — notes
 
-The **composited image** includes **`AsagiYang_Info.png`** as the top layer (`infoLayer` in `manifest.json`). This file is optional extra copy for humans; canvas size for this skin is **3400 × 1156** (`canvasSize` in manifest).
+Canvas **3400 × 1156** (`canvasSize` in `manifest.json`). **Draw order (bottom → top):** colors 1–4 → pattern (color 5 tint) → color 6 → details → lineart (multiply) → background → **palette** PNG → **info** PNG (soft-light). Sidebar text is optional `infoNotes` `.md` only.

@@ -11,10 +11,15 @@
     "background": "AsagiYang_Background.png",
     "lineart": "AsagiYang_Lineart.png",
     "details": "AsagiYang_Details.png",
+    "palette": "AsagiYang_Palette.png",
     "infoLayer": "AsagiYang_Info.png",
     "infoNotes": "AsagiYang_Info.md"
   },
-  "patterns": ["AsagiYang_Color5-Pattern1.png"],
+  "patterns": [
+    "AsagiYang_Color5-Pattern1.png",
+    "AsagiYang_Color5-Pattern2.png",
+    "AsagiYang_Color5-Pattern3.png"
+  ],
   "colorSlots": {
     "1": {
       "label": "Color 1",

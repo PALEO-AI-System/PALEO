@@ -33,7 +33,21 @@
         linear-gradient(165deg, var(--void) 0%, var(--deep) 55%, #151022 100%);
     }
     a { color: #f0a090; }
-    .wrap { max-width: 1220px; margin: 0 auto; padding: 24px 18px 40px; }
+    .wrap {
+      max-width: 100%;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px clamp(12px, 3vw, 28px) 40px;
+      box-sizing: border-box;
+    }
+    body { overflow-x: hidden; }
+    .preview-hero {
+      width: 100%;
+      margin: 0 0 26px;
+    }
+    .preview-hero .preview-scroll {
+      max-height: min(78vh, 1100px);
+    }
     header { margin-bottom: 22px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
     header h1 {
       margin: 0 0 6px;
@@ -52,13 +66,16 @@
       background: rgba(255,255,255,0.1);
       border: 1px solid rgba(255,255,255,0.14);
     }
-    .layout {
+    .layout-below {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
       gap: 22px;
       align-items: start;
+      max-width: 1320px;
+      margin: 0 auto;
     }
-    @media (max-width: 960px) { .layout { grid-template-columns: 1fr; } }
+    @media (max-width: 960px) { .layout-below { grid-template-columns: 1fr; } }
+    .notes-aside .info-box { margin-top: 8px; }
 
     .panel {
       background: var(--panel);
@@ -294,12 +311,50 @@
     <header>
       <h1>Chroma Strata</h1>
       <p>
-        <strong>PoT skin</strong> loads <span class="kbd">pages/skin-db/AsagiYang/</span> (see tab below). <strong>Free stack</strong> keeps the original upload workflow (phone-friendly color picker, layers, arrows).
-        Manifest mode: <span class="kbd">R</span> = colors + patterns · <span class="kbd">Shift+R</span> = colors only. Pattern count comes from <code>manifest.json</code> (1, 3, 6+ files all OK).
+        <strong>Preview</strong> is full width <strong>above</strong> controls for a larger view. <strong>PoT skin</strong> loads <span class="kbd">pages/skin-db/AsagiYang/</span>. <strong>Free stack</strong> uses the same top preview when selected.
+        <span class="kbd">R</span> / <span class="kbd">Shift+R</span> randomize in manifest mode; pattern count comes from <code>manifest.json</code>.
       </p>
     </header>
 
-    <div class="layout">
+    <div class="preview-hero" id="preview-hero">
+      <div id="block-manifest-preview">
+        <div class="preview-shell">
+          <div class="preview-toolbar">
+            <span id="pill-dim">—</span>
+            <label class="small" for="preview-zoom" style="margin:0;">Preview size</label>
+            <select id="preview-zoom" aria-label="Preview zoom" style="width:auto;min-width:140px;">
+              <option value="fit" selected>Fit in panel</option>
+              <option value="100">100% (scroll)</option>
+              <option value="125">125%</option>
+              <option value="150">150%</option>
+              <option value="200">200%</option>
+            </select>
+          </div>
+          <div class="preview-frame">
+            <div class="preview-scroll" id="preview-scroll">
+              <div id="preview-scale-wrap">
+                <canvas id="preview-canvas" width="1024" height="1024" aria-label="Composited skin preview"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="block-free-preview" hidden>
+        <div class="preview-shell">
+          <div class="preview-toolbar">
+            <span>Free stack preview</span>
+          </div>
+          <div class="preview-frame">
+            <div class="free-stack-wrap">
+              <div class="preview-stack-inner-free" id="free-preview-stack"></div>
+            </div>
+          </div>
+        </div>
+        <p class="hint" style="color:rgba(232,226,240,0.65);margin-top:12px;">Object URLs in this tab only — not saved to GitHub.</p>
+      </div>
+    </div>
+
+    <div class="layout-below">
       <div class="panel">
         <div class="panel-inner">
           <h2 id="main-h2">Skin &amp; controls</h2>
@@ -334,7 +389,7 @@
           </div>
 
           <div id="pane-free" role="tabpanel" hidden>
-            <p class="hint" style="margin-top:0;">Upload PNGs per layer (append files). Base = color or image bank; overlays stack on top. Nothing here is saved to GitHub.</p>
+            <p class="hint" style="margin-top:0;">Upload PNGs per layer (append files). Base = color or image bank; overlays stack on top.</p>
             <div class="slot-card" style="margin-top:0;">
               <h3>Base (bottom)</h3>
               <label class="small" for="free-base-color">Fallback color</label>
@@ -356,44 +411,10 @@
         </div>
       </div>
 
-      <div id="col-manifest">
-        <div class="preview-shell">
-          <div class="preview-toolbar">
-            <span id="pill-dim">—</span>
-            <label class="small" for="preview-zoom" style="margin:0;">Preview size</label>
-            <select id="preview-zoom" aria-label="Preview zoom" style="width:auto;min-width:140px;">
-              <option value="fit" selected>Fit in panel</option>
-              <option value="100">100% (scroll)</option>
-              <option value="125">125%</option>
-              <option value="150">150%</option>
-              <option value="200">200%</option>
-            </select>
-          </div>
-          <div class="preview-frame">
-            <div class="preview-scroll" id="preview-scroll">
-              <div id="preview-scale-wrap">
-                <canvas id="preview-canvas" width="1024" height="1024" aria-label="Composited skin preview"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-        <label class="small" style="margin-top:14px;color:rgba(232,226,240,0.7);">Notes only (<code>infoNotes</code> .md)</label>
+      <aside class="notes-aside" id="notes-aside">
+        <label class="small" style="color:rgba(232,226,240,0.78);margin-top:0;">Notes (<code>infoNotes</code> .md)</label>
         <div class="info-box" id="info-text">—</div>
-      </div>
-
-      <div id="col-free" hidden>
-        <div class="preview-shell">
-          <div class="preview-toolbar">
-            <span>Free stack preview</span>
-          </div>
-          <div class="preview-frame">
-            <div class="free-stack-wrap">
-              <div class="preview-stack-inner-free" id="free-preview-stack"></div>
-            </div>
-          </div>
-        </div>
-        <p class="hint" style="color:rgba(232,226,240,0.65);margin-top:12px;">Uses the same live stacking idea as the first Chroma Strata build: object URLs in this tab only.</p>
-      </div>
+      </aside>
     </div>
 
     <footer>Assets: <code>pages/skin-db/</code> · see <code>skin-db/README.md</code> for filenames, tint vs options, and exact hex on masks.</footer>
@@ -682,6 +703,14 @@
     }
     var bgTop = getImg(cst.background);
     if (bgTop) drawImageCover(ctx, bgTop, W, H);
+    var pal = getImg(cst.palette);
+    if (pal) {
+      var pb = safeComposite(cblend.palette);
+      ctx.save();
+      if (pb) ctx.globalCompositeOperation = pb;
+      drawImageContain(ctx, pal, W, H);
+      ctx.restore();
+    }
     var infoL = getImg(cst.infoLayer);
     if (infoL) {
       var ib = safeComposite(cblend.infoLayer);
@@ -698,7 +727,7 @@
   function collectUrls(manifest, skinPath) {
     var urls = [];
     var c = manifest.constants || {};
-    ["background", "lineart", "details", "infoLayer"].forEach(function (k) {
+    ["background", "lineart", "details", "palette", "infoLayer"].forEach(function (k) {
       if (c[k]) urls.push(assetUrl(skinPath, c[k]));
     });
     (manifest.patterns || []).forEach(function (p) {
@@ -1028,8 +1057,9 @@
   var tabF = document.getElementById("tab-free");
   var paneM = document.getElementById("pane-manifest");
   var paneF = document.getElementById("pane-free");
-  var colM = document.getElementById("col-manifest");
-  var colF = document.getElementById("col-free");
+  var blockManifestPreview = document.getElementById("block-manifest-preview");
+  var blockFreePreview = document.getElementById("block-free-preview");
+  var notesAside = document.getElementById("notes-aside");
   var mainH2 = document.getElementById("main-h2");
 
   function setMode(mode) {
@@ -1039,8 +1069,9 @@
     tabF.setAttribute("aria-selected", isFree ? "true" : "false");
     paneM.hidden = isFree;
     paneF.hidden = !isFree;
-    colM.hidden = isFree;
-    colF.hidden = !isFree;
+    if (blockManifestPreview) blockManifestPreview.hidden = isFree;
+    if (blockFreePreview) blockFreePreview.hidden = !isFree;
+    if (notesAside) notesAside.hidden = isFree;
     mainH2.textContent = isFree ? "Free layer stack (uploads)" : "Skin & controls";
     if (isFree) paintFreePreview();
     if (!isFree && typeof window.__chromaLayoutPreview === "function") {
