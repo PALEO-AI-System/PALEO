@@ -2,13 +2,33 @@
   "version": 1,
   "skins": [
     {
-      "path": "AsagiYang",
+      "path": "Yang/AsagiYang",
       "displayName": "Asagi",
       "species": "Yang"
     },
     {
-      "path": "SolsticeWiehen",
+      "path": "Sin/PastelSin",
+      "displayName": "Pastel",
+      "species": "Sin"
+    },
+    {
+      "path": "Tuojian/SunsetTuojian",
+      "displayName": "Sunset",
+      "species": "Tuojian"
+    },
+    {
+      "path": "Wiehen/SolsticeWiehen",
       "displayName": "Solstice",
+      "species": "Wiehen"
+    },
+    {
+      "path": "Wiehen/SeismicWiehen",
+      "displayName": "Seismic",
+      "species": "Wiehen"
+    },
+    {
+      "path": "Wiehen/Solstice2Wiehen",
+      "displayName": "Solstice 2",
       "species": "Wiehen"
     }
   ]

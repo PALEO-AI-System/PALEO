@@ -8,7 +8,7 @@
   },
   "constants": {
     "background": "AsagiYang_Background.png",
-    "lineart": "AsagiYang_Lineart.png",
+    "lineart": "../Yang_Lineart.png",
     "details": "AsagiYang_Details.png",
     "palette": "AsagiYang_Palette.png",
     "infoLayer": "AsagiYang_Info.png",
@@ -19,7 +19,7 @@
     "1": {
       "label": "Color 1",
       "kind": "tintMask",
-      "mask": "AsagiYang_Color1.png",
+      "mask": "../Yang_Color1.png",
       "palette": ["#932314", "#9E2937", "#462310", "#65472F", "#934D14", "#935E14", "#B76400", "#ED9B0F", "#91A147"]
     },
     "2": {
@@ -48,7 +48,7 @@
     "6": {
       "label": "Color 6 (eyes)",
       "kind": "tintMask",
-      "mask": "AsagiYang_Color6.png",
+      "mask": "../Yang_Color6.png",
       "palette": ["#260C03", "#4B270B", "#9E5B28", "#886A3F", "#858E43", "#639777"]
     }
   }

@@ -1,0 +1,48 @@
+{
+  "id": "PastelSin",
+  "displayName": "Pastel",
+  "canvasSize": [3400, 1156],
+  "constantsBlend": {
+    "lineart": "multiply",
+    "infoLayer": "soft-light"
+  },
+  "constants": {
+    "background": "PastelSin_Background.png",
+    "lineart": "../Sin_Lineart.png",
+    "palette": "PastelSin_Palette.png",
+    "infoLayer": "PastelSin_Info.png",
+    "infoNotes": "PastelSin_Info.md"
+  },
+  "patterns": ["PastelSin_Color5-Pattern1.png"],
+  "colorSlots": {
+    "1": {
+      "label": "Color 1",
+      "kind": "tintMask",
+      "mask": "../Sin_Color1.png",
+      "palette": ["#888888"]
+    },
+    "2": {
+      "label": "Color 2",
+      "kind": "tintMask",
+      "mask": "PastelSin_Color2.png",
+      "palette": ["#888888"]
+    },
+    "3": {
+      "label": "Color 3",
+      "kind": "tintMask",
+      "mask": "PastelSin_Color3.png",
+      "palette": ["#888888"]
+    },
+    "4": {
+      "label": "Color 4",
+      "kind": "tintMask",
+      "mask": "PastelSin_Color4.png",
+      "palette": ["#888888"]
+    },
+    "5": {
+      "label": "Color 5 (pattern)",
+      "kind": "patternTint",
+      "palette": ["#240B05"]
+    }
+  }
+}

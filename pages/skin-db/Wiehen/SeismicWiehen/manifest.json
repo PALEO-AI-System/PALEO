@@ -1,0 +1,58 @@
+{
+  "id": "SeismicWiehen",
+  "displayName": "Seismic",
+  "canvasSize": [9262, 3102],
+  "constantsBlend": {
+    "lineart": "multiply",
+    "infoLayer": "soft-light"
+  },
+  "constants": {
+    "background": "SeismicWiehen_Background.png",
+    "lineart": "../Wiehen_Lineart.png",
+    "details": "../SolsticeWiehen/SolsticeWiehen_Details.png",
+    "infoLayer": "SeismicWiehen_Info.png",
+    "infoNotes": "SeismicWiehen_Info.md"
+  },
+  "patterns": [
+    "SeismicWiehen_Color5-Pattern1.png",
+    "SeismicWiehen_Color5-Pattern2.png",
+    "SeismicWiehen_Color5-Pattern3.png"
+  ],
+  "colorSlots": {
+    "1": {
+      "label": "Color 1",
+      "kind": "tintMask",
+      "mask": "../Wiehen_Color1.png",
+      "palette": ["#251D18"]
+    },
+    "2": {
+      "label": "Color 2",
+      "kind": "tintMask",
+      "mask": "SeismicWiehen_Color2.png",
+      "palette": ["#61271A"]
+    },
+    "3": {
+      "label": "Color 3",
+      "kind": "tintMask",
+      "mask": "SeismicWiehen_Color3.png",
+      "palette": ["#E49847"]
+    },
+    "4": {
+      "label": "Color 4",
+      "kind": "tintMask",
+      "mask": "SeismicWiehen_Color4.png",
+      "palette": ["#FF3201", "#FF6001", "#A991E8", "#90E7CB"]
+    },
+    "5": {
+      "label": "Color 5 (pattern)",
+      "kind": "patternTint",
+      "palette": ["#250701"]
+    },
+    "6": {
+      "label": "Color 6 (eyes)",
+      "kind": "tintMask",
+      "mask": "../Wiehen_Color6.png",
+      "palette": ["#5BC0ED"]
+    }
+  }
+}

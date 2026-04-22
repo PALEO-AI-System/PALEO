@@ -1479,7 +1479,8 @@
           skinSelect.appendChild(o);
         });
         var last = localStorage.getItem(LS_LAST_SKIN);
-        if (last === "Yang/AsagiYang") last = "AsagiYang";
+        if (last === "AsagiYang") last = "Yang/AsagiYang";
+        if (last === "SolsticeWiehen") last = "Wiehen/SolsticeWiehen";
         if (last && Array.prototype.some.call(skinSelect.options, function (o) { return o.value === last; })) {
           skinSelect.value = last;
         }
@@ -1520,7 +1521,8 @@
   window.__chromaLayoutPreview = layoutPreviewFit;
 
   var qp = new URLSearchParams(location.search).get("skin");
-  if (qp === "Yang/AsagiYang") qp = "AsagiYang";
+  if (qp === "AsagiYang") qp = "Yang/AsagiYang";
+  if (qp === "SolsticeWiehen") qp = "Wiehen/SolsticeWiehen";
   populateSkinIndex().then(function () {
     if (qp && Array.prototype.some.call(skinSelect.options, function (o) { return o.value === qp; })) {
       skinSelect.value = qp;

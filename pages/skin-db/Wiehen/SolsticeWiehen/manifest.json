@@ -8,7 +8,7 @@
   },
   "constants": {
     "background": "SolsticeWiehen_Background.png",
-    "lineart": "SolsticeWiehen_Lineart.png",
+    "lineart": "../Wiehen_Lineart.png",
     "details": "SolsticeWiehen_Details.png",
     "palette": "SolsticeWiehen_Palette.png",
     "infoLayer": "SolsticeWiehen_Info.png",
@@ -19,7 +19,7 @@
     "1": {
       "label": "Color 1",
       "kind": "tintMask",
-      "mask": "SolsticeWiehen_Color1.png",
+      "mask": "../Wiehen_Color1.png",
       "palette": ["#251D18"]
     },
     "2": {
@@ -48,7 +48,7 @@
     "6": {
       "label": "Color 6 (eyes)",
       "kind": "tintMask",
-      "mask": "SolsticeWiehen_Color6.png",
+      "mask": "../Wiehen_Color6.png",
       "palette": ["#5BC0ED"]
     }
   }
