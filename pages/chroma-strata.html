@@ -108,24 +108,25 @@
       display: flex;
       gap: 8px;
       align-items: center;
+      flex-wrap: wrap;
     }
+    .mini-controls .mini-pattern-inline { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
     .mini-controls .mini-tints {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 6px;
       width: 100%;
-      min-width: 220px;
+      min-width: 0;
     }
     .mini-controls .mini-slot {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 6px;
       background: rgba(0, 0, 0, 0.18);
       border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 10px;
       padding: 5px 6px;
-      overflow-x: auto;
-      scrollbar-width: thin;
     }
     .mini-controls .mini-label {
       font-size: 0.65rem;
@@ -207,7 +208,7 @@
     }
     @media (max-width: 900px) {
       .mini-controls .mini-tints {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
       .hex-chip {
         border-radius: 12px;
@@ -272,6 +273,12 @@
       color: #fff;
     }
     .btn-tiny { padding: 6px 9px; font-size: 0.76rem; border-radius: 8px; }
+    .btn-copy {
+      padding: 3px 5px;
+      min-width: 26px;
+      height: 24px;
+      border-radius: 6px;
+    }
     .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
     .slot-card {
@@ -511,6 +518,7 @@
           <button type="button" class="mini-btn" id="mini-rand-colors" title="Randomize colors" aria-label="Randomize colors"><i data-lucide="shuffle"></i></button>
           <button type="button" class="mini-btn primary" id="mini-rand-all" title="Randomize colors and pattern" aria-label="Randomize colors and pattern"><i data-lucide="dice-5"></i></button>
           <button type="button" class="mini-btn" id="mini-export" title="Download PNG" aria-label="Download PNG"><i data-lucide="download"></i></button>
+          <div class="mini-pattern-inline" id="mini-pattern-inline"></div>
         </div>
         <div class="mini-tints" id="mini-slot-mount"></div>
       </div>
@@ -586,6 +594,16 @@
   </div>
 
   <input type="color" id="custom-picker" aria-label="Custom color picker" style="position:fixed;left:8px;top:8px;opacity:0;width:36px;height:36px;pointer-events:auto;" />
+  <div id="mobile-color-sheet" hidden style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:90;">
+    <div style="position:absolute;left:50%;bottom:16px;transform:translateX(-50%);width:min(92vw,360px);background:#f3eee6;border:1px solid #e0d8cc;border-radius:12px;padding:12px;color:#1c1528;">
+      <label class="small" for="mobile-color-input" style="margin-top:0;">Pick custom color</label>
+      <input type="color" id="mobile-color-input" value="#ffffff" style="width:100%;height:42px;border:none;border-radius:8px;background:#fff;" />
+      <div class="row" style="margin-top:10px;justify-content:flex-end;">
+        <button type="button" class="btn-ghost" id="mobile-color-cancel">Cancel</button>
+        <button type="button" class="btn-primary" id="mobile-color-apply">Use color</button>
+      </div>
+    </div>
+  </div>
   <canvas id="free-export-canvas" width="1024" height="1024" hidden aria-hidden="true"></canvas>
   <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -610,6 +628,11 @@
   var pillDim = document.getElementById("pill-dim");
   var loadStatus = document.getElementById("load-status");
   var customPicker = document.getElementById("custom-picker");
+  var mobileColorSheet = document.getElementById("mobile-color-sheet");
+  var mobileColorInput = document.getElementById("mobile-color-input");
+  var mobileColorApply = document.getElementById("mobile-color-apply");
+  var mobileColorCancel = document.getElementById("mobile-color-cancel");
+  var miniPatternInline = document.getElementById("mini-pattern-inline");
   var hexCurrent = document.getElementById("hex-current");
   var hexGroups = document.getElementById("hex-groups");
 
@@ -692,12 +715,24 @@
   function makeCopyIconButton(onClick, titleText) {
     var b = document.createElement("button");
     b.type = "button";
-    b.className = "btn-ghost btn-tiny";
+    b.className = "btn-ghost btn-tiny btn-copy";
     b.title = titleText || "Copy";
     b.setAttribute("aria-label", titleText || "Copy");
     b.innerHTML = '<i data-lucide="copy"></i>';
     b.addEventListener("click", onClick);
     return b;
+  }
+
+  function applyCustomColor(hex) {
+    if (!customTarget || !hex) return;
+    addCustomHex(state.skinPath, customTarget, hex);
+    var cols = effectiveColors(customTarget);
+    state.slotChoice[customTarget] = cols.length - 1;
+    customTarget = null;
+    buildSlotCards();
+    buildMiniControls();
+    renderHexPanel();
+    compose();
   }
 
   function basePalette(slotKey) {
@@ -1047,6 +1082,7 @@
   function buildMiniControls() {
     if (!miniSlotMount || !state.manifest || !state.manifest.colorSlots) return;
     miniSlotMount.innerHTML = "";
+    if (miniPatternInline) miniPatternInline.innerHTML = "";
     ["1", "2", "3", "4", "5", "6"].forEach(function (key) {
       var spec = state.manifest.colorSlots[key];
       if (!spec || !(spec.kind === "tintMask" || spec.kind === "patternTint")) return;
@@ -1075,13 +1111,7 @@
       miniSlotMount.appendChild(wrap);
     });
     var patterns = state.manifest.patterns || [];
-    if (patterns.length > 0) {
-      var pw = document.createElement("div");
-      pw.className = "mini-slot";
-      var pl = document.createElement("span");
-      pl.className = "mini-label";
-      pl.textContent = "P";
-      pw.appendChild(pl);
+    if (patterns.length > 0 && miniPatternInline) {
       patterns.forEach(function (_, idx) {
         var pb = document.createElement("button");
         pb.type = "button";
@@ -1099,9 +1129,8 @@
           buildMiniControls();
           compose();
         });
-        pw.appendChild(pb);
+        miniPatternInline.appendChild(pb);
       });
-      miniSlotMount.appendChild(pw);
     }
     refreshIcons();
   }
@@ -1216,16 +1245,14 @@
           var sy = window.scrollY || window.pageYOffset || 0;
           var mobile = isMobileDevice();
           if (mobile) {
-            customPicker.style.opacity = "0.01";
-            customPicker.style.pointerEvents = "auto";
+            if (mobileColorInput && mobileColorSheet) {
+              mobileColorInput.value = customPicker.value;
+              mobileColorSheet.hidden = false;
+              return;
+            }
           }
           if (typeof customPicker.showPicker === "function") customPicker.showPicker();
           else customPicker.click();
-          if (mobile) {
-            setTimeout(function () {
-              customPicker.style.opacity = "0";
-            }, 500);
-          }
           window.requestAnimationFrame(function () { window.scrollTo(0, sy); });
         });
         addRow.appendChild(addBtn);
@@ -1268,18 +1295,23 @@
 
   customPicker.addEventListener("change", function () {
     if (!customTarget) return;
-    addCustomHex(state.skinPath, customTarget, customPicker.value);
-    var cols = effectiveColors(customTarget);
-    state.slotChoice[customTarget] = cols.length - 1;
-    customTarget = null;
-    buildSlotCards();
-    buildMiniControls();
-    renderHexPanel();
-    compose();
+    applyCustomColor(customPicker.value);
   });
   customPicker.addEventListener("blur", function () {
     customTarget = null;
   });
+  if (mobileColorApply) {
+    mobileColorApply.addEventListener("click", function () {
+      if (mobileColorSheet) mobileColorSheet.hidden = true;
+      applyCustomColor(mobileColorInput ? mobileColorInput.value : "");
+    });
+  }
+  if (mobileColorCancel) {
+    mobileColorCancel.addEventListener("click", function () {
+      if (mobileColorSheet) mobileColorSheet.hidden = true;
+      customTarget = null;
+    });
+  }
 
   function syncSkinName() {
     if (!pillSkin || !skinSelect) return;
