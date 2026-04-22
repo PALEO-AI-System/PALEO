@@ -594,11 +594,11 @@
         <h3>Selected and Palette Hex Codes</h3>
         <div class="hex-current" id="hex-current"></div>
         <div class="hex-groups" id="hex-groups"></div>
-        <h3 style="margin-top:12px;">PoT DevKit Import</h3>
-        <textarea id="devkit-import-text" rows="7" style="width:100%;border:1px solid var(--panel-edge);border-radius:8px;padding:8px;font-family:monospace;font-size:0.74rem;"></textarea>
-        <div class="row" style="margin-top:8px;">
-          <button type="button" class="btn-ghost btn-tiny" id="devkit-copy-all">Copy DevKit block</button>
+        <div class="row" style="margin-top:12px;justify-content:space-between;align-items:center;">
+          <h3 style="margin:0;">PoT DevKit Import</h3>
+          <button type="button" class="btn-ghost btn-tiny btn-copy" id="devkit-copy-title" aria-label="Copy DevKit block" title="Copy DevKit block"><i data-lucide="copy"></i></button>
         </div>
+        <textarea id="devkit-import-text" rows="7" style="width:100%;border:1px solid var(--panel-edge);border-radius:8px;padding:8px;font-family:monospace;font-size:0.74rem;"></textarea>
       </div>
 
     </div>
@@ -649,7 +649,7 @@
   var hexCurrent = document.getElementById("hex-current");
   var hexGroups = document.getElementById("hex-groups");
   var devkitImportText = document.getElementById("devkit-import-text");
-  var devkitCopyAll = document.getElementById("devkit-copy-all");
+  var devkitCopyTitle = document.getElementById("devkit-copy-title");
 
   var customTarget = null;
 
@@ -1354,8 +1354,8 @@
       customTarget = null;
     });
   }
-  if (devkitCopyAll) {
-    devkitCopyAll.addEventListener("click", function () {
+  if (devkitCopyTitle) {
+    devkitCopyTitle.addEventListener("click", function () {
       copyText(devkitImportText ? devkitImportText.value : "");
     });
   }
