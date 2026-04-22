@@ -121,7 +121,6 @@
     .mini-controls .mini-slot {
       display: flex;
       align-items: center;
-      flex-wrap: wrap;
       gap: 6px;
       background: rgba(0, 0, 0, 0.18);
       border: 1px solid rgba(255, 255, 255, 0.14);
@@ -142,6 +141,14 @@
       box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
       cursor: pointer;
       padding: 0;
+    }
+    .mini-controls .mini-swatch-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      flex: 1;
+      min-width: 0;
     }
     .mini-controls .mini-swatch[data-on="1"] {
       outline: 2px solid #f3eee6;
@@ -279,6 +286,7 @@
       height: 24px;
       border-radius: 6px;
     }
+    .btn-copy svg { width: 12px; height: 12px; }
     .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
     .slot-card {
@@ -586,6 +594,12 @@
         <h3>Selected and Palette Hex Codes</h3>
         <div class="hex-current" id="hex-current"></div>
         <div class="hex-groups" id="hex-groups"></div>
+        <h3 style="margin-top:12px;">Unreal DevKit Import (Starter)</h3>
+        <p class="hint" style="margin-top:4px;">Starter format based on Unreal `FLinearColor` string parsing (`R=,G=,B=,A=`). Paste/edit this for male/female color arrays in your DevKit workflow.</p>
+        <textarea id="devkit-import-text" rows="7" style="width:100%;border:1px solid var(--panel-edge);border-radius:8px;padding:8px;font-family:monospace;font-size:0.74rem;"></textarea>
+        <div class="row" style="margin-top:8px;">
+          <button type="button" class="btn-ghost btn-tiny" id="devkit-copy-all">Copy DevKit block</button>
+        </div>
       </div>
 
     </div>
@@ -600,7 +614,7 @@
       <input type="color" id="mobile-color-input" value="#ffffff" style="width:100%;height:42px;border:none;border-radius:8px;background:#fff;" />
       <div class="row" style="margin-top:10px;justify-content:flex-end;">
         <button type="button" class="btn-ghost" id="mobile-color-cancel">Cancel</button>
-        <button type="button" class="btn-primary" id="mobile-color-apply">Use color</button>
+        <button type="button" class="btn-primary" id="mobile-color-apply">Confirm</button>
       </div>
     </div>
   </div>
@@ -635,6 +649,8 @@
   var miniPatternInline = document.getElementById("mini-pattern-inline");
   var hexCurrent = document.getElementById("hex-current");
   var hexGroups = document.getElementById("hex-groups");
+  var devkitImportText = document.getElementById("devkit-import-text");
+  var devkitCopyAll = document.getElementById("devkit-copy-all");
 
   var customTarget = null;
 
@@ -732,7 +748,48 @@
     buildSlotCards();
     buildMiniControls();
     renderHexPanel();
+    renderDevkitImportBlock();
     compose();
+  }
+
+  function openCustomColorSheet(seedHex) {
+    if (!mobileColorInput || !mobileColorSheet) return;
+    mobileColorInput.value = seedHex || "#ffffff";
+    mobileColorSheet.hidden = false;
+  }
+
+  function closeCustomColorSheet() {
+    if (mobileColorSheet) mobileColorSheet.hidden = true;
+  }
+
+  function hexToLinearParts(hex) {
+    var m = /^#?([0-9A-Fa-f]{6})$/.exec(hex || "");
+    if (!m) return { r: "0.000000", g: "0.000000", b: "0.000000" };
+    var n = m[1];
+    var r = parseInt(n.slice(0, 2), 16) / 255;
+    var g = parseInt(n.slice(2, 4), 16) / 255;
+    var b = parseInt(n.slice(4, 6), 16) / 255;
+    return { r: r.toFixed(6), g: g.toFixed(6), b: b.toFixed(6) };
+  }
+
+  function renderDevkitImportBlock() {
+    if (!devkitImportText || !state.manifest || !state.manifest.colorSlots) return;
+    var lines = [];
+    lines.push("; Starter block for UE/PoT DevKit color import");
+    lines.push("SkinId=" + (state.manifest.id || state.skinPath || "Skin"));
+    ["Male", "Female"].forEach(function (sex) {
+      lines.push(sex + "Colors=(");
+      ["1", "2", "3", "4", "5", "6"].forEach(function (k) {
+        var cols = effectiveColors(k);
+        var arr = cols.map(function (hx) {
+          var c = hexToLinearParts(hx);
+          return "(R=" + c.r + ",G=" + c.g + ",B=" + c.b + ",A=1.000000)";
+        });
+        lines.push("  Color" + k + "=(" + arr.join(",") + "),");
+      });
+      lines.push(")");
+    });
+    devkitImportText.value = lines.join("\n");
   }
 
   function basePalette(slotKey) {
@@ -1028,6 +1085,7 @@
         buildSlotCards();
         buildMiniControls();
         renderHexPanel();
+        renderDevkitImportBlock();
         compose();
         localStorage.setItem(LS_LAST_SKIN, skinPath);
         syncSkinName();
@@ -1092,6 +1150,8 @@
       lab.className = "mini-label";
       lab.textContent = key;
       wrap.appendChild(lab);
+      var swrap = document.createElement("div");
+      swrap.className = "mini-swatch-wrap";
       var colors = effectiveColors(key);
       colors.forEach(function (hex, idx) {
         var sw = document.createElement("button");
@@ -1106,8 +1166,9 @@
           buildMiniControls();
           compose();
         });
-        wrap.appendChild(sw);
+        swrap.appendChild(sw);
       });
+      wrap.appendChild(swrap);
       miniSlotMount.appendChild(wrap);
     });
     var patterns = state.manifest.patterns || [];
@@ -1242,18 +1303,7 @@
         addBtn.addEventListener("click", function () {
           customTarget = key;
           customPicker.value = colors[state.slotChoice[key]] || "#ffffff";
-          var sy = window.scrollY || window.pageYOffset || 0;
-          var mobile = isMobileDevice();
-          if (mobile) {
-            if (mobileColorInput && mobileColorSheet) {
-              mobileColorInput.value = customPicker.value;
-              mobileColorSheet.hidden = false;
-              return;
-            }
-          }
-          if (typeof customPicker.showPicker === "function") customPicker.showPicker();
-          else customPicker.click();
-          window.requestAnimationFrame(function () { window.scrollTo(0, sy); });
+          openCustomColorSheet(customPicker.value);
         });
         addRow.appendChild(addBtn);
         card.appendChild(addRow);
@@ -1293,30 +1343,29 @@
     refreshIcons();
   }
 
-  customPicker.addEventListener("change", function () {
-    if (!customTarget) return;
-    applyCustomColor(customPicker.value);
-  });
-  customPicker.addEventListener("blur", function () {
-    customTarget = null;
-  });
   if (mobileColorApply) {
     mobileColorApply.addEventListener("click", function () {
-      if (mobileColorSheet) mobileColorSheet.hidden = true;
+      closeCustomColorSheet();
       applyCustomColor(mobileColorInput ? mobileColorInput.value : "");
     });
   }
   if (mobileColorCancel) {
     mobileColorCancel.addEventListener("click", function () {
-      if (mobileColorSheet) mobileColorSheet.hidden = true;
+      closeCustomColorSheet();
       customTarget = null;
+    });
+  }
+  if (devkitCopyAll) {
+    devkitCopyAll.addEventListener("click", function () {
+      copyText(devkitImportText ? devkitImportText.value : "");
     });
   }
 
   function syncSkinName() {
     if (!pillSkin || !skinSelect) return;
     var txt = skinSelect.options[skinSelect.selectedIndex] ? skinSelect.options[skinSelect.selectedIndex].textContent : "Skin";
-    pillSkin.textContent = txt.replace(" · ", " ");
+    var parts = txt.split(" · ");
+    pillSkin.textContent = parts.length === 2 ? (parts[1] + " " + parts[0]) : txt;
   }
 
   function randomizeColorsOnly() {
@@ -1328,6 +1377,7 @@
     buildSlotCards();
     buildMiniControls();
     renderHexPanel();
+    renderDevkitImportBlock();
     compose();
   }
 
@@ -1338,6 +1388,7 @@
     buildPatternPills();
     buildMiniControls();
     renderHexPanel();
+    renderDevkitImportBlock();
     compose();
   }
 
@@ -1348,6 +1399,7 @@
     buildSlotCards();
     buildMiniControls();
     renderHexPanel();
+    renderDevkitImportBlock();
     compose();
   }
 
