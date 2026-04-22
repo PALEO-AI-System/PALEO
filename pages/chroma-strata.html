@@ -657,8 +657,8 @@
     ctx.fillRect(0, 0, W, H);
 
     var tintMult = state.manifest.tintComposite === "multiply";
-    function tintBlendForSlot(key) {
-      return key === "1" || !tintMult ? "source-over" : "multiply";
+    function tintBlendForSlot() {
+      return tintMult ? "multiply" : "source-over";
     }
 
     ["1", "2", "3", "4"].forEach(function (key) {
@@ -666,7 +666,7 @@
       if (!spec) return;
       if (spec.kind === "tintMask") {
         var mask = getImg(spec.mask);
-        drawTintMask(ctx, mask, hexForSlot(key), W, H, tintBlendForSlot(key));
+        drawTintMask(ctx, mask, hexForSlot(key), W, H, tintBlendForSlot());
       } else if (spec.kind === "imageOptions") {
         var opts = effectiveImageOptions(key);
         var idx = Math.min(state.slotChoice[key] || 0, Math.max(0, opts.length - 1));

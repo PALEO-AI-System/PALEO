@@ -15,11 +15,7 @@
     "infoLayer": "AsagiYang_Info.png",
     "infoNotes": "AsagiYang_Info.md"
   },
-  "patterns": [
-    "AsagiYang_Color5-Pattern1.png",
-    "AsagiYang_Color5-Pattern2.png",
-    "AsagiYang_Color5-Pattern3.png"
-  ],
+  "patterns": ["AsagiYang_Color5-Pattern1.png"],
   "colorSlots": {
     "1": {
       "label": "Color 1",
@@ -48,7 +44,7 @@
     "5": {
       "label": "Color 5 (pattern tint)",
       "kind": "patternTint",
-      "palette": ["#eceff1", "#cfd8dc", "#90a4ae", "#546e7a", "#37474f"]
+      "palette": ["#401A11"]
     },
     "6": {
       "label": "Color 6 (eyes)",

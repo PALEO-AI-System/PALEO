@@ -9,7 +9,7 @@ Put files in **`pages/skin-db/AsagiYang/`** (one folder per skin id).
 Optional in **`manifest.json`**:
 
 - **`canvasSize`**: `[3400, 1156]` forces export/preview pixel size (otherwise inferred from Color1 or max image).
-- **`tintComposite`**: `"multiply"` tints **color 2–4, pattern, and color 6** onto the stack with **multiply** (good for multiply-style PSD masks). Color **1** stays **normal** on the gray base. Omit or use anything other than `"multiply"` for the older all–source-over tint.
+- **`tintComposite`**: `"multiply"` tints **colors 1–4, pattern, and color 6** onto the gray base with **multiply** (PoT-style mask stack). Omit or use anything other than `"multiply"` for all–`source-over` tints.
 - **`constantsBlend`**: per constant, a [canvas `globalCompositeOperation`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation) string, e.g. `{ "lineart": "multiply", "infoLayer": "soft-light" }`. PNGs do **not** carry Photoshop blend modes; this reapplies a chosen mode in the browser. Transparent pixels stay transparent; the mode affects how non-transparent pixels combine with what is underneath.
 - **`palette`**: `constants.palette` → e.g. `AsagiYang_Palette.png` (reference swatches on canvas). Optional blend via **`constantsBlend.palette`**.
 - **`infoLayer`**: top branding / labels PNG. Optional blend (e.g. **`constantsBlend.infoLayer`**: `"soft-light"`). **`infoNotes`**: optional `.md` for the sidebar only.
@@ -24,7 +24,7 @@ The Chroma Strata preview **always fits** the wide canvas inside a capped-height
 | 2 | `AsagiYang_Color2.png` |
 | 3 | `AsagiYang_Color3.png` |
 | 4 | `AsagiYang_Color4.png` |
-| 5 | `AsagiYang_Color5-Pattern1.png`, `-Pattern2.png`, … (one active; tinted by color 5) |
+| 5 | `AsagiYang_Color5-Pattern1.png` (add more filenames in `"patterns"` if the skin has variants; tinted by color 5) |
 | 6 | `AsagiYang_Color6.png` |
 | 7 | `AsagiYang_Details.png` |
 | 8 | `AsagiYang_Lineart.png` (default blend: **`multiply`** in manifest `constantsBlend`) |
