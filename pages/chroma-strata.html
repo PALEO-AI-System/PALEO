@@ -479,6 +479,32 @@
       place-items: center;
       padding: 6%;
     }
+    .toast-host {
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      z-index: 120;
+      display: grid;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      background: rgba(32, 24, 48, 0.95);
+      color: #f5f0e8;
+      border: 1px solid rgba(224, 216, 204, 0.28);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.78rem;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.28);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 120ms ease, transform 120ms ease;
+      max-width: min(86vw, 320px);
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
   </style>
 </head>
 <body>
@@ -608,6 +634,7 @@
 
     <footer>Chroma Strata for Path of Titans skin concept workflows, for your convenience. Please contact FluffShady (@fluffshady on Discord) for any questions, concerns, or requests!</footer>
   </div>
+  <div class="toast-host" id="toast-host" aria-live="polite" aria-atomic="true"></div>
 
   <input type="color" id="custom-picker" aria-label="Custom color picker" style="position:fixed;left:8px;top:8px;opacity:0;width:36px;height:36px;pointer-events:auto;" />
   <div id="mobile-color-sheet" hidden style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:90;">
@@ -653,6 +680,7 @@
   var hexGroups = document.getElementById("hex-groups");
   var devkitImportText = document.getElementById("devkit-import-text");
   var devkitCopyTitle = document.getElementById("devkit-copy-title");
+  var toastHost = document.getElementById("toast-host");
 
   var customTarget = null;
 
@@ -709,7 +737,9 @@
   function copyText(txt) {
     if (!txt) return;
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(txt).catch(function () {});
+      navigator.clipboard.writeText(txt).then(function () {
+        showToast("Copied.");
+      }).catch(function () {});
       return;
     }
     var ta = document.createElement("textarea");
@@ -718,6 +748,20 @@
     ta.select();
     try { document.execCommand("copy"); } catch (e) {}
     ta.remove();
+    showToast("Copied.");
+  }
+
+  function showToast(msg) {
+    if (!toastHost || !msg) return;
+    var el = document.createElement("div");
+    el.className = "toast";
+    el.textContent = msg;
+    toastHost.appendChild(el);
+    requestAnimationFrame(function () { el.classList.add("show"); });
+    setTimeout(function () {
+      el.classList.remove("show");
+      setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 150);
+    }, 1500);
   }
 
   function refreshIcons() {
@@ -1403,6 +1447,7 @@
     renderHexPanel();
     renderDevkitImportBlock();
     compose();
+    showToast("Reset to defaults.");
   }
 
   function exportPng() {
@@ -1444,6 +1489,7 @@
   });
   btnReload.addEventListener("click", function () {
     loadSkin(skinSelect.value);
+    showToast("Reloading skin...");
   });
   document.getElementById("btn-rand-colors").addEventListener("click", randomizeColorsOnly);
   document.getElementById("btn-rand-all").addEventListener("click", randomizeAll);
