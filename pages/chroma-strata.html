@@ -507,6 +507,15 @@
             </div>
           </div>
         </div>
+        <div class="mini-controls" id="mini-controls">
+          <div class="mini-stack">
+            <button type="button" class="mini-btn" id="mini-rand-colors" title="Randomize colors" aria-label="Randomize colors"><i data-lucide="shuffle"></i></button>
+            <button type="button" class="mini-btn primary" id="mini-rand-all" title="Randomize colors and pattern" aria-label="Randomize colors and pattern"><i data-lucide="dice-5"></i></button>
+            <button type="button" class="mini-btn" id="mini-export" title="Download PNG" aria-label="Download PNG"><i data-lucide="download"></i></button>
+            <div class="mini-pattern-inline" id="mini-pattern-inline"></div>
+          </div>
+          <div class="mini-tints" id="mini-slot-mount"></div>
+        </div>
       </div>
       <div id="block-free-preview" hidden>
         <div class="preview-shell">
@@ -520,15 +529,6 @@
           </div>
         </div>
         <p class="hint" style="color:rgba(232,226,240,0.65);margin-top:12px;">Object URLs in this tab only — not saved to GitHub.</p>
-      </div>
-      <div class="mini-controls" id="mini-controls">
-        <div class="mini-stack">
-          <button type="button" class="mini-btn" id="mini-rand-colors" title="Randomize colors" aria-label="Randomize colors"><i data-lucide="shuffle"></i></button>
-          <button type="button" class="mini-btn primary" id="mini-rand-all" title="Randomize colors and pattern" aria-label="Randomize colors and pattern"><i data-lucide="dice-5"></i></button>
-          <button type="button" class="mini-btn" id="mini-export" title="Download PNG" aria-label="Download PNG"><i data-lucide="download"></i></button>
-          <div class="mini-pattern-inline" id="mini-pattern-inline"></div>
-        </div>
-        <div class="mini-tints" id="mini-slot-mount"></div>
       </div>
     </div>
 
@@ -1534,8 +1534,10 @@
       { id: uid(), name: "Color 2", slots: [], chosen: -1 },
       { id: uid(), name: "Color 3", slots: [], chosen: -1 },
       { id: uid(), name: "Color 4", slots: [], chosen: -1 },
-      { id: uid(), name: "Color 5 Pattern", slots: [], chosen: -1 },
-      { id: uid(), name: "Color 6 Eyes", slots: [], chosen: -1 },
+      { id: uid(), name: "Color 5-Pattern1", slots: [], chosen: -1 },
+      { id: uid(), name: "Color 5-Pattern2", slots: [], chosen: -1 },
+      { id: uid(), name: "Color 5-Pattern3", slots: [], chosen: -1 },
+      { id: uid(), name: "Color 6", slots: [], chosen: -1 },
       { id: uid(), name: "Details", slots: [], chosen: -1 },
       { id: uid(), name: "Lineart", slots: [], chosen: -1 },
       { id: uid(), name: "Background", slots: [], chosen: -1 },
