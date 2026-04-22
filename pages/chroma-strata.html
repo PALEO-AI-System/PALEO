@@ -568,9 +568,12 @@
           </div>
 
           <div id="pane-free" role="tabpanel" hidden>
-            <p class="hint" style="margin-top:0;">Upload PNGs per layer (append files). Base = color or image bank; overlays stack on top.</p>
+            <p class="hint" style="margin-top:0;">Upload your own skin concept layers. This tab starts with a PoT-like empty template so you can drop files into familiar slots.</p>
+            <div class="row" style="margin-bottom:10px;">
+              <button type="button" class="btn-ghost" id="free-init-template">Reset PoT-style empty template</button>
+            </div>
             <div class="slot-card" style="margin-top:0;">
-              <h3>Base (bottom)</h3>
+              <h3>Color 1 (base)</h3>
               <label class="small" for="free-base-color">Fallback color</label>
               <input type="color" id="free-base-color" value="#b89a6f" />
               <label class="small" style="margin-top:10px;">Base image variants (optional)</label>
@@ -1487,6 +1490,7 @@
   var tabF = document.getElementById("tab-free");
   var paneM = document.getElementById("pane-manifest");
   var paneF = document.getElementById("pane-free");
+  var hexPanel = document.getElementById("hex-panel");
   var blockManifestPreview = document.getElementById("block-manifest-preview");
   var blockFreePreview = document.getElementById("block-free-preview");
   var mainH2 = document.getElementById("main-h2");
@@ -1499,6 +1503,7 @@
     tabF.setAttribute("aria-selected", isFree ? "true" : "false");
     paneM.hidden = isFree;
     paneF.hidden = !isFree;
+    if (hexPanel) hexPanel.hidden = isFree;
     if (blockManifestPreview) blockManifestPreview.hidden = isFree;
     if (blockFreePreview) blockFreePreview.hidden = !isFree;
     if (miniControls) miniControls.hidden = isFree;
@@ -1518,10 +1523,26 @@
   var freeRegionsEl = document.getElementById("free-regions");
   var freePreviewStack = document.getElementById("free-preview-stack");
   var freeExportCanvas = document.getElementById("free-export-canvas");
+  var freeInitTemplateBtn = document.getElementById("free-init-template");
 
   var baseSlots = [];
   var baseChosen = -1;
   var regions = [];
+
+  function defaultTemplateRegions() {
+    return [
+      { id: uid(), name: "Color 2", slots: [], chosen: -1 },
+      { id: uid(), name: "Color 3", slots: [], chosen: -1 },
+      { id: uid(), name: "Color 4", slots: [], chosen: -1 },
+      { id: uid(), name: "Color 5 Pattern", slots: [], chosen: -1 },
+      { id: uid(), name: "Color 6 Eyes", slots: [], chosen: -1 },
+      { id: uid(), name: "Details", slots: [], chosen: -1 },
+      { id: uid(), name: "Lineart", slots: [], chosen: -1 },
+      { id: uid(), name: "Background", slots: [], chosen: -1 },
+      { id: uid(), name: "Palette", slots: [], chosen: -1 },
+      { id: uid(), name: "Info", slots: [], chosen: -1 }
+    ];
+  }
 
   function uid() {
     return "fr_" + Math.random().toString(36).slice(2, 9);
@@ -1596,7 +1617,7 @@
       nw.className = "grow";
       var lab = document.createElement("label");
       lab.className = "small";
-      lab.textContent = "Overlay " + (idx + 1);
+      lab.textContent = reg.name || ("Overlay " + (idx + 1));
       lab.setAttribute("for", "nm-" + reg.id);
       var inp = document.createElement("input");
       inp.type = "text";
@@ -1802,6 +1823,14 @@
     renderRegions();
     paintFreePreview();
   });
+  if (freeInitTemplateBtn) {
+    freeInitTemplateBtn.addEventListener("click", function () {
+      regions.forEach(function (r) { revokeSlots(r.slots); });
+      regions = defaultTemplateRegions();
+      renderRegions();
+      paintFreePreview();
+    });
+  }
 
   document.addEventListener("keydown", function (e) {
     if (localStorage.getItem(LS_MODE) !== "free") return;
@@ -1812,8 +1841,7 @@
     }
   });
 
-  regions.push({ id: uid(), name: "Overlay A", slots: [], chosen: -1 });
-  regions.push({ id: uid(), name: "Overlay B", slots: [], chosen: -1 });
+  regions = defaultTemplateRegions();
   renderRegions();
   paintFreePreview();
 
