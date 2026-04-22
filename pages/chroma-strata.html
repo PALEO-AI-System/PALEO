@@ -46,7 +46,7 @@
       margin: 0 0 26px;
     }
     .preview-hero .preview-scroll {
-      max-height: min(78vh, 1100px);
+      max-height: min(34vh, 420px);
     }
     header { margin-bottom: 22px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
     header h1 {
@@ -209,13 +209,24 @@
     }
     .preview-frame {
       padding: 0;
-      background: repeating-conic-gradient(#ddd8cf 0% 25%, #e8e3da 0% 50%) 50% / 18px 18px;
+      background: linear-gradient(165deg, #2a2438 0%, #1a1624 55%, #252030 100%);
     }
     .preview-scroll {
-      overflow: auto;
-      max-height: min(88vh, 1400px);
-      padding: 10px;
+      overflow: hidden;
+      max-height: min(34vh, 420px);
+      padding: 8px;
       border-radius: 0 0 8px 8px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      box-sizing: border-box;
+    }
+    #preview-scale-viewport {
+      overflow: hidden;
+      line-height: 0;
+      flex-shrink: 0;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     }
     #preview-scale-wrap {
       transform-origin: 0 0;
@@ -320,20 +331,15 @@
       <div id="block-manifest-preview">
         <div class="preview-shell">
           <div class="preview-toolbar">
-            <span id="pill-dim">—</span>
-            <label class="small" for="preview-zoom" style="margin:0;">Preview size</label>
-            <select id="preview-zoom" aria-label="Preview zoom" style="width:auto;min-width:140px;">
-              <option value="fit" selected>Fit in panel</option>
-              <option value="100">100% (scroll)</option>
-              <option value="125">125%</option>
-              <option value="150">150%</option>
-              <option value="200">200%</option>
-            </select>
+            <span class="small" style="opacity:0.85;">Preview fits the panel (wide canvas scaled down).</span>
+            <span id="pill-dim" style="margin-left:auto;">—</span>
           </div>
           <div class="preview-frame">
             <div class="preview-scroll" id="preview-scroll">
-              <div id="preview-scale-wrap">
-                <canvas id="preview-canvas" width="1024" height="1024" aria-label="Composited skin preview"></canvas>
+              <div id="preview-scale-viewport">
+                <div id="preview-scale-wrap">
+                  <canvas id="preview-canvas" width="1024" height="1024" aria-label="Composited skin preview"></canvas>
+                </div>
               </div>
             </div>
           </div>
@@ -436,8 +442,8 @@
   var slotsMount = document.getElementById("slots-mount");
   var previewCanvas = document.getElementById("preview-canvas");
   var previewScroll = document.getElementById("preview-scroll");
+  var previewScaleViewport = document.getElementById("preview-scale-viewport");
   var previewScaleWrap = document.getElementById("preview-scale-wrap");
-  var previewZoom = document.getElementById("preview-zoom");
   var tintSlab = document.createElement("canvas");
   var pillDim = document.getElementById("pill-dim");
   var infoText = document.getElementById("info-text");
@@ -545,21 +551,28 @@
     ctx.restore();
   }
 
-  function layoutPreviewZoom() {
-    if (!previewCanvas || !previewScroll || !previewScaleWrap || !previewZoom) return;
+  function layoutPreviewFit() {
+    if (!previewCanvas || !previewScroll || !previewScaleWrap || !previewScaleViewport) return;
     if (!previewCanvas.width) return;
     var cw = previewCanvas.width;
     var ch = previewCanvas.height;
-    var mode = previewZoom.value;
-    var availW = Math.max(160, previewScroll.clientWidth - 16);
-    var availH = Math.min(window.innerHeight * 0.88, 1600);
-    var fit = Math.min(availW / cw, availH / ch, 1);
-    var s = mode === "fit" ? fit : parseInt(mode, 10) / 100;
-    if (!(s > 0) || s > 8) s = fit;
+    var capH = Math.min(window.innerHeight * 0.34, 420);
+    var pad = 16;
+    var availW = Math.max(160, previewScroll.clientWidth - pad);
+    var availH = Math.max(120, capH - pad);
+    var s = Math.min(availW / cw, availH / ch, 1);
+    if (!(s > 0)) s = 1;
     previewScaleWrap.style.width = cw + "px";
     previewScaleWrap.style.height = ch + "px";
     previewScaleWrap.style.transform = "scale(" + s + ")";
-    previewScroll.style.minHeight = Math.ceil(ch * s + 24) + "px";
+    var vw = Math.ceil(cw * s);
+    var vh = Math.ceil(ch * s);
+    previewScaleViewport.style.width = vw + "px";
+    previewScaleViewport.style.height = vh + "px";
+    previewScaleViewport.style.overflow = "hidden";
+    previewScroll.style.minHeight = "";
+    previewScroll.style.height = (vh + pad) + "px";
+    previewScroll.style.maxHeight = (capH + pad) + "px";
   }
 
   function drawImageContain(ctx, img, cw, ch) {
@@ -721,7 +734,7 @@
     }
 
     pillDim.textContent = W + " × " + H + " px";
-    window.requestAnimationFrame(function () { layoutPreviewZoom(); });
+    window.requestAnimationFrame(function () { layoutPreviewFit(); });
   }
 
   function collectUrls(manifest, skinPath) {
@@ -1016,13 +1029,8 @@
   document.getElementById("btn-rand-all").addEventListener("click", randomizeAll);
   document.getElementById("btn-export").addEventListener("click", exportPng);
 
-  if (previewZoom) {
-    previewZoom.addEventListener("change", function () {
-      layoutPreviewZoom();
-    });
-  }
   window.addEventListener("resize", function () {
-    layoutPreviewZoom();
+    layoutPreviewFit();
   });
 
   document.addEventListener("keydown", function (e) {
@@ -1035,7 +1043,7 @@
     }
   });
 
-  window.__chromaLayoutPreview = layoutPreviewZoom;
+  window.__chromaLayoutPreview = layoutPreviewFit;
 
   var qp = new URLSearchParams(location.search).get("skin");
   if (qp === "Yang/AsagiYang") qp = "AsagiYang";

@@ -25,25 +25,25 @@
       "label": "Color 1",
       "kind": "tintMask",
       "mask": "AsagiYang_Color1.png",
-      "palette": ["#b89a6f", "#8d6e63", "#5d4037", "#d7ccc8", "#efebe9"]
+      "palette": ["#932314", "#9E2937", "#934D14", "#935E14", "#B76400", "#ED9B0F", "#91A147"]
     },
     "2": {
       "label": "Color 2",
       "kind": "tintMask",
       "mask": "AsagiYang_Color2.png",
-      "palette": ["#6d4c41", "#a1887f", "#bcaaa4", "#3e2723", "#efebe9"]
+      "palette": ["#B98618", "#96A51C", "#8CB422"]
     },
     "3": {
       "label": "Color 3",
       "kind": "tintMask",
       "mask": "AsagiYang_Color3.png",
-      "palette": ["#4e342e", "#795548", "#a1887f", "#d7ccc8", "#5d4037"]
+      "palette": ["#67C19C", "#75DC98"]
     },
     "4": {
       "label": "Color 4",
       "kind": "tintMask",
       "mask": "AsagiYang_Color4.png",
-      "palette": ["#3e2723", "#5d4037", "#8d6e63", "#bcaaa4", "#212121"]
+      "palette": ["#DFCF77", "#FFF69D"]
     },
     "5": {
       "label": "Color 5 (pattern tint)",
@@ -54,7 +54,7 @@
       "label": "Color 6 (eyes)",
       "kind": "tintMask",
       "mask": "AsagiYang_Color6.png",
-      "palette": ["#ffcc80", "#ffb74d", "#ff9800", "#f57c00", "#5d4037"]
+      "palette": ["#9E5B28"]
     }
   }
 }

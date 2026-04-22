@@ -14,7 +14,7 @@ Optional in **`manifest.json`**:
 - **`palette`**: `constants.palette` → e.g. `AsagiYang_Palette.png` (reference swatches on canvas). Optional blend via **`constantsBlend.palette`**.
 - **`infoLayer`**: top branding / labels PNG. Optional blend (e.g. **`constantsBlend.infoLayer`**: `"soft-light"`). **`infoNotes`**: optional `.md` for the sidebar only.
 
-The Chroma Strata **Preview size** control scales the wide canvas (fit / 100% / 125% / …) with scroll when needed. The **preview strip is full browser width** above the control panel.
+The Chroma Strata preview **always fits** the wide canvas inside a capped-height panel (no separate zoom modes). The **preview strip is full browser width** above the control panel.
 
 **Bottom → top draw order** (AsagiYang):
 
