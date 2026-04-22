@@ -1,11 +1,13 @@
 {
   "id": "AsagiYang",
   "displayName": "Asagi",
+  "canvasSize": [3400, 1156],
   "constants": {
     "background": "AsagiYang_Background.png",
     "lineart": "AsagiYang_Lineart.png",
     "details": "AsagiYang_Details.png",
-    "info": "AsagiYang_Info.md"
+    "infoLayer": "AsagiYang_Info.png",
+    "infoNotes": "AsagiYang_Info.md"
   },
   "patterns": [
     "AsagiYang_Color5-Pattern1.png",

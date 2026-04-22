@@ -356,7 +356,7 @@
             <canvas id="preview-canvas" width="1024" height="1024" aria-label="Composited skin preview"></canvas>
           </div>
         </div>
-        <label class="small" style="margin-top:14px;color:rgba(232,226,240,0.7);">Skin info (optional)</label>
+        <label class="small" style="margin-top:14px;color:rgba(232,226,240,0.7);">Notes only (<code>infoNotes</code> .md)</label>
         <div class="info-box" id="info-text">—</div>
       </div>
 
@@ -515,6 +515,12 @@
   }
 
   function computeCanvasSize() {
+    var fixed = state.manifest.canvasSize;
+    if (Array.isArray(fixed) && fixed.length === 2) {
+      var fw = parseInt(fixed[0], 10);
+      var fh = parseInt(fixed[1], 10);
+      if (fw > 0 && fh > 0) return { w: fw, h: fh };
+    }
     var cs = state.manifest.colorSlots && state.manifest.colorSlots["1"];
     if (cs && cs.kind === "tintMask" && cs.mask) {
       var u1 = assetUrl(state.skinPath, cs.mask);
@@ -607,6 +613,8 @@
     if (line) drawImageContain(ctx, line, W, H);
     var bgTop = getImg(cst.background);
     if (bgTop) drawImageCover(ctx, bgTop, W, H);
+    var infoL = getImg(cst.infoLayer);
+    if (infoL) drawImageContain(ctx, infoL, W, H);
 
     pillDim.textContent = W + " × " + H + " px";
   }
@@ -614,7 +622,7 @@
   function collectUrls(manifest, skinPath) {
     var urls = [];
     var c = manifest.constants || {};
-    ["background", "lineart", "details"].forEach(function (k) {
+    ["background", "lineart", "details", "infoLayer"].forEach(function (k) {
       if (c[k]) urls.push(assetUrl(skinPath, c[k]));
     });
     (manifest.patterns || []).forEach(function (p) {
@@ -826,9 +834,10 @@
   });
 
   function loadInfoMd() {
-    var infoFile = state.manifest.constants && state.manifest.constants.info;
+    var c = state.manifest.constants || {};
+    var infoFile = c.infoNotes || c.info;
     if (!infoFile) {
-      infoText.textContent = "No info file in manifest.";
+      infoText.textContent = c.infoLayer ? "Notes optional — info image is on the canvas." : "No notes file in manifest.";
       return;
     }
     fetch(assetUrl(state.skinPath, infoFile), { cache: "no-store" })

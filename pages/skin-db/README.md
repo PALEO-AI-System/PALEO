@@ -6,6 +6,8 @@ Static files live under **`pages/skin-db/`** next to `chroma-strata.html`. Commi
 
 Put files in **`pages/skin-db/AsagiYang/`** (one folder per skin id).
 
+Optional in **`manifest.json`**: `"canvasSize": [3400, 1156]` forces export/preview pixel size (otherwise inferred from Color1 or max image). **`infoLayer`** is a PNG drawn **on top of everything**; **`infoNotes`** is optional markdown for the sidebar only.
+
 **Bottom → top draw order** (matches PoT-style stacking for this skin):
 
 | Order | File |
@@ -18,9 +20,10 @@ Put files in **`pages/skin-db/AsagiYang/`** (one folder per skin id).
 | 6 | `AsagiYang_Color6.png` |
 | 7 | `AsagiYang_Details.png` (no tint) |
 | 8 | `AsagiYang_Lineart.png` (no tint) |
-| 9 (top) | `AsagiYang_Background.png` (no tint) |
+| 9 | `AsagiYang_Background.png` (no tint) |
+| 10 (top) | `AsagiYang_Info.png` — `constants.infoLayer` (full layer, no tint) |
 
-Optional: **`AsagiYang_Info.md`** (sidebar text, not a canvas layer).
+Optional sidebar: **`AsagiYang_Info.md`** via `constants.infoNotes` (not composited).
 
 Add or remove pattern entries in **`manifest.json`** → `"patterns": [ ... ]`. Color **5** tints whichever pattern is selected.
 
