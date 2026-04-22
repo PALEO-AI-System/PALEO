@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes" />
   <title>Chroma Strata · PoT-style skin lab</title>
   <meta name="description" content="Path of Titans–style color slots (1–6), pattern variants, tint masks or image options, randomize modes, skin-db manifests, local custom colors." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -124,6 +124,8 @@
       border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 10px;
       padding: 5px 6px;
+      overflow-x: auto;
+      scrollbar-width: thin;
     }
     .mini-controls .mini-label {
       font-size: 0.65rem;
@@ -131,6 +133,7 @@
       opacity: 0.85;
     }
     .mini-controls .mini-swatch {
+      flex: 0 0 auto;
       width: 16px;
       height: 16px;
       border-radius: 50%;
@@ -184,7 +187,8 @@
     }
     .hex-row {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
       gap: 8px;
       font-size: 0.76rem;
       background: #fffcf7;
@@ -194,15 +198,19 @@
     }
     .hex-row code {
       font-size: 0.72rem;
-      white-space: nowrap;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      flex: 1 1 200px;
     }
-    @media (min-width: 1180px) {
-      .mini-controls {
-        position: absolute;
-        left: 14px;
-        top: 54px;
-        z-index: 20;
-        max-width: 420px;
+    .hex-row strong {
+      min-width: 56px;
+    }
+    @media (max-width: 900px) {
+      .mini-controls .mini-tints {
+        grid-template-columns: 1fr;
+      }
+      .hex-chip {
+        border-radius: 12px;
       }
     }
 
@@ -276,6 +284,7 @@
     .slot-card h3 { margin: 0 0 8px; font-size: 0.95rem; font-weight: 600; }
     .swatches { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
     .sw {
+      flex: 0 0 auto;
       width: 32px;
       height: 32px;
       border-radius: 50%;
@@ -536,8 +545,8 @@
             <button type="button" class="btn-primary" id="btn-rand-all">Randomize colors + patterns</button>
           </div>
           <div class="row" style="margin-top:10px;">
-            <button type="button" class="btn-ghost" id="btn-reset">Reset to default</button>
             <button type="button" class="btn-green" id="btn-export">Download PNG</button>
+            <button type="button" class="btn-ghost" id="btn-reset">Reset to default</button>
           </div>
           <p id="load-status" class="warn" hidden></p>
           </div>
@@ -576,7 +585,7 @@
     <footer>Chroma Strata for Path of Titans skin concept workflows, for your convenience. Please contact FluffShady (@fluffshady on Discord) for any questions, concerns, or requests!</footer>
   </div>
 
-  <input type="color" id="custom-picker" aria-label="Custom color picker" style="position:fixed;left:8px;top:8px;opacity:0;width:36px;height:36px;pointer-events:none;" />
+  <input type="color" id="custom-picker" aria-label="Custom color picker" style="position:fixed;left:8px;top:8px;opacity:0;width:36px;height:36px;pointer-events:auto;" />
   <canvas id="free-export-canvas" width="1024" height="1024" hidden aria-hidden="true"></canvas>
   <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -674,6 +683,21 @@
     if (window.lucide && typeof window.lucide.createIcons === "function") {
       window.lucide.createIcons();
     }
+  }
+
+  function isMobileDevice() {
+    return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "");
+  }
+
+  function makeCopyIconButton(onClick, titleText) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn-ghost btn-tiny";
+    b.title = titleText || "Copy";
+    b.setAttribute("aria-label", titleText || "Copy");
+    b.innerHTML = '<i data-lucide="copy"></i>';
+    b.addEventListener("click", onClick);
+    return b;
   }
 
   function basePalette(slotKey) {
@@ -1051,7 +1075,7 @@
       miniSlotMount.appendChild(wrap);
     });
     var patterns = state.manifest.patterns || [];
-    if (patterns.length > 1) {
+    if (patterns.length > 0) {
       var pw = document.createElement("div");
       pw.className = "mini-slot";
       var pl = document.createElement("span");
@@ -1061,10 +1085,14 @@
       patterns.forEach(function (_, idx) {
         var pb = document.createElement("button");
         pb.type = "button";
-        pb.className = "mini-swatch";
-        pb.style.background = idx === state.patternIndex ? "#f6b8aa" : "#b8adca";
-        pb.dataset.on = idx === state.patternIndex ? "1" : "0";
+        pb.className = "btn-ghost btn-tiny";
+        pb.style.padding = "3px 7px";
+        pb.style.fontSize = "0.66rem";
+        pb.style.background = idx === state.patternIndex ? "#f6b8aa" : "rgba(255,255,255,0.2)";
+        pb.style.color = idx === state.patternIndex ? "#251d33" : "#f5f0e8";
+        pb.style.borderStyle = "solid";
         pb.title = "Pattern " + (idx + 1);
+        pb.textContent = "P" + (idx + 1);
         pb.addEventListener("click", function () {
           state.patternIndex = idx;
           buildPatternPills();
@@ -1089,11 +1117,7 @@
       var chip = document.createElement("div");
       chip.className = "hex-chip";
       chip.innerHTML = '<span class="hex-swatch" style="background:' + selected + '"></span><strong>C' + key + "</strong><code>" + selected + "</code>";
-      var cbtn = document.createElement("button");
-      cbtn.type = "button";
-      cbtn.className = "btn-ghost btn-tiny";
-      cbtn.textContent = "Copy";
-      cbtn.addEventListener("click", function () { copyText(selected); });
+      var cbtn = makeCopyIconButton(function () { copyText(selected); }, "Copy selected hex");
       chip.appendChild(cbtn);
       hexCurrent.appendChild(chip);
 
@@ -1101,14 +1125,11 @@
       row.className = "hex-row";
       var txt = cols.join(", ");
       row.innerHTML = "<strong>Color " + key + "</strong><code>" + txt + "</code>";
-      var cpAll = document.createElement("button");
-      cpAll.type = "button";
-      cpAll.className = "btn-ghost btn-tiny";
-      cpAll.textContent = "Copy row";
-      cpAll.addEventListener("click", function () { copyText("Color " + key + ": " + txt); });
+      var cpAll = makeCopyIconButton(function () { copyText("Color " + key + ": " + txt); }, "Copy color row");
       row.appendChild(cpAll);
       hexGroups.appendChild(row);
     });
+    refreshIcons();
   }
 
   function buildSlotCards() {
@@ -1176,11 +1197,7 @@
           var chip = document.createElement("span");
           chip.className = "hex-chip";
           chip.innerHTML = '<span class="hex-swatch" style="background:' + selHex + '"></span><code>' + selHex + "</code>";
-          var cp = document.createElement("button");
-          cp.type = "button";
-          cp.className = "btn-ghost btn-tiny";
-          cp.textContent = "Copy";
-          cp.addEventListener("click", function () { copyText(selHex); });
+          var cp = makeCopyIconButton(function () { copyText(selHex); }, "Copy slot hex");
           selRow.appendChild(chip);
           selRow.appendChild(cp);
           card.appendChild(selRow);
@@ -1197,8 +1214,18 @@
           customTarget = key;
           customPicker.value = colors[state.slotChoice[key]] || "#ffffff";
           var sy = window.scrollY || window.pageYOffset || 0;
+          var mobile = isMobileDevice();
+          if (mobile) {
+            customPicker.style.opacity = "0.01";
+            customPicker.style.pointerEvents = "auto";
+          }
           if (typeof customPicker.showPicker === "function") customPicker.showPicker();
           else customPicker.click();
+          if (mobile) {
+            setTimeout(function () {
+              customPicker.style.opacity = "0";
+            }, 500);
+          }
           window.requestAnimationFrame(function () { window.scrollTo(0, sy); });
         });
         addRow.appendChild(addBtn);
@@ -1236,6 +1263,7 @@
 
       slotsMount.appendChild(card);
     });
+    refreshIcons();
   }
 
   customPicker.addEventListener("change", function () {
