@@ -284,7 +284,7 @@
     <header>
       <h1>Chroma Strata</h1>
       <p>
-        <strong>PoT skin</strong> loads <span class="kbd">pages/skin-db/Yang/AsagiYang/</span> (see tab below). <strong>Free stack</strong> keeps the original upload workflow (phone-friendly color picker, layers, arrows).
+        <strong>PoT skin</strong> loads <span class="kbd">pages/skin-db/AsagiYang/</span> (see tab below). <strong>Free stack</strong> keeps the original upload workflow (phone-friendly color picker, layers, arrows).
         Manifest mode: <span class="kbd">R</span> = colors + patterns · <span class="kbd">Shift+R</span> = colors only. Pattern count comes from <code>manifest.json</code> (1, 3, 6+ files all OK).
       </p>
     </header>
@@ -515,11 +515,13 @@
   }
 
   function computeCanvasSize() {
-    var c = state.manifest.constants || {};
-    var bgUrl = assetUrl(state.skinPath, c.background);
-    var bg = state.images.get(bgUrl);
-    if (bg && bg.naturalWidth) {
-      return { w: bg.naturalWidth, h: bg.naturalHeight };
+    var cs = state.manifest.colorSlots && state.manifest.colorSlots["1"];
+    if (cs && cs.kind === "tintMask" && cs.mask) {
+      var u1 = assetUrl(state.skinPath, cs.mask);
+      var im1 = state.images.get(u1);
+      if (im1 && im1.naturalWidth) {
+        return { w: im1.naturalWidth, h: im1.naturalHeight };
+      }
     }
     var w = 0;
     var h = 0;
@@ -560,15 +562,8 @@
       return state.images.get(assetUrl(state.skinPath, rel));
     }
 
-    var bg = getImg(cst.background);
-    if (bg) drawImageCover(ctx, bg, W, H);
-    else {
-      ctx.fillStyle = "#c8c4bc";
-      ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = "#666";
-      ctx.font = "24px sans-serif";
-      ctx.fillText("Add " + (cst.background || "background") + " to skin folder", 24, 48);
-    }
+    ctx.fillStyle = "#c8c4bc";
+    ctx.fillRect(0, 0, W, H);
 
     ["1", "2", "3", "4"].forEach(function (key) {
       var spec = state.manifest.colorSlots[key];
@@ -606,10 +601,12 @@
       }
     }
 
-    var line = getImg(cst.lineart);
-    if (line) drawImageContain(ctx, line, W, H);
     var det = getImg(cst.details);
     if (det) drawImageContain(ctx, det, W, H);
+    var line = getImg(cst.lineart);
+    if (line) drawImageContain(ctx, line, W, H);
+    var bgTop = getImg(cst.background);
+    if (bgTop) drawImageCover(ctx, bgTop, W, H);
 
     pillDim.textContent = W + " × " + H + " px";
   }
@@ -888,6 +885,7 @@
           skinSelect.appendChild(o);
         });
         var last = localStorage.getItem(LS_LAST_SKIN);
+        if (last === "Yang/AsagiYang") last = "AsagiYang";
         if (last && Array.prototype.some.call(skinSelect.options, function (o) { return o.value === last; })) {
           skinSelect.value = last;
         }
@@ -915,6 +913,7 @@
   });
 
   var qp = new URLSearchParams(location.search).get("skin");
+  if (qp === "Yang/AsagiYang") qp = "AsagiYang";
   populateSkinIndex().then(function () {
     if (qp && Array.prototype.some.call(skinSelect.options, function (o) { return o.value === qp; })) {
       skinSelect.value = qp;

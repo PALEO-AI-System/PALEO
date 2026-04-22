@@ -2,35 +2,39 @@
 
 Static files live under **`pages/skin-db/`** next to `chroma-strata.html`. Commit PNGs here and open the lab via GitHub Pages or `python scripts/serve_companion.py` (serves the `pages/` folder).
 
-## Asagi (Yang) — exact filenames
+## AsagiYang — folder and filenames
 
-Put files in **`pages/skin-db/Yang/AsagiYang/`**:
+Put files in **`pages/skin-db/AsagiYang/`** (one folder per skin id).
 
-| File | Role |
+**Bottom → top draw order** (matches PoT-style stacking for this skin):
+
+| Order | File |
 |------|------|
-| `AsagiYang_Background.png` | Bottom constant |
-| `AsagiYang_Color1.png` … `AsagiYang_Color4.png` | Tint masks for colors 1–4 (see below) |
-| `AsagiYang_Color5-Pattern1.png` | Pattern variant 1 (tinted by color 5) |
-| `AsagiYang_Color5-Pattern2.png` | Pattern variant 2 |
-| `AsagiYang_Color5-Pattern3.png` | Pattern variant 3 |
-| `AsagiYang_Color6.png` | Eyes (tint mask for color 6) |
-| `AsagiYang_Lineart.png` | Lineart constant |
-| `AsagiYang_Details.png` | Details constant |
-| `AsagiYang_Info.md` | Optional notes (sidebar) |
+| 1 (bottom) | `AsagiYang_Color1.png` |
+| 2 | `AsagiYang_Color2.png` |
+| 3 | `AsagiYang_Color3.png` |
+| 4 | `AsagiYang_Color4.png` |
+| 5 | `AsagiYang_Color5-Pattern1.png`, `-Pattern2.png`, … (one active; tinted by color 5) |
+| 6 | `AsagiYang_Color6.png` |
+| 7 | `AsagiYang_Details.png` (no tint) |
+| 8 | `AsagiYang_Lineart.png` (no tint) |
+| 9 (top) | `AsagiYang_Background.png` (no tint) |
 
-Add or remove pattern lines in **`manifest.json`** → `"patterns": [ ... ]` (1, 2, 5+ files all work). Color 5 still tints whichever pattern is selected.
+Optional: **`AsagiYang_Info.md`** (sidebar text, not a canvas layer).
 
-## Tint masks vs `Color4-Option1.png`, etc.
+Add or remove pattern entries in **`manifest.json`** → `"patterns": [ ... ]`. Color **5** tints whichever pattern is selected.
 
-- **Tint (`tintMask`)**: one PNG per slot. **Opaque white (`#FFFFFF`)** where you want paint; **transparent** elsewhere. The preview uses your **exact hex** in those pixels (same RGB as the swatch). Mid-**gray** masks will **not** match the swatch exactly (they act like a filter). For predictable “this hex is what I see,” prefer **white**, not light gray.
-- **`imageOptions`**: list separate PNGs in `manifest.json` (`"options": ["AsagiYang_Color4-Option1.png", ...]`). Best when each option is hand-painted or non-uniform.
+## Tint masks vs separate option PNGs
+
+- **`tintMask`**: one PNG per color slot. **Opaque white** where you want paint; transparent elsewhere. Swatch hex maps predictably to those pixels.
+- **`imageOptions`**: separate PNGs per swatch in `manifest.json` when you need painted variants.
 
 ## Register a skin
 
-1. Folder: `skin-db/<Species>/<SkinFolder>/` (e.g. `Yang/AsagiYang/`).
+1. Folder: `skin-db/<SkinId>/` (e.g. `AsagiYang/`).
 2. `manifest.json` inside that folder.
 3. Entry in `skin-db/index.json`.
 
 ## Custom colors (browser)
 
-Extra swatches from the color picker are stored in **localStorage** (`chromaStrata_customHex.v1`), not in this folder.
+Extra swatches from the color picker are stored in **localStorage** (`chromaStrata_customHex.v1`), keyed by skin path (e.g. `AsagiYang`).
