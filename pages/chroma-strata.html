@@ -44,6 +44,7 @@
     .preview-hero {
       width: 100%;
       margin: 0 0 26px;
+      position: relative;
     }
     .preview-hero .preview-scroll {
       max-height: min(80vh, 980px);
@@ -75,13 +76,14 @@
       margin-top: 10px;
       display: flex;
       gap: 8px;
-      align-items: center;
+      align-items: flex-start;
       flex-wrap: wrap;
       padding: 10px;
       border-radius: 12px;
       background: rgba(243, 238, 230, 0.14);
       border: 1px solid rgba(224, 216, 204, 0.24);
       backdrop-filter: blur(3px);
+      color: #f5f0e8;
     }
     .mini-controls .mini-btn {
       background: #ebe4d9;
@@ -102,19 +104,105 @@
       color: #fff;
       border: none;
     }
-    .mini-controls .mini-skin {
-      min-width: 170px;
-      max-width: 260px;
-      width: min(40vw, 260px);
+    .mini-controls .mini-stack {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .mini-controls .mini-tints {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      width: 100%;
+      min-width: 220px;
+    }
+    .mini-controls .mini-slot {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 5px 6px;
+    }
+    .mini-controls .mini-label {
+      font-size: 0.65rem;
+      min-width: 10px;
+      opacity: 0.85;
+    }
+    .mini-controls .mini-swatch {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.28);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+      cursor: pointer;
+      padding: 0;
+    }
+    .mini-controls .mini-swatch[data-on="1"] {
+      outline: 2px solid #f3eee6;
+      outline-offset: 1px;
+    }
+    .hex-panel {
+      margin-top: 14px;
+      background: rgba(243, 238, 230, 0.95);
+      color: #251d33;
+      border-radius: 12px;
+      border: 1px solid var(--panel-edge);
+      padding: 12px;
+    }
+    .hex-panel h3 {
+      margin: 0 0 8px;
+      font-size: 0.95rem;
+    }
+    .hex-current {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .hex-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       background: #fff;
+      border: 1px solid var(--panel-edge);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+    }
+    .hex-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.15);
+    }
+    .hex-groups {
+      display: grid;
+      gap: 6px;
+    }
+    .hex-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.76rem;
+      background: #fffcf7;
+      border: 1px solid var(--panel-edge);
+      border-radius: 8px;
+      padding: 6px 8px;
+    }
+    .hex-row code {
+      font-size: 0.72rem;
+      white-space: nowrap;
     }
     @media (min-width: 1180px) {
       .mini-controls {
-        position: fixed;
-        left: 12px;
-        top: 110px;
+        position: absolute;
+        left: 14px;
+        top: 54px;
         z-index: 20;
-        max-width: 320px;
+        max-width: 420px;
       }
     }
 
@@ -171,6 +259,10 @@
       padding: 7px 11px;
     }
     .btn-ghost:hover { border-style: solid; color: var(--ink); background: rgba(0,0,0,0.04); }
+    .btn-green {
+      background: linear-gradient(135deg, #2f9e44 0%, #1f7a32 100%);
+      color: #fff;
+    }
     .btn-tiny { padding: 6px 9px; font-size: 0.76rem; border-radius: 8px; }
     .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
@@ -406,10 +498,12 @@
         <p class="hint" style="color:rgba(232,226,240,0.65);margin-top:12px;">Object URLs in this tab only — not saved to GitHub.</p>
       </div>
       <div class="mini-controls" id="mini-controls">
-        <select id="mini-skin-select" class="mini-skin" aria-label="Quick skin selector"></select>
-        <button type="button" class="mini-btn" id="mini-rand-colors" title="Randomize colors" aria-label="Randomize colors">R</button>
-        <button type="button" class="mini-btn primary" id="mini-rand-all" title="Randomize colors and pattern" aria-label="Randomize colors and pattern">R+</button>
-        <button type="button" class="mini-btn" id="mini-export" title="Download PNG" aria-label="Download PNG">DL</button>
+        <div class="mini-stack">
+          <button type="button" class="mini-btn" id="mini-rand-colors" title="Randomize colors" aria-label="Randomize colors"><i data-lucide="shuffle"></i></button>
+          <button type="button" class="mini-btn primary" id="mini-rand-all" title="Randomize colors and pattern" aria-label="Randomize colors and pattern"><i data-lucide="dice-5"></i></button>
+          <button type="button" class="mini-btn" id="mini-export" title="Download PNG" aria-label="Download PNG"><i data-lucide="download"></i></button>
+        </div>
+        <div class="mini-tints" id="mini-slot-mount"></div>
       </div>
     </div>
 
@@ -442,7 +536,8 @@
             <button type="button" class="btn-primary" id="btn-rand-all">Randomize colors + patterns</button>
           </div>
           <div class="row" style="margin-top:10px;">
-            <button type="button" class="btn-ghost" id="btn-export">Download PNG</button>
+            <button type="button" class="btn-ghost" id="btn-reset">Reset to default</button>
+            <button type="button" class="btn-green" id="btn-export">Download PNG</button>
           </div>
           <p id="load-status" class="warn" hidden></p>
           </div>
@@ -470,13 +565,20 @@
         </div>
       </div>
 
+      <div class="hex-panel" id="hex-panel">
+        <h3>Selected and Palette Hex Codes</h3>
+        <div class="hex-current" id="hex-current"></div>
+        <div class="hex-groups" id="hex-groups"></div>
+      </div>
+
     </div>
 
-    <footer>Chroma Strata for Path of Titans skin workflows. Credits: FluffShady.</footer>
+    <footer>Chroma Strata for Path of Titans skin concept workflows, for your convenience. Please contact FluffShady (@fluffshady on Discord) for any questions, concerns, or requests!</footer>
   </div>
 
-  <input type="color" id="custom-picker" aria-label="Custom color picker" style="position:fixed;left:-9999px;bottom:0;opacity:0;width:1px;height:1px;pointer-events:none;" />
+  <input type="color" id="custom-picker" aria-label="Custom color picker" style="position:fixed;left:8px;top:8px;opacity:0;width:36px;height:36px;pointer-events:none;" />
   <canvas id="free-export-canvas" width="1024" height="1024" hidden aria-hidden="true"></canvas>
+  <script src="https://unpkg.com/lucide@latest"></script>
 
   <script>
 (function () {
@@ -493,12 +595,14 @@
   var previewScroll = document.getElementById("preview-scroll");
   var previewScaleViewport = document.getElementById("preview-scale-viewport");
   var previewScaleWrap = document.getElementById("preview-scale-wrap");
-  var miniSkinSelect = document.getElementById("mini-skin-select");
+  var miniSlotMount = document.getElementById("mini-slot-mount");
   var pillSkin = document.getElementById("pill-skin");
   var tintSlab = document.createElement("canvas");
   var pillDim = document.getElementById("pill-dim");
   var loadStatus = document.getElementById("load-status");
   var customPicker = document.getElementById("custom-picker");
+  var hexCurrent = document.getElementById("hex-current");
+  var hexGroups = document.getElementById("hex-groups");
 
   var customTarget = null;
 
@@ -550,6 +654,26 @@
     if (!st[skinPath] || !st[skinPath][slotKey]) return;
     st[skinPath][slotKey] = st[skinPath][slotKey].filter(function (h) { return h !== hex; });
     writeCustomStore(st);
+  }
+
+  function copyText(txt) {
+    if (!txt) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).catch(function () {});
+      return;
+    }
+    var ta = document.createElement("textarea");
+    ta.value = txt;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    ta.remove();
+  }
+
+  function refreshIcons() {
+    if (window.lucide && typeof window.lucide.createIcons === "function") {
+      window.lucide.createIcons();
+    }
   }
 
   function basePalette(slotKey) {
@@ -843,6 +967,8 @@
         });
         buildPatternPills();
         buildSlotCards();
+        buildMiniControls();
+        renderHexPanel();
         compose();
         localStorage.setItem(LS_LAST_SKIN, skinPath);
         syncSkinName();
@@ -886,11 +1012,103 @@
         b.addEventListener("click", function () {
           state.patternIndex = idx;
           buildPatternPills();
+          buildMiniControls();
           compose();
         });
         patternPills.appendChild(b);
       })(i);
     }
+  }
+
+  function buildMiniControls() {
+    if (!miniSlotMount || !state.manifest || !state.manifest.colorSlots) return;
+    miniSlotMount.innerHTML = "";
+    ["1", "2", "3", "4", "5", "6"].forEach(function (key) {
+      var spec = state.manifest.colorSlots[key];
+      if (!spec || !(spec.kind === "tintMask" || spec.kind === "patternTint")) return;
+      var wrap = document.createElement("div");
+      wrap.className = "mini-slot";
+      var lab = document.createElement("span");
+      lab.className = "mini-label";
+      lab.textContent = key;
+      wrap.appendChild(lab);
+      var colors = effectiveColors(key);
+      colors.forEach(function (hex, idx) {
+        var sw = document.createElement("button");
+        sw.type = "button";
+        sw.className = "mini-swatch";
+        sw.style.background = hex;
+        sw.dataset.on = state.slotChoice[key] === idx ? "1" : "0";
+        sw.title = hex;
+        sw.addEventListener("click", function () {
+          state.slotChoice[key] = idx;
+          buildSlotCards();
+          buildMiniControls();
+          compose();
+        });
+        wrap.appendChild(sw);
+      });
+      miniSlotMount.appendChild(wrap);
+    });
+    var patterns = state.manifest.patterns || [];
+    if (patterns.length > 1) {
+      var pw = document.createElement("div");
+      pw.className = "mini-slot";
+      var pl = document.createElement("span");
+      pl.className = "mini-label";
+      pl.textContent = "P";
+      pw.appendChild(pl);
+      patterns.forEach(function (_, idx) {
+        var pb = document.createElement("button");
+        pb.type = "button";
+        pb.className = "mini-swatch";
+        pb.style.background = idx === state.patternIndex ? "#f6b8aa" : "#b8adca";
+        pb.dataset.on = idx === state.patternIndex ? "1" : "0";
+        pb.title = "Pattern " + (idx + 1);
+        pb.addEventListener("click", function () {
+          state.patternIndex = idx;
+          buildPatternPills();
+          buildMiniControls();
+          compose();
+        });
+        pw.appendChild(pb);
+      });
+      miniSlotMount.appendChild(pw);
+    }
+    refreshIcons();
+  }
+
+  function renderHexPanel() {
+    if (!hexCurrent || !hexGroups || !state.manifest) return;
+    hexCurrent.innerHTML = "";
+    hexGroups.innerHTML = "";
+    ["1", "2", "3", "4", "5", "6"].forEach(function (key) {
+      var cols = effectiveColors(key);
+      if (!cols.length) return;
+      var selected = cols[Math.min(state.slotChoice[key] || 0, cols.length - 1)];
+      var chip = document.createElement("div");
+      chip.className = "hex-chip";
+      chip.innerHTML = '<span class="hex-swatch" style="background:' + selected + '"></span><strong>C' + key + "</strong><code>" + selected + "</code>";
+      var cbtn = document.createElement("button");
+      cbtn.type = "button";
+      cbtn.className = "btn-ghost btn-tiny";
+      cbtn.textContent = "Copy";
+      cbtn.addEventListener("click", function () { copyText(selected); });
+      chip.appendChild(cbtn);
+      hexCurrent.appendChild(chip);
+
+      var row = document.createElement("div");
+      row.className = "hex-row";
+      var txt = cols.join(", ");
+      row.innerHTML = "<strong>Color " + key + "</strong><code>" + txt + "</code>";
+      var cpAll = document.createElement("button");
+      cpAll.type = "button";
+      cpAll.className = "btn-ghost btn-tiny";
+      cpAll.textContent = "Copy row";
+      cpAll.addEventListener("click", function () { copyText("Color " + key + ": " + txt); });
+      row.appendChild(cpAll);
+      hexGroups.appendChild(row);
+    });
   }
 
   function buildSlotCards() {
@@ -926,6 +1144,8 @@
           d.addEventListener("click", function () {
             state.slotChoice[key] = idx;
             buildSlotCards();
+            buildMiniControls();
+            renderHexPanel();
             compose();
           });
           if (isCustom) {
@@ -939,6 +1159,8 @@
               removeCustomHex(state.skinPath, key, hex);
               state.slotChoice[key] = 0;
               buildSlotCards();
+              buildMiniControls();
+              renderHexPanel();
               compose();
             });
             d.appendChild(rm);
@@ -946,6 +1168,23 @@
           sw.appendChild(d);
         });
         card.appendChild(sw);
+        if (colors.length) {
+          var selHex = colors[Math.min(state.slotChoice[key] || 0, colors.length - 1)];
+          var selRow = document.createElement("div");
+          selRow.className = "row";
+          selRow.style.marginTop = "8px";
+          var chip = document.createElement("span");
+          chip.className = "hex-chip";
+          chip.innerHTML = '<span class="hex-swatch" style="background:' + selHex + '"></span><code>' + selHex + "</code>";
+          var cp = document.createElement("button");
+          cp.type = "button";
+          cp.className = "btn-ghost btn-tiny";
+          cp.textContent = "Copy";
+          cp.addEventListener("click", function () { copyText(selHex); });
+          selRow.appendChild(chip);
+          selRow.appendChild(cp);
+          card.appendChild(selRow);
+        }
 
         var addRow = document.createElement("div");
         addRow.className = "row";
@@ -957,9 +1196,10 @@
         addBtn.addEventListener("click", function () {
           customTarget = key;
           customPicker.value = colors[state.slotChoice[key]] || "#ffffff";
-          customPicker.focus();
+          var sy = window.scrollY || window.pageYOffset || 0;
           if (typeof customPicker.showPicker === "function") customPicker.showPicker();
           else customPicker.click();
+          window.requestAnimationFrame(function () { window.scrollTo(0, sy); });
         });
         addRow.appendChild(addBtn);
         card.appendChild(addRow);
@@ -985,6 +1225,8 @@
           imgEl.addEventListener("click", function () {
             state.slotChoice[key] = idx;
             buildSlotCards();
+            buildMiniControls();
+            renderHexPanel();
             compose();
           });
           row.appendChild(imgEl);
@@ -1003,6 +1245,8 @@
     state.slotChoice[customTarget] = cols.length - 1;
     customTarget = null;
     buildSlotCards();
+    buildMiniControls();
+    renderHexPanel();
     compose();
   });
   customPicker.addEventListener("blur", function () {
@@ -1022,6 +1266,8 @@
     });
     buildPatternPills();
     buildSlotCards();
+    buildMiniControls();
+    renderHexPanel();
     compose();
   }
 
@@ -1030,6 +1276,18 @@
     var pn = (state.manifest.patterns || []).length;
     if (pn > 0) state.patternIndex = Math.floor(Math.random() * pn);
     buildPatternPills();
+    buildMiniControls();
+    renderHexPanel();
+    compose();
+  }
+
+  function resetDefaults() {
+    state.patternIndex = 0;
+    ["1", "2", "3", "4", "5", "6"].forEach(function (k) { state.slotChoice[k] = 0; });
+    buildPatternPills();
+    buildSlotCards();
+    buildMiniControls();
+    renderHexPanel();
     compose();
   }
 
@@ -1063,33 +1321,26 @@
         if (last && Array.prototype.some.call(skinSelect.options, function (o) { return o.value === last; })) {
           skinSelect.value = last;
         }
-        if (miniSkinSelect) miniSkinSelect.innerHTML = skinSelect.innerHTML;
-        if (miniSkinSelect) miniSkinSelect.value = skinSelect.value;
         syncSkinName();
       });
   }
 
   skinSelect.addEventListener("change", function () {
-    if (miniSkinSelect) miniSkinSelect.value = skinSelect.value;
     loadSkin(skinSelect.value);
   });
-  if (miniSkinSelect) {
-    miniSkinSelect.addEventListener("change", function () {
-      skinSelect.value = miniSkinSelect.value;
-      loadSkin(skinSelect.value);
-    });
-  }
   btnReload.addEventListener("click", function () {
     loadSkin(skinSelect.value);
   });
   document.getElementById("btn-rand-colors").addEventListener("click", randomizeColorsOnly);
   document.getElementById("btn-rand-all").addEventListener("click", randomizeAll);
+  document.getElementById("btn-reset").addEventListener("click", resetDefaults);
   document.getElementById("btn-export").addEventListener("click", exportPng);
   document.getElementById("mini-rand-colors").addEventListener("click", randomizeColorsOnly);
   document.getElementById("mini-rand-all").addEventListener("click", randomizeAll);
   document.getElementById("mini-export").addEventListener("click", exportPng);
 
   window.addEventListener("resize", function () {
+    if (window.visualViewport && window.visualViewport.scale && window.visualViewport.scale !== 1) return;
     layoutPreviewFit();
   });
 
