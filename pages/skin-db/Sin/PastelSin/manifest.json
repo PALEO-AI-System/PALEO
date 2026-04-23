@@ -43,12 +43,12 @@
       "kind": "tintMask",
       "mask": "../Sin_Color1.png",
       "palette": [
-        "#0C212C",
+        "#81253E",
         "#371B01",
         "#643001",
-        "#81253E",
+        "#9CAA37",
         "#355E67",
-        "#9CAA37"
+        "#0C212C"
       ],
       "femalePalette": [
         "#888888"
@@ -59,11 +59,11 @@
       "kind": "tintMask",
       "mask": "PastelSin_Color2.png",
       "palette": [
-        "#6FB4A4",
         "#FF5F13",
-        "#F39101",
         "#FB7B4B",
-        "#FFB037"
+        "#F39101",
+        "#FFB037",
+        "#6FB4A4"
       ],
       "femalePalette": [
         "#888888"
@@ -74,9 +74,9 @@
       "kind": "tintMask",
       "mask": "PastelSin_Color3.png",
       "palette": [
-        "#51052C",
+        "#120F12",
         "#200B1E",
-        "#120F12"
+        "#51052C"
       ],
       "femalePalette": [
         "#888888"
@@ -89,11 +89,11 @@
       "palette": [
         "#141210",
         "#37240A",
-        "#525588",
-        "#645701",
         "#8B5A19",
-        "#AB8792",
-        "#D0984D"
+        "#D0984D",
+        "#645701",
+        "#525588",
+        "#AB8792"
       ],
       "femalePalette": [
         "#888888"
@@ -103,10 +103,10 @@
       "label": "Color 5 (pattern)",
       "kind": "patternTint",
       "palette": [
-        "#F5E9DB",
-        "#82E5C3",
+        "#ED8313",
         "#FFC54C",
-        "#ED8313"
+        "#82E5C3",
+        "#F5E9DB"
       ],
       "femalePalette": [
         "#888888"
