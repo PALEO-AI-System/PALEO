@@ -115,19 +115,43 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
+      width: 30px;
+      height: 26px;
+      border-radius: 8px;
       border: 1px solid rgba(255, 255, 255, 0.22);
       background: #3c7acb;
       color: #fff;
-      font-size: 1rem;
+      font-size: 0.92rem;
       font-weight: 700;
       padding: 0;
     }
     .mini-controls .mini-gender .icon {
-      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      font-size: 0.95rem;
       line-height: 1;
+    }
+    .gender-choice {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 34px;
+    }
+    .gender-choice .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1em;
+      height: 1em;
+      line-height: 1;
+      font-size: 1rem;
+    }
+    .hex-gender {
+      margin-bottom: 8px;
     }
     .mini-controls .mini-tints {
       display: grid;
@@ -611,8 +635,8 @@
           <div class="slot-card" style="margin-top:12px;">
             <h3>Gender</h3>
             <div class="row">
-              <button type="button" class="btn-secondary" id="btn-gender-male">♂ Male</button>
-              <button type="button" class="btn-secondary" id="btn-gender-female">♀ Female</button>
+              <button type="button" class="btn-secondary gender-choice" id="btn-gender-male"><span class="icon">♂</span><span>Male</span></button>
+              <button type="button" class="btn-secondary gender-choice" id="btn-gender-female"><span class="icon">♀</span><span>Female</span></button>
             </div>
           </div>
 
@@ -657,6 +681,7 @@
 
       <div class="hex-panel" id="hex-panel">
         <h3>Selected and Palette Hex Codes</h3>
+        <div class="hex-gender" id="hex-gender"></div>
         <div class="hex-current" id="hex-current"></div>
         <div class="hex-groups" id="hex-groups"></div>
         <div class="row" style="margin-top:12px;justify-content:flex-start;align-items:center;gap:6px;">
@@ -715,6 +740,7 @@
   var miniGenderToggle = document.getElementById("mini-gender-toggle");
   var btnGenderMale = document.getElementById("btn-gender-male");
   var btnGenderFemale = document.getElementById("btn-gender-female");
+  var hexGender = document.getElementById("hex-gender");
   var hexCurrent = document.getElementById("hex-current");
   var hexGroups = document.getElementById("hex-groups");
   var devkitImportText = document.getElementById("devkit-import-text");
@@ -1408,6 +1434,9 @@
 
   function renderHexPanel() {
     if (!hexCurrent || !hexGroups || !state.manifest) return;
+    if (hexGender) {
+      hexGender.innerHTML = '<div class="hex-chip"><strong>Gender</strong><code>' + (state.gender === "female" ? "Female" : "Male") + "</code></div>";
+    }
     hexCurrent.innerHTML = "";
     hexGroups.innerHTML = "";
     ["1", "2", "3", "4", "5", "6"].forEach(function (key) {

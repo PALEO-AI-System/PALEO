@@ -46,12 +46,12 @@
       "kind": "tintMask",
       "mask": "../Wiehen_Color1.png",
       "palette": [
-        "#3B4A78",
-        "#5870B8",
         "#923B29",
         "#78453A",
         "#9E822F",
-        "#E3C055"
+        "#E3C055",
+        "#3B4A78",
+        "#5870B8"
       ],
       "femalePalette": [
         "#888888"
@@ -62,12 +62,12 @@
       "kind": "tintMask",
       "mask": "Solstice2Wiehen_Color2.png",
       "palette": [
-        "#1CCAFF",
+        "#BF6C40",
+        "#D67C4D",
         "#459FBA",
         "#5381AC",
         "#65C4FF",
-        "#BF6C40",
-        "#D67C4D"
+        "#1CCAFF"
       ],
       "femalePalette": [
         "#888888"
