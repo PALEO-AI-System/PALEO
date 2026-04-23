@@ -122,7 +122,7 @@ def main()-> None:
     table_path.write_text(json.dumps(table_rows, indent=4))
     print(f"\nSaved comparison table to {table_path}")
 
-    history_path = daRESULTSROOT / "training_histories.json"
+    history_path = daRESULTSROOT / "all_histories.json"
     history_path.write_text(json.dumps(all_results, indent=4))
     print(f"Full histories saved to {history_path}")
 

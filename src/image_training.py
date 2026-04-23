@@ -5,8 +5,9 @@ from __future__ import annotations
 import json
 import random
 from dataclasses import asdict
+from importlib import import_module
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from .data import DatasetRecord
 from .serengeti_image_paths import list_records_with_local_files, local_image_path
@@ -14,23 +15,50 @@ from .training import TrainingConfig, save_training_history
 
 _TORCH_IMPORT_ERROR = ""
 
+torch: Any | None = None
+nn: Any | None = None
+DataLoader: Any | None = None
+transforms: Any | None = None
+ResNet18_Weights: Any | None = None
+resnet18: Any | None = None
+
 try:
-    import torch
-    import torch.nn as nn
-    from torch.utils.data import DataLoader, Dataset
-    from torchvision import transforms
-    from torchvision.models import ResNet18_Weights, resnet18
+    torch = import_module("torch")
+    nn = import_module("torch.nn")
+    data_utils = import_module("torch.utils.data")
+    DataLoader = data_utils.DataLoader
+    transforms = import_module("torchvision.transforms")
+    tv_models = import_module("torchvision.models")
+    ResNet18_Weights = tv_models.ResNet18_Weights
+    resnet18 = tv_models.resnet18
 except ImportError as exc:  # pragma: no cover
     _TORCH_IMPORT_ERROR = str(exc)
-    torch = None
-    nn = None
-    DataLoader = None
-    Dataset = object  # type: ignore[misc, assignment]
-    resnet18 = None
-    transforms = None
 
 
-class SerengetiDiskDataset(Dataset):  # type: ignore[misc]
+def _require_torch_image_deps() -> tuple[Any, Any, Any, Any, Any, Any]:
+    if (
+        torch is None
+        or nn is None
+        or DataLoader is None
+        or transforms is None
+        or ResNet18_Weights is None
+        or resnet18 is None
+    ):
+        msg = "Install torch and torchvision to train on images."
+        if _TORCH_IMPORT_ERROR:
+            msg += f" Import error: {_TORCH_IMPORT_ERROR}"
+        raise RuntimeError(msg)
+    return torch, nn, DataLoader, transforms, ResNet18_Weights, resnet18
+
+
+def _load_pil_image_module() -> Any:
+    try:
+        return import_module("PIL.Image")
+    except ImportError as exc:  # pragma: no cover
+        raise RuntimeError("Install Pillow to load local JPEGs.") from exc
+
+
+class SerengetiDiskDataset:
     """Loads RGB images from disk; labels = ``predator_label`` (0/1)."""
 
     def __init__(
@@ -40,34 +68,44 @@ class SerengetiDiskDataset(Dataset):  # type: ignore[misc]
         image_size: int = 224,
         augment: bool = False,
     ) -> None:
-        if torch is None:
-            raise RuntimeError("torch and torchvision are required for image training.")
+        torch_module, _, _, transforms_module, _, _ = _require_torch_image_deps()
+        _ = torch_module
         self.records = records
         self.images_root = Path(images_root)
-        ops: List = [
-            transforms.Resize((image_size, image_size)),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+
+        ops: List[Any] = [
+            transforms_module.Resize((image_size, image_size)),
+            transforms_module.ToTensor(),
+            transforms_module.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225],
+            ),
         ]
         if augment:
             ops = [
-                transforms.RandomResizedCrop(image_size, scale=(0.8, 1.0)),
-                transforms.RandomHorizontalFlip(p=0.5),
-            ] + ops[1:]
-        self.transform = transforms.Compose(ops)
+                transforms_module.RandomResizedCrop(image_size, scale=(0.8, 1.0)),
+                transforms_module.RandomHorizontalFlip(p=0.5),
+                transforms_module.ToTensor(),
+                transforms_module.Normalize(
+                    mean=[0.485, 0.456, 0.406],
+                    std=[0.229, 0.224, 0.225],
+                ),
+            ]
+        self.transform = transforms_module.Compose(ops)
 
     def __len__(self) -> int:
         return len(self.records)
 
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
-        from PIL import Image
+    def __getitem__(self, idx: int) -> Tuple[Any, Any]:
+        torch_module, _, _, _, _, _ = _require_torch_image_deps()
+        image_module = _load_pil_image_module()
 
         rec = self.records[idx]
         path = local_image_path(rec, self.images_root)
-        img = Image.open(path).convert("RGB")
+        img = image_module.open(path).convert("RGB")
         x = self.transform(img)
         y = int(rec.predator_label)
-        y_t = torch.tensor(y, dtype=torch.long)
+        y_t = torch_module.tensor(y, dtype=torch_module.long)
         return x, y_t
 
 
@@ -78,11 +116,11 @@ def _split_train_val(
 ) -> Tuple[List[DatasetRecord], List[DatasetRecord]]:
     if not records:
         return [], []
-    # Prefer manifest splits when both sides have at least one sample.
     train_m = [r for r in records if r.split == "train"]
     val_m = [r for r in records if r.split == "val"]
     if len(train_m) >= 1 and len(val_m) >= 1:
         return train_m, val_m
+
     rng = random.Random(seed)
     idxs = list(range(len(records)))
     rng.shuffle(idxs)
@@ -95,11 +133,23 @@ def _split_train_val(
     return train, val
 
 
-def _accuracy(logits: torch.Tensor, targets: torch.Tensor) -> float:
+def _accuracy(logits: Any, targets: Any) -> float:
     """Batch accuracy; runs under ``no_grad`` so it is safe in the train loop."""
-    with torch.no_grad():
+    torch_module, _, _, _, _, _ = _require_torch_image_deps()
+    with torch_module.no_grad():
         pred = logits.argmax(dim=1)
         return float((pred == targets).float().mean().item())
+
+
+def load_classifier(checkpoint_path: str | Path) -> Any:
+    """Load a saved ResNet-18 checkpoint for inference."""
+    torch_module, nn_module, _, _, _, resnet18_fn = _require_torch_image_deps()
+    ckpt = torch_module.load(checkpoint_path, map_location="cpu")
+    model = resnet18_fn(weights=None)
+    model.fc = nn_module.Linear(model.fc.in_features, 2)
+    model.load_state_dict(ckpt["model_state"])
+    model.eval()
+    return model
 
 
 def train_serengeti_predator_on_disk(
@@ -112,11 +162,9 @@ def train_serengeti_predator_on_disk(
     augment: bool = True,
 ) -> Dict[str, List[float]]:
     """Fine-tune ResNet-18 fc layer for binary predator classification."""
-    if torch is None or resnet18 is None:
-        msg = "Install torch and torchvision to train on images."
-        if _TORCH_IMPORT_ERROR:
-            msg += f" Import error: {_TORCH_IMPORT_ERROR}"
-        raise RuntimeError(msg)
+    torch_module, nn_module, data_loader_cls, _, weights_enum, resnet18_fn = (
+        _require_torch_image_deps()
+    )
 
     local = list_records_with_local_files(records, images_root)
     if len(local) < 2:
@@ -129,15 +177,15 @@ def train_serengeti_predator_on_disk(
     train_ds = SerengetiDiskDataset(train_recs, images_root, image_size=image_size, augment=augment)
     val_ds = SerengetiDiskDataset(val_recs, images_root, image_size=image_size, augment=False)
 
-    pin_memory = torch.cuda.is_available()
-    train_loader = DataLoader(
+    pin_memory = torch_module.cuda.is_available()
+    train_loader = data_loader_cls(
         train_ds,
         batch_size=min(config.batch_size, len(train_ds)),
         shuffle=True,
         num_workers=0,
         pin_memory=pin_memory,
     )
-    val_loader = DataLoader(
+    val_loader = data_loader_cls(
         val_ds,
         batch_size=min(config.batch_size, max(len(val_ds), 1)),
         shuffle=False,
@@ -145,27 +193,29 @@ def train_serengeti_predator_on_disk(
         pin_memory=pin_memory,
     )
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    weights = ResNet18_Weights.IMAGENET1K_V1
-    model = resnet18(weights=weights)
-    model.fc = nn.Linear(model.fc.in_features, 2)
+    device = torch_module.device("cuda" if torch_module.cuda.is_available() else "cpu")
+    weights = weights_enum.IMAGENET1K_V1
+    model = resnet18_fn(weights=weights)
+    model.fc = nn_module.Linear(model.fc.in_features, 2)
     model.to(device)
 
-    crit = nn.CrossEntropyLoss()
-    # Fine-tune last block + head; freeze earlier layers for tiny datasets.
+    crit = nn_module.CrossEntropyLoss()
     for name, param in model.named_parameters():
         if name.startswith("layer4") or name.startswith("fc"):
             param.requires_grad = True
         else:
             param.requires_grad = False
-    opt = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=config.learning_rate)
+    opt = torch_module.optim.Adam(
+        filter(lambda p: p.requires_grad, model.parameters()),
+        lr=config.learning_rate,
+    )
 
     epochs_hist: List[int] = []
     train_losses: List[float] = []
     val_losses: List[float] = []
     val_accs: List[float] = []
-
     train_accs: List[float] = []
+
     for epoch in range(1, config.epochs + 1):
         model.train()
         running = 0.0
@@ -213,9 +263,8 @@ def train_serengeti_predator_on_disk(
         "weights_backbone": str(weights),
         "task": "predator_binary",
     }
-    torch.save(ckpt, out_dir / "resnet18_serengeti_disk.pt")
+    torch_module.save(ckpt, out_dir / "resnet18_serengeti_disk.pt")
 
-    # Align with scaffold metrics.json shape + extra fields.
     history = {
         "epochs": epochs_hist,
         "train_loss": train_losses,
