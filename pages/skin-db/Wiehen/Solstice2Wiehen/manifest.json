@@ -46,12 +46,12 @@
       "kind": "tintMask",
       "mask": "../Wiehen_Color1.png",
       "palette": [
-        "#5870B8",
         "#3B4A78",
-        "#9E822F",
-        "#E3C055",
+        "#5870B8",
+        "#923B29",
         "#78453A",
-        "#923B29"
+        "#9E822F",
+        "#E3C055"
       ],
       "femalePalette": [
         "#888888"
@@ -62,12 +62,12 @@
       "kind": "tintMask",
       "mask": "Solstice2Wiehen_Color2.png",
       "palette": [
-        "#65C4FF",
-        "#5381AC",
-        "#BF6C40",
-        "#D67C4D",
+        "#1CCAFF",
         "#459FBA",
-        "#1CCAFF"
+        "#5381AC",
+        "#65C4FF",
+        "#BF6C40",
+        "#D67C4D"
       ],
       "femalePalette": [
         "#888888"
@@ -78,8 +78,8 @@
       "kind": "tintMask",
       "mask": "Solstice2Wiehen_Color3.png",
       "palette": [
-        "#FE700B",
-        "#AA6441"
+        "#AA6441",
+        "#FE700B"
       ],
       "femalePalette": [
         "#888888"
@@ -90,8 +90,8 @@
       "kind": "tintMask",
       "mask": "Solstice2Wiehen_Color4.png",
       "palette": [
-        "#FFE599",
-        "#DCC793"
+        "#DCC793",
+        "#FFE599"
       ],
       "femalePalette": [
         "#888888"

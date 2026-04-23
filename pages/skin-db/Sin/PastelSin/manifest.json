@@ -43,10 +43,10 @@
       "kind": "tintMask",
       "mask": "../Sin_Color1.png",
       "palette": [
-        "#81253E",
-        "#643001",
-        "#371B01",
         "#0C212C",
+        "#371B01",
+        "#643001",
+        "#81253E",
         "#355E67",
         "#9CAA37"
       ],
@@ -59,10 +59,10 @@
       "kind": "tintMask",
       "mask": "PastelSin_Color2.png",
       "palette": [
-        "#FB7B4B",
         "#6FB4A4",
         "#FF5F13",
         "#F39101",
+        "#FB7B4B",
         "#FFB037"
       ],
       "femalePalette": [
@@ -87,13 +87,13 @@
       "kind": "tintMask",
       "mask": "PastelSin_Color4.png",
       "palette": [
-        "#525588",
-        "#AB8792",
-        "#8B5A19",
-        "#37240A",
-        "#D0984D",
         "#141210",
-        "#645701"
+        "#37240A",
+        "#525588",
+        "#645701",
+        "#8B5A19",
+        "#AB8792",
+        "#D0984D"
       ],
       "femalePalette": [
         "#888888"

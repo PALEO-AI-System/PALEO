@@ -114,18 +114,19 @@
     .mini-controls .mini-gender {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.26);
-      background: rgba(255, 255, 255, 0.16);
-      color: #f5f0e8;
-      font-size: 0.68rem;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: #3c7acb;
+      color: #fff;
+      font-size: 1rem;
       font-weight: 700;
-      letter-spacing: 0.03em;
+      padding: 0;
     }
     .mini-controls .mini-gender .icon {
-      font-size: 0.9rem;
+      font-size: 1rem;
       line-height: 1;
     }
     .mini-controls .mini-tints {
@@ -184,10 +185,9 @@
       font-size: 0.95rem;
     }
     .hex-current {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
       gap: 8px;
-      align-items: center;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
       margin-bottom: 10px;
     }
     .hex-chip {
@@ -298,12 +298,21 @@
     }
     .btn-tiny { padding: 6px 9px; font-size: 0.76rem; border-radius: 8px; }
     .btn-copy {
-      padding: 3px 5px;
+      padding: 0;
       min-width: 26px;
       height: 24px;
       border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
     }
-    .btn-copy svg { width: 12px; height: 12px; }
+    .btn-copy svg {
+      width: 12px;
+      height: 12px;
+      display: block;
+      margin: 0;
+    }
     .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
     .slot-card {
@@ -409,11 +418,16 @@
       flex-shrink: 0;
       border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
     #preview-scale-wrap {
       transform-origin: 0 0;
       display: inline-block;
       line-height: 0;
+      border-radius: 8px;
+      overflow: hidden;
     }
     #preview-canvas {
       display: block;
@@ -557,7 +571,7 @@
             <button type="button" class="mini-btn primary" id="mini-rand-all" title="Randomize colors and pattern" aria-label="Randomize colors and pattern"><i data-lucide="dice-5"></i></button>
             <button type="button" class="mini-btn" id="mini-export" title="Download PNG" aria-label="Download PNG"><i data-lucide="download"></i></button>
             <div class="mini-pattern-inline" id="mini-pattern-inline"></div>
-            <button type="button" class="mini-gender" id="mini-gender-toggle" title="Switch gender palette" aria-label="Switch gender palette"><span class="icon">♂</span><span>Male</span></button>
+            <button type="button" class="mini-gender" id="mini-gender-toggle" title="Switch gender palette" aria-label="Switch gender palette"><span class="icon">♂</span></button>
           </div>
           <div class="mini-tints" id="mini-slot-mount"></div>
         </div>
@@ -597,6 +611,14 @@
             <h3>Pattern</h3>
             <p class="hint" style="margin-top:0;" id="pattern-hint">—</p>
             <div class="pattern-pills" id="pattern-pills"></div>
+          </div>
+
+          <div class="slot-card" style="margin-top:12px;">
+            <h3>Gender</h3>
+            <div class="row">
+              <button type="button" class="btn-secondary" id="btn-gender-male">♂ Male</button>
+              <button type="button" class="btn-secondary" id="btn-gender-female">♀ Female</button>
+            </div>
           </div>
 
           <div id="slots-mount"></div>
@@ -696,6 +718,8 @@
   var mobileColorCancel = document.getElementById("mobile-color-cancel");
   var miniPatternInline = document.getElementById("mini-pattern-inline");
   var miniGenderToggle = document.getElementById("mini-gender-toggle");
+  var btnGenderMale = document.getElementById("btn-gender-male");
+  var btnGenderFemale = document.getElementById("btn-gender-female");
   var hexCurrent = document.getElementById("hex-current");
   var hexGroups = document.getElementById("hex-groups");
   var devkitImportText = document.getElementById("devkit-import-text");
@@ -901,9 +925,12 @@
       state.slotChoice[k] = n > 0 ? Math.max(0, Math.min(n - 1, idx)) : 0;
     });
     if (miniGenderToggle) {
-      miniGenderToggle.innerHTML = state.gender === "female"
-        ? '<span class="icon" style="color:#ff6fb1;">♀</span><span>Female</span>'
-        : '<span class="icon" style="color:#6db2ff;">♂</span><span>Male</span>';
+      miniGenderToggle.innerHTML = state.gender === "female" ? '<span class="icon">♀</span>' : '<span class="icon">♂</span>';
+      miniGenderToggle.style.background = state.gender === "female" ? "#c64b93" : "#3c7acb";
+    }
+    if (btnGenderMale && btnGenderFemale) {
+      btnGenderMale.style.opacity = state.gender === "male" ? "1" : "0.72";
+      btnGenderFemale.style.opacity = state.gender === "female" ? "1" : "0.72";
     }
   }
 
@@ -964,7 +991,7 @@
     previewScaleWrap.style.transform = "scale(" + s + ")";
     var vw = Math.ceil(cw * s);
     var vh = Math.ceil(ch * s);
-    previewScaleViewport.style.width = vw + "px";
+    previewScaleViewport.style.width = (vw + 2) + "px";
     previewScaleViewport.style.height = vh + "px";
     previewScaleViewport.style.overflow = "hidden";
     previewScroll.style.minHeight = "";
@@ -1302,10 +1329,6 @@
     if (!hexCurrent || !hexGroups || !state.manifest) return;
     hexCurrent.innerHTML = "";
     hexGroups.innerHTML = "";
-    var gChip = document.createElement("div");
-    gChip.className = "hex-chip";
-    gChip.innerHTML = "<strong>Gender</strong><code>" + (state.gender === "female" ? "Female" : "Male") + "</code>";
-    hexCurrent.appendChild(gChip);
     ["1", "2", "3", "4", "5", "6"].forEach(function (key) {
       var cols = effectiveColors(key);
       if (!cols.length) return;
@@ -1561,6 +1584,28 @@
   if (miniGenderToggle) {
     miniGenderToggle.addEventListener("click", function () {
       applyManifestDefaults(state.gender === "male" ? "female" : "male");
+      buildPatternPills();
+      buildSlotCards();
+      buildMiniControls();
+      renderHexPanel();
+      renderDevkitImportBlock();
+      compose();
+    });
+  }
+  if (btnGenderMale) {
+    btnGenderMale.addEventListener("click", function () {
+      applyManifestDefaults("male");
+      buildPatternPills();
+      buildSlotCards();
+      buildMiniControls();
+      renderHexPanel();
+      renderDevkitImportBlock();
+      compose();
+    });
+  }
+  if (btnGenderFemale) {
+    btnGenderFemale.addEventListener("click", function () {
+      applyManifestDefaults("female");
       buildPatternPills();
       buildSlotCards();
       buildMiniControls();

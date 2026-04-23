@@ -21,20 +21,20 @@
     "gender": "male",
     "patternIndex": 0,
     "male": {
-      "1": 0,
-      "2": 0,
-      "3": 0,
+      "1": 1,
+      "2": 2,
+      "3": 5,
       "4": 3,
-      "5": 0,
-      "6": 0
+      "5": 3,
+      "6": 5
     },
     "female": {
-      "1": 0,
-      "2": 0,
-      "3": 0,
+      "1": 1,
+      "2": 2,
+      "3": 5,
       "4": 3,
-      "5": 0,
-      "6": 0
+      "5": 3,
+      "6": 5
     }
   },
   "patterns": [
@@ -46,9 +46,9 @@
       "kind": "tintMask",
       "mask": "../Wiehen_Color1.png",
       "palette": [
+        "#1D1211",
         "#251D18",
         "#402517",
-        "#1D1211",
         "#522414",
         "#76542D"
       ],
@@ -61,10 +61,10 @@
       "kind": "tintMask",
       "mask": "SolsticeWiehen_Color2.png",
       "palette": [
+        "#210603",
+        "#562810",
         "#61271A",
         "#6D1C12",
-        "#562810",
-        "#210603",
         "#7B4609"
       ],
       "femalePalette": [
@@ -76,12 +76,12 @@
       "kind": "tintMask",
       "mask": "SolsticeWiehen_Color3.png",
       "palette": [
-        "#E49847",
-        "#D7AD37",
+        "#746044",
+        "#755A33",
         "#B8936F",
         "#C5B79B",
-        "#746044",
-        "#755A33"
+        "#D7AD37",
+        "#E49847"
       ],
       "femalePalette": [
         "#888888"
@@ -94,9 +94,9 @@
       "palette": [
         "#FF3201",
         "#FF6001",
-        "#A991E8",
-        "#90E7CB",
         "#F8AD2A",
+        "#90E7CB",
+        "#A991E8",
         "#8058DF"
       ],
       "femalePalette": [
@@ -107,11 +107,11 @@
       "label": "Color 5 (pattern)",
       "kind": "patternTint",
       "palette": [
-        "#250701",
-        "#150D04",
-        "#2F1209",
         "#111928",
+        "#150D04",
         "#1D2310",
+        "#250701",
+        "#2F1209",
         "#43271E"
       ],
       "femalePalette": [
@@ -123,13 +123,13 @@
       "kind": "tintMask",
       "mask": "../Wiehen_Color6.png",
       "palette": [
-        "#5BC0ED",
-        "#9C77BB",
-        "#ECA60E",
         "#552911",
         "#7E5C35",
-        "#A9D0D6",
-        "#A63F08"
+        "#A63F08",
+        "#ECA60E",
+        "#9C77BB",
+        "#5BC0ED",
+        "#A9D0D6"
       ],
       "femalePalette": [
         "#888888"
