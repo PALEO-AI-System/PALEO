@@ -115,13 +115,13 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 30px;
-      height: 26px;
-      border-radius: 8px;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
       border: 1px solid rgba(255, 255, 255, 0.22);
-      background: #3c7acb;
-      color: #fff;
-      font-size: 0.92rem;
+      background: #d7e9ff;
+      color: #3c7acb;
+      font-size: 0.8rem;
       font-weight: 700;
       padding: 0;
     }
@@ -150,6 +150,16 @@
       line-height: 1;
       font-size: 1rem;
     }
+    .gender-choice.male {
+      background: #d7e9ff;
+      color: #2e66b3;
+    }
+    .gender-choice.male .icon { color: #2e66b3; }
+    .gender-choice.female {
+      background: #ffd9ec;
+      color: #b13d7f;
+    }
+    .gender-choice.female .icon { color: #b13d7f; }
     .hex-gender {
       margin-bottom: 8px;
     }
@@ -257,6 +267,10 @@
     @media (max-width: 900px) {
       .mini-controls .mini-tints {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .mini-controls .mini-gender .icon,
+      .gender-choice .icon {
+        transform: translateY(-1px);
       }
       .hex-chip {
         border-radius: 12px;
@@ -624,6 +638,7 @@
           <div class="row" style="margin-bottom:12px;">
             <select id="skin-select" style="flex:1;min-width:200px;"></select>
             <button type="button" class="btn-ghost" id="btn-reload">Reload</button>
+            <button type="button" class="btn-ghost" id="btn-low-mem">Low-memory: Off</button>
           </div>
 
           <div class="slot-card" style="margin-top:0;">
@@ -635,8 +650,8 @@
           <div class="slot-card" style="margin-top:12px;">
             <h3>Gender</h3>
             <div class="row">
-              <button type="button" class="btn-secondary gender-choice" id="btn-gender-male"><span class="icon">♂</span><span>Male</span></button>
-              <button type="button" class="btn-secondary gender-choice" id="btn-gender-female"><span class="icon">♀</span><span>Female</span></button>
+              <button type="button" class="btn-secondary gender-choice male" id="btn-gender-male"><span class="icon">♂</span><span>Male</span></button>
+              <button type="button" class="btn-secondary gender-choice female" id="btn-gender-female"><span class="icon">♀</span><span>Female</span></button>
             </div>
           </div>
 
@@ -717,9 +732,11 @@
 
   var LS_CUSTOM = "chromaStrata_customHex.v1";
   var LS_LAST_SKIN = "chromaStrata_lastSkin.v1";
+  var LS_LOW_MEM = "chromaStrata_lowMemPreview.v1";
 
   var skinSelect = document.getElementById("skin-select");
   var btnReload = document.getElementById("btn-reload");
+  var btnLowMem = document.getElementById("btn-low-mem");
   var patternPills = document.getElementById("pattern-pills");
   var slotsMount = document.getElementById("slots-mount");
   var previewCanvas = document.getElementById("preview-canvas");
@@ -756,6 +773,7 @@
     gender: "male",
     loadSeq: 0,
     previewScale: 1,
+    lowMemPreview: localStorage.getItem(LS_LOW_MEM) === "1",
     patternIndex: 0,
     slotChoice: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0 },
     canvasW: 1024,
@@ -830,6 +848,11 @@
       el.classList.remove("show");
       setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 150);
     }, 1500);
+  }
+
+  function updateLowMemButton() {
+    if (!btnLowMem) return;
+    btnLowMem.textContent = "Low-memory: " + (state.lowMemPreview ? "On" : "Off");
   }
 
   function refreshIcons() {
@@ -949,7 +972,8 @@
     });
     if (miniGenderToggle) {
       miniGenderToggle.innerHTML = state.gender === "female" ? '<span class="icon">♀</span>' : '<span class="icon">♂</span>';
-      miniGenderToggle.style.background = state.gender === "female" ? "#c64b93" : "#3c7acb";
+      miniGenderToggle.style.background = state.gender === "female" ? "#ffd9ec" : "#d7e9ff";
+      miniGenderToggle.style.color = state.gender === "female" ? "#b13d7f" : "#2e66b3";
     }
     if (btnGenderMale && btnGenderFemale) {
       btnGenderMale.style.opacity = state.gender === "male" ? "1" : "0.72";
@@ -1293,7 +1317,7 @@
         var baseW = parseInt(canvasSize[0], 10) || 4096;
         var baseH = parseInt(canvasSize[1], 10) || 4096;
         var maxDim = Math.max(baseW, baseH);
-        var lowMem = isMobileDevice();
+        var lowMem = isMobileDevice() || state.lowMemPreview;
         state.previewScale = 1;
         var decodeW = 0;
         var decodeH = 0;
@@ -1643,17 +1667,101 @@
   }
 
   function exportPng() {
-    previewCanvas.toBlob(function (blob) {
-      if (!blob) return;
-      var a = document.createElement("a");
-      var u = URL.createObjectURL(blob);
-      a.href = u;
-      a.download = "chroma-strata-" + (state.manifest.id || "skin") + "-" + Date.now() + ".png";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(u);
-    }, "image/png");
+    if (!state.manifest || !state.skinPath) return;
+    showToast("Building full-size PNG...");
+    var manifest = state.manifest;
+    var skinPath = state.skinPath;
+    var urls = collectUrls(manifest, skinPath);
+    var fullW = state.canvasW;
+    var fullH = state.canvasH;
+    if (Array.isArray(manifest.canvasSize) && manifest.canvasSize.length === 2) {
+      fullW = parseInt(manifest.canvasSize[0], 10) || fullW;
+      fullH = parseInt(manifest.canvasSize[1], 10) || fullH;
+    } else if (state.previewScale > 0 && state.previewScale !== 1) {
+      fullW = Math.max(1, Math.round(fullW / state.previewScale));
+      fullH = Math.max(1, Math.round(fullH / state.previewScale));
+    }
+    loadImagesLimited(urls, 2, 0, 0).then(function (results) {
+      var fullMap = new Map();
+      results.forEach(function (r) {
+        if (r.ok && r.img) fullMap.set(r.url, r.img);
+      });
+      var c = document.createElement("canvas");
+      c.width = fullW;
+      c.height = fullH;
+      var ctx = c.getContext("2d");
+      ctx.clearRect(0, 0, fullW, fullH);
+      ctx.fillStyle = "#c8c4bc";
+      ctx.fillRect(0, 0, fullW, fullH);
+      var cst = manifest.constants || {};
+      var cblend = manifest.constantsBlend || {};
+      function safeComposite(name) {
+        var ok = "source-over,multiply,screen,overlay,darken,lighten,color-dodge,color-burn,hard-light,soft-light,difference,exclusion,hue,saturation,color,luminosity";
+        if (!name || name === "normal") return null;
+        return ok.indexOf(name) >= 0 ? name : null;
+      }
+      function getImg(rel) {
+        if (!rel) return null;
+        return fullMap.get(assetUrl(skinPath, rel));
+      }
+      ["1", "2", "3", "4"].forEach(function (key) {
+        var spec = manifest.colorSlots[key];
+        if (!spec) return;
+        if (spec.kind === "tintMask") {
+          drawTintMask(ctx, getImg(spec.mask), hexForSlot(key), fullW, fullH, "source-over");
+        } else if (spec.kind === "imageOptions") {
+          var opts = effectiveImageOptions(key);
+          var idx = Math.min(state.slotChoice[key] || 0, Math.max(0, opts.length - 1));
+          if (opts.length) drawImageContain(ctx, fullMap.get(assetUrl(skinPath, opts[idx])), fullW, fullH);
+        }
+      });
+      var pats = manifest.patterns || [];
+      if (pats.length) {
+        var pi = Math.min(state.patternIndex, pats.length - 1);
+        drawTintMask(ctx, getImg(pats[pi]), hexForSlot("5"), fullW, fullH, "source-over");
+      }
+      var s6 = manifest.colorSlots["6"];
+      if (s6 && s6.kind === "tintMask") drawTintMask(ctx, getImg(s6.mask), hexForSlot("6"), fullW, fullH, "source-over");
+      var det = getImg(cst.details);
+      if (det) drawImageContain(ctx, det, fullW, fullH);
+      var line = getImg(cst.lineart);
+      if (line) {
+        var lb = safeComposite(cblend.lineart);
+        ctx.save();
+        if (lb) ctx.globalCompositeOperation = lb;
+        drawImageContain(ctx, line, fullW, fullH);
+        ctx.restore();
+      }
+      var bgTop = getImg(cst.background);
+      if (bgTop) drawImageCover(ctx, bgTop, fullW, fullH);
+      var pal = getImg(cst.palette);
+      if (pal) {
+        var pb = safeComposite(cblend.palette);
+        ctx.save();
+        if (pb) ctx.globalCompositeOperation = pb;
+        drawImageContain(ctx, pal, fullW, fullH);
+        ctx.restore();
+      }
+      var infoL = getImg(cst.infoLayer);
+      if (infoL) {
+        var ib = safeComposite(cblend.infoLayer);
+        ctx.save();
+        if (ib) ctx.globalCompositeOperation = ib;
+        drawImageContain(ctx, infoL, fullW, fullH);
+        ctx.restore();
+      }
+      c.toBlob(function (blob) {
+        if (!blob) return;
+        var a = document.createElement("a");
+        var u = URL.createObjectURL(blob);
+        a.href = u;
+        a.download = "chroma-strata-" + (manifest.id || "skin") + "-" + Date.now() + ".png";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(u);
+      }, "image/png");
+    });
   }
 
   function populateSkinIndex() {
@@ -1684,6 +1792,18 @@
     loadSkin(skinSelect.value);
     showToast("Reloading skin...");
   });
+  if (btnLowMem) {
+    updateLowMemButton();
+    btnLowMem.addEventListener("click", function () {
+      state.lowMemPreview = !state.lowMemPreview;
+      localStorage.setItem(LS_LOW_MEM, state.lowMemPreview ? "1" : "0");
+      updateLowMemButton();
+      if (state.skinPath) {
+        loadSkin(state.skinPath);
+        showToast("Rebuilding preview...");
+      }
+    });
+  }
   document.getElementById("btn-rand-colors").addEventListener("click", randomizeColorsOnly);
   document.getElementById("btn-rand-all").addEventListener("click", randomizeAll);
   document.getElementById("btn-reset").addEventListener("click", resetDefaults);
