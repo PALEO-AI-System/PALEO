@@ -729,6 +729,7 @@
     images: new Map(),
     gender: "male",
     loadSeq: 0,
+    previewScale: 1,
     patternIndex: 0,
     slotChoice: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0 },
     canvasW: 1024,
@@ -940,8 +941,38 @@
     return spec.options || [];
   }
 
-  function loadImage(url) {
+  function imageWidth(img) {
+    return img ? (img.naturalWidth || img.width || 0) : 0;
+  }
+
+  function imageHeight(img) {
+    return img ? (img.naturalHeight || img.height || 0) : 0;
+  }
+
+  function loadImage(url, resizeW, resizeH) {
     return new Promise(function (resolve) {
+      if (window.createImageBitmap && resizeW && resizeH) {
+        fetch(url, { cache: "force-cache" })
+          .then(function (r) { return r.blob(); })
+          .then(function (blob) {
+            return createImageBitmap(blob, {
+              resizeWidth: resizeW,
+              resizeHeight: resizeH,
+              resizeQuality: "high"
+            });
+          })
+          .then(function (bmp) {
+            resolve({ url: url, img: bmp, ok: true });
+          })
+          .catch(function () {
+            var imFallback = new Image();
+            imFallback.crossOrigin = "anonymous";
+            imFallback.onload = function () { resolve({ url: url, img: imFallback, ok: true }); };
+            imFallback.onerror = function () { resolve({ url: url, img: null, ok: false }); };
+            imFallback.src = url;
+          });
+        return;
+      }
       var im = new Image();
       im.crossOrigin = "anonymous";
       im.onload = function () { resolve({ url: url, img: im, ok: true }); };
@@ -950,7 +981,7 @@
     });
   }
 
-  function loadImagesLimited(urls, limit) {
+  function loadImagesLimited(urls, limit, resizeW, resizeH) {
     if (!urls || !urls.length) return Promise.resolve([]);
     var out = new Array(urls.length);
     var i = 0;
@@ -962,7 +993,7 @@
         while (inFlight < limit && i < urls.length) {
           (function (idx) {
             inFlight += 1;
-            loadImage(urls[idx]).then(function (res) {
+            loadImage(urls[idx], resizeW, resizeH).then(function (res) {
               out[idx] = res;
             }).finally(function () {
               inFlight -= 1;
@@ -983,7 +1014,7 @@
 
   function drawTintMask(ctx, maskImg, hex, w, h, blendOntoMain) {
     blendOntoMain = blendOntoMain || "source-over";
-    if (!maskImg || !maskImg.naturalWidth) return;
+    if (!maskImg || !imageWidth(maskImg)) return;
     if (tintSlab.width !== w || tintSlab.height !== h) {
       tintSlab.width = w;
       tintSlab.height = h;
@@ -1032,9 +1063,9 @@
   }
 
   function drawImageContain(ctx, img, cw, ch) {
-    if (!img || !img.naturalWidth) return;
-    var iw = img.naturalWidth;
-    var ih = img.naturalHeight;
+    if (!img || !imageWidth(img)) return;
+    var iw = imageWidth(img);
+    var ih = imageHeight(img);
     var scale = Math.min(cw / iw, ch / ih);
     var w = iw * scale;
     var h = ih * scale;
@@ -1044,9 +1075,9 @@
   }
 
   function drawImageCover(ctx, img, cw, ch) {
-    if (!img || !img.naturalWidth) return;
-    var iw = img.naturalWidth;
-    var ih = img.naturalHeight;
+    if (!img || !imageWidth(img)) return;
+    var iw = imageWidth(img);
+    var ih = imageHeight(img);
     var scale = Math.max(cw / iw, ch / ih);
     var w = iw * scale;
     var h = ih * scale;
@@ -1060,22 +1091,26 @@
     if (Array.isArray(fixed) && fixed.length === 2) {
       var fw = parseInt(fixed[0], 10);
       var fh = parseInt(fixed[1], 10);
-      if (fw > 0 && fh > 0) return { w: fw, h: fh };
+      if (fw > 0 && fh > 0) {
+        fw = Math.max(1, Math.round(fw * state.previewScale));
+        fh = Math.max(1, Math.round(fh * state.previewScale));
+        return { w: fw, h: fh };
+      }
     }
     var cs = state.manifest.colorSlots && state.manifest.colorSlots["1"];
     if (cs && cs.kind === "tintMask" && cs.mask) {
       var u1 = assetUrl(state.skinPath, cs.mask);
       var im1 = state.images.get(u1);
-      if (im1 && im1.naturalWidth) {
-        return { w: im1.naturalWidth, h: im1.naturalHeight };
+      if (im1 && imageWidth(im1)) {
+        return { w: imageWidth(im1), h: imageHeight(im1) };
       }
     }
     var w = 0;
     var h = 0;
     state.images.forEach(function (img) {
-      if (img && img.naturalWidth) {
-        w = Math.max(w, img.naturalWidth);
-        h = Math.max(h, img.naturalHeight);
+      if (img && imageWidth(img)) {
+        w = Math.max(w, imageWidth(img));
+        h = Math.max(h, imageHeight(img));
       }
     });
     if (w) return { w: w, h: h };
@@ -1228,8 +1263,21 @@
         if (reqId !== state.loadSeq) throw new Error("stale load");
         state.manifest = manifest;
         var urls = collectUrls(manifest, skinPath);
+        var canvasSize = manifest.canvasSize || [4096, 4096];
+        var baseW = parseInt(canvasSize[0], 10) || 4096;
+        var baseH = parseInt(canvasSize[1], 10) || 4096;
+        var maxDim = Math.max(baseW, baseH);
+        var lowMem = isMobileDevice();
+        state.previewScale = 1;
+        var decodeW = 0;
+        var decodeH = 0;
+        if (lowMem && maxDim > 2048) {
+          state.previewScale = 2048 / maxDim;
+          decodeW = Math.max(1, Math.round(baseW * state.previewScale));
+          decodeH = Math.max(1, Math.round(baseH * state.previewScale));
+        }
         /* Large skin packs can crash browsers when many big PNGs load in parallel. */
-        return loadImagesLimited(urls, 2);
+        return loadImagesLimited(urls, 2, decodeW, decodeH);
       })
       .then(function (results) {
         if (reqId !== state.loadSeq) return;
