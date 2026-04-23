@@ -728,6 +728,7 @@
     manifest: null,
     images: new Map(),
     gender: "male",
+    loadSeq: 0,
     patternIndex: 0,
     slotChoice: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0 },
     canvasW: 1024,
@@ -946,6 +947,37 @@
       im.onload = function () { resolve({ url: url, img: im, ok: true }); };
       im.onerror = function () { resolve({ url: url, img: null, ok: false }); };
       im.src = url;
+    });
+  }
+
+  function loadImagesLimited(urls, limit) {
+    if (!urls || !urls.length) return Promise.resolve([]);
+    var out = new Array(urls.length);
+    var i = 0;
+    var inFlight = 0;
+    var done = 0;
+    limit = Math.max(1, limit || 2);
+    return new Promise(function (resolve) {
+      function pump() {
+        while (inFlight < limit && i < urls.length) {
+          (function (idx) {
+            inFlight += 1;
+            loadImage(urls[idx]).then(function (res) {
+              out[idx] = res;
+            }).finally(function () {
+              inFlight -= 1;
+              done += 1;
+              if (done >= urls.length) {
+                resolve(out);
+              } else {
+                pump();
+              }
+            });
+          })(i);
+          i += 1;
+        }
+      }
+      pump();
     });
   }
 
@@ -1182,20 +1214,25 @@
   }
 
   function loadSkin(skinPath) {
+    var reqId = ++state.loadSeq;
     state.skinPath = skinPath;
     state.images.clear();
     loadStatus.hidden = true;
     return fetch(assetUrl(skinPath, "manifest.json"), { cache: "no-store" })
       .then(function (r) {
+        if (reqId !== state.loadSeq) throw new Error("stale load");
         if (!r.ok) throw new Error("manifest " + r.status);
         return r.json();
       })
       .then(function (manifest) {
+        if (reqId !== state.loadSeq) throw new Error("stale load");
         state.manifest = manifest;
         var urls = collectUrls(manifest, skinPath);
-        return Promise.all(urls.map(loadImage));
+        /* Large skin packs can crash browsers when many big PNGs load in parallel. */
+        return loadImagesLimited(urls, 2);
       })
       .then(function (results) {
+        if (reqId !== state.loadSeq) return;
         results.forEach(function (r) {
           if (r.ok && r.img) state.images.set(r.url, r.img);
         });
@@ -1215,6 +1252,7 @@
         syncSkinName();
       })
       .catch(function (e) {
+        if (String(e && e.message || e) === "stale load") return;
         loadStatus.hidden = false;
         loadStatus.textContent = String(e.message || e);
       });
