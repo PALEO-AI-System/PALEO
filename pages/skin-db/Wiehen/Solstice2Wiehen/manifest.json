@@ -1,55 +1,122 @@
 {
   "id": "Solstice2Wiehen",
   "displayName": "Solstice 2",
-  "canvasSize": [9262, 3102],
+  "canvasSize": [
+    9262,
+    3102
+  ],
   "constantsBlend": {
     "lineart": "multiply",
     "infoLayer": "soft-light"
   },
   "constants": {
-    "background": "Seismic2Wiehen_Background.png",
+    "background": "Solstice2Wiehen_Background.png",
     "lineart": "../Wiehen_Lineart.png",
-    "details": "Seismic2Wiehen_Details.png",
-    "palette": "Seismic2Wiehen_Palette.png",
-    "infoLayer": "Seismic2Wiehen_Info.png",
-    "infoNotes": "Seismic2Wiehen_Info.md"
+    "details": "Solstice2Wiehen_Details.png",
+    "palette": "Solstice2Wiehen_Palette.png",
+    "infoLayer": "Solstice2Wiehen_Info.png",
+    "infoNotes": "Solstice2Wiehen_Info.md"
   },
-  "patterns": ["Seismic2Wiehen_Color5-Pattern1.png"],
+  "defaults": {
+    "gender": "male",
+    "patternIndex": 0,
+    "male": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0
+    },
+    "female": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0
+    }
+  },
+  "patterns": [
+    "Solstice2Wiehen_Color5-Pattern1.png"
+  ],
   "colorSlots": {
     "1": {
       "label": "Color 1",
       "kind": "tintMask",
       "mask": "../Wiehen_Color1.png",
-      "palette": ["#251D18"]
+      "palette": [
+        "#5870B8",
+        "#3B4A78",
+        "#9E822F",
+        "#E3C055",
+        "#78453A",
+        "#923B29"
+      ],
+      "femalePalette": [
+        "#888888"
+      ]
     },
     "2": {
       "label": "Color 2",
       "kind": "tintMask",
-      "mask": "Seismic2Wiehen_Color2.png",
-      "palette": ["#61271A"]
+      "mask": "Solstice2Wiehen_Color2.png",
+      "palette": [
+        "#65C4FF",
+        "#5381AC",
+        "#BF6C40",
+        "#D67C4D",
+        "#459FBA",
+        "#1CCAFF"
+      ],
+      "femalePalette": [
+        "#888888"
+      ]
     },
     "3": {
       "label": "Color 3",
       "kind": "tintMask",
-      "mask": "Seismic2Wiehen_Color3.png",
-      "palette": ["#E49847"]
+      "mask": "Solstice2Wiehen_Color3.png",
+      "palette": [
+        "#FE700B",
+        "#AA6441"
+      ],
+      "femalePalette": [
+        "#888888"
+      ]
     },
     "4": {
       "label": "Color 4",
       "kind": "tintMask",
-      "mask": "Seismic2Wiehen_Color4.png",
-      "palette": ["#FF3201", "#FF6001", "#A991E8", "#90E7CB"]
+      "mask": "Solstice2Wiehen_Color4.png",
+      "palette": [
+        "#FFE599",
+        "#DCC793"
+      ],
+      "femalePalette": [
+        "#888888"
+      ]
     },
     "5": {
       "label": "Color 5 (pattern)",
       "kind": "patternTint",
-      "palette": ["#250701"]
+      "palette": [
+        "#2B2518"
+      ],
+      "femalePalette": [
+        "#888888"
+      ]
     },
     "6": {
       "label": "Color 6 (eyes)",
       "kind": "tintMask",
       "mask": "../Wiehen_Color6.png",
-      "palette": ["#5BC0ED"]
+      "palette": [
+        "#EBA970"
+      ],
+      "femalePalette": [
+        "#888888"
+      ]
     }
   }
 }

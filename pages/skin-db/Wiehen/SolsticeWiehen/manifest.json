@@ -1,7 +1,10 @@
 {
   "id": "SolsticeWiehen",
   "displayName": "Solstice",
-  "canvasSize": [9262, 3102],
+  "canvasSize": [
+    9262,
+    3102
+  ],
   "constantsBlend": {
     "lineart": "multiply",
     "infoLayer": "soft-light"
@@ -14,42 +17,123 @@
     "infoLayer": "SolsticeWiehen_Info.png",
     "infoNotes": "SolsticeWiehen_Info.md"
   },
-  "patterns": ["SolsticeWiehen_Color5-Pattern1.png"],
+  "defaults": {
+    "gender": "male",
+    "patternIndex": 0,
+    "male": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 3,
+      "5": 0,
+      "6": 0
+    },
+    "female": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 3,
+      "5": 0,
+      "6": 0
+    }
+  },
+  "patterns": [
+    "SolsticeWiehen_Color5-Pattern1.png"
+  ],
   "colorSlots": {
     "1": {
       "label": "Color 1",
       "kind": "tintMask",
       "mask": "../Wiehen_Color1.png",
-      "palette": ["#251D18"]
+      "palette": [
+        "#251D18",
+        "#402517",
+        "#1D1211",
+        "#522414",
+        "#76542D"
+      ],
+      "femalePalette": [
+        "#888888"
+      ]
     },
     "2": {
       "label": "Color 2",
       "kind": "tintMask",
       "mask": "SolsticeWiehen_Color2.png",
-      "palette": ["#61271A"]
+      "palette": [
+        "#61271A",
+        "#6D1C12",
+        "#562810",
+        "#210603",
+        "#7B4609"
+      ],
+      "femalePalette": [
+        "#888888"
+      ]
     },
     "3": {
       "label": "Color 3",
       "kind": "tintMask",
       "mask": "SolsticeWiehen_Color3.png",
-      "palette": ["#E49847"]
+      "palette": [
+        "#E49847",
+        "#D7AD37",
+        "#B8936F",
+        "#C5B79B",
+        "#746044",
+        "#755A33"
+      ],
+      "femalePalette": [
+        "#888888"
+      ]
     },
     "4": {
       "label": "Color 4",
       "kind": "tintMask",
       "mask": "SolsticeWiehen_Color4.png",
-      "palette": ["#FF3201", "#FF6001", "#A991E8", "#90E7CB"]
+      "palette": [
+        "#FF3201",
+        "#FF6001",
+        "#A991E8",
+        "#90E7CB",
+        "#F8AD2A",
+        "#8058DF"
+      ],
+      "femalePalette": [
+        "#888888"
+      ]
     },
     "5": {
       "label": "Color 5 (pattern)",
       "kind": "patternTint",
-      "palette": ["#250701"]
+      "palette": [
+        "#250701",
+        "#150D04",
+        "#2F1209",
+        "#111928",
+        "#1D2310",
+        "#43271E"
+      ],
+      "femalePalette": [
+        "#888888"
+      ]
     },
     "6": {
       "label": "Color 6 (eyes)",
       "kind": "tintMask",
       "mask": "../Wiehen_Color6.png",
-      "palette": ["#5BC0ED"]
+      "palette": [
+        "#5BC0ED",
+        "#9C77BB",
+        "#ECA60E",
+        "#552911",
+        "#7E5C35",
+        "#A9D0D6",
+        "#A63F08"
+      ],
+      "femalePalette": [
+        "#888888"
+      ]
     }
   }
 }
