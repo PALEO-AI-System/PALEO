@@ -119,8 +119,8 @@
       height: 24px;
       border-radius: 6px;
       border: 1px solid rgba(255, 255, 255, 0.22);
-      background: #3c7acb;
-      color: #fff;
+      background: #dbe6f3;
+      color: #5a7290;
       font-size: 0.8rem;
       font-weight: 700;
       padding: 0;
@@ -974,8 +974,8 @@
     });
     if (miniGenderToggle) {
       miniGenderToggle.innerHTML = state.gender === "female" ? '<span class="icon">♀</span>' : '<span class="icon">♂</span>';
-      miniGenderToggle.style.background = state.gender === "female" ? "#c64b93" : "#3c7acb";
-      miniGenderToggle.style.color = "#fff";
+      miniGenderToggle.style.background = state.gender === "female" ? "#f0deea" : "#dbe6f3";
+      miniGenderToggle.style.color = state.gender === "female" ? "#8f5f78" : "#5a7290";
     }
     if (btnGenderMale && btnGenderFemale) {
       btnGenderMale.style.opacity = state.gender === "male" ? "1" : "0.72";
