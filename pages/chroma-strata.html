@@ -119,8 +119,8 @@
       height: 24px;
       border-radius: 6px;
       border: 1px solid rgba(255, 255, 255, 0.22);
-      background: #d7e9ff;
-      color: #3c7acb;
+      background: #3c7acb;
+      color: #fff;
       font-size: 0.8rem;
       font-weight: 700;
       padding: 0;
@@ -268,9 +268,11 @@
       .mini-controls .mini-tints {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
-      .mini-controls .mini-gender .icon,
+      .mini-controls .mini-gender .icon {
+        transform: translateY(-5px);
+      }
       .gender-choice .icon {
-        transform: translateY(-1px);
+        transform: translateY(-4px);
       }
       .hex-chip {
         border-radius: 12px;
@@ -650,8 +652,8 @@
           <div class="slot-card" style="margin-top:12px;">
             <h3>Gender</h3>
             <div class="row">
-              <button type="button" class="btn-secondary gender-choice male" id="btn-gender-male"><span class="icon">♂</span><span>Male</span></button>
-              <button type="button" class="btn-secondary gender-choice female" id="btn-gender-female"><span class="icon">♀</span><span>Female</span></button>
+              <button type="button" class="btn-secondary gender-choice" id="btn-gender-male"><span class="icon">♂</span><span>Male</span></button>
+              <button type="button" class="btn-secondary gender-choice" id="btn-gender-female"><span class="icon">♀</span><span>Female</span></button>
             </div>
           </div>
 
@@ -972,8 +974,8 @@
     });
     if (miniGenderToggle) {
       miniGenderToggle.innerHTML = state.gender === "female" ? '<span class="icon">♀</span>' : '<span class="icon">♂</span>';
-      miniGenderToggle.style.background = state.gender === "female" ? "#ffd9ec" : "#d7e9ff";
-      miniGenderToggle.style.color = state.gender === "female" ? "#b13d7f" : "#2e66b3";
+      miniGenderToggle.style.background = state.gender === "female" ? "#c64b93" : "#3c7acb";
+      miniGenderToggle.style.color = "#fff";
     }
     if (btnGenderMale && btnGenderFemale) {
       btnGenderMale.style.opacity = state.gender === "male" ? "1" : "0.72";

@@ -144,3 +144,6 @@
 
 ## 2026-04-22
 - **`pages/skin-db/`** restructured to **species → skin** folders (`Yang/AsagiYang`, `Wiehen/SolsticeWiehen`, placeholders `Sin/PastelSin`, `Tuojian/SunsetTuojian`, `Wiehen/SeismicWiehen`, `Wiehen/Solstice2Wiehen`). Species-level **Color1 / Color6 / Lineart** (and Tuojian’s **SunsetTuojian_Color1** + line art) live next to skin subfolders; manifests reference them with **`../`**. **SeismicWiehen** `details` points at **`../SolsticeWiehen/SolsticeWiehen_Details.png`**. **`index.json`** paths updated; **`chroma-strata.html`** migrates saved last skin and `?skin=` from old flat paths (`AsagiYang`, `SolsticeWiehen`) to the new nested paths.
+
+## 2026-04-23
+- Chroma Strata: large-panel gender controls use undifferentiated **`btn-secondary gender-choice`** again (removed per-gender pastel fills); mini gender button uses **white** symbols on **`#3c7acb` / `#c64b93`** like the earlier revision; mobile-only **`translateY`** on the **icon spans** only (stronger nudge). **`PastelSin`** / **`Solstice2Wiehen`** `defaults.male` indices updated so the loaded swatches match the conversation’s first-listed hexes after palette reorder (**AsagiYang** defaults already matched the specified hexes).
