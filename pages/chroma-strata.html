@@ -115,6 +115,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      place-content: center;
       width: 24px;
       height: 24px;
       border-radius: 6px;
@@ -124,15 +125,18 @@
       font-size: 0.8rem;
       font-weight: 700;
       padding: 0;
+      line-height: 0;
+      text-align: center;
     }
     .mini-controls .mini-gender .icon {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
       width: 100%;
       height: 100%;
       font-size: 0.95rem;
-      line-height: 1;
+      line-height: 0;
+      margin: 0;
     }
     .gender-choice {
       display: inline-flex;
@@ -276,7 +280,7 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
       .is-true-mobile .mini-controls .mini-gender .icon {
-        transform: translateY(-8px);
+        transform: translateY(-7px);
       }
       .is-true-mobile .gender-choice .icon {
         transform: translateY(-8px);
@@ -1509,7 +1513,7 @@
 
       var row = document.createElement("div");
       row.className = "hex-row";
-      var txt = selected;
+      var txt = cols.join(", ");
       row.innerHTML = "<strong>Color " + key + "</strong><code>" + txt + "</code>";
       var cpAll = makeCopyIconButton(function () { copyText("Color " + key + ": " + txt); }, "Copy color row");
       row.appendChild(cpAll);
