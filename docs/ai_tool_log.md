@@ -147,3 +147,6 @@
 
 ## 2026-04-23
 - Chroma Strata: large-panel gender controls use undifferentiated **`btn-secondary gender-choice`** again (removed per-gender pastel fills); mini gender button uses **white** symbols on **`#3c7acb` / `#c64b93`** like the earlier revision; mobile-only **`translateY`** on the **icon spans** only (stronger nudge). **`PastelSin`** / **`Solstice2Wiehen`** `defaults.male` indices updated so the loaded swatches match the conversation’s first-listed hexes after palette reorder (**AsagiYang** defaults already matched the specified hexes).
+
+## 2026-04-24
+- Chroma Strata: set `AsagiYang` `defaults.male["2"]` to index `2` (third option, browner swatch) and increased mobile-only icon lift for gender symbols (`mini-gender` `-6px`, large-panel `gender-choice` `-5px`) while leaving text baseline unchanged.
