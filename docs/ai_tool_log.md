@@ -152,3 +152,4 @@
 - Chroma Strata: set `AsagiYang` `defaults.male["2"]` to index `2` (third option, browner swatch) and increased mobile-only icon lift for gender symbols (`mini-gender` `-6px`, large-panel `gender-choice` `-5px`) while leaving text baseline unchanged.
 - Chroma Strata: increased mobile-only gender icon lift again (`mini-gender` icon `-7px`, large-panel `gender-choice` icon `-6px`) while keeping label text baseline unchanged.
 - Chroma Strata: switched mini-panel gender button back to a softer pastel-only scheme (male `#dbe6f3`/`#5a7290`, female `#f0deea`/`#8f5f78`) while leaving large-panel gender buttons unchanged.
+- Chroma Strata: increased mobile-only gender icon lift again (`mini-gender` `-7px`, large-panel `gender-choice` `-6px`) and explicitly pinned desktop icon lift to `0` so split-screen desktop keeps baseline alignment.
