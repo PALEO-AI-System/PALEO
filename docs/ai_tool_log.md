@@ -153,3 +153,4 @@
 - Chroma Strata: increased mobile-only gender icon lift again (`mini-gender` icon `-7px`, large-panel `gender-choice` icon `-6px`) while keeping label text baseline unchanged.
 - Chroma Strata: switched mini-panel gender button back to a softer pastel-only scheme (male `#dbe6f3`/`#5a7290`, female `#f0deea`/`#8f5f78`) while leaving large-panel gender buttons unchanged.
 - Chroma Strata: increased mobile-only gender icon lift again (`mini-gender` `-7px`, large-panel `gender-choice` `-6px`) and explicitly pinned desktop icon lift to `0` so split-screen desktop keeps baseline alignment.
+- Chroma Strata: updated `SeismicWiehen` female palettes for Color 1-5 (removed leading gray and added provided female-only options), made custom hex storage gender-scoped (`skinPath -> gender -> slot`) so male/female custom colors stay separate, added desktop-only icon bolding for gender symbols, and increased mobile-only icon lift (`mini -8px`, large-button icon -7px).

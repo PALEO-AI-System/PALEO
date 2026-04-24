@@ -151,6 +151,12 @@
       font-size: 1rem;
       transform: translateY(0);
     }
+    @media (min-width: 901px) {
+      .mini-controls .mini-gender .icon,
+      .gender-choice .icon {
+        font-weight: 800;
+      }
+    }
     .gender-choice.male {
       background: #d7e9ff;
       color: #2e66b3;
@@ -270,10 +276,10 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
       .mini-controls .mini-gender .icon {
-        transform: translateY(-7px);
+        transform: translateY(-8px);
       }
       .gender-choice .icon {
-        transform: translateY(-6px);
+        transform: translateY(-7px);
       }
       .hex-chip {
         border-radius: 12px;
@@ -800,26 +806,27 @@
     localStorage.setItem(LS_CUSTOM, JSON.stringify(obj));
   }
 
-  function getCustomHexes(skinPath, slotKey) {
+  function getCustomHexes(skinPath, gender, slotKey) {
     var st = readCustomStore();
-    var sub = st[skinPath] && st[skinPath][slotKey];
+    var sub = st[skinPath] && st[skinPath][gender] && st[skinPath][gender][slotKey];
     return Array.isArray(sub) ? sub.slice() : [];
   }
 
-  function addCustomHex(skinPath, slotKey, hex) {
+  function addCustomHex(skinPath, gender, slotKey, hex) {
     if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) return;
     var st = readCustomStore();
     if (!st[skinPath]) st[skinPath] = {};
-    var arr = st[skinPath][slotKey] || [];
+    if (!st[skinPath][gender]) st[skinPath][gender] = {};
+    var arr = st[skinPath][gender][slotKey] || [];
     if (arr.indexOf(hex) === -1) arr.push(hex);
-    st[skinPath][slotKey] = arr;
+    st[skinPath][gender][slotKey] = arr;
     writeCustomStore(st);
   }
 
-  function removeCustomHex(skinPath, slotKey, hex) {
+  function removeCustomHex(skinPath, gender, slotKey, hex) {
     var st = readCustomStore();
-    if (!st[skinPath] || !st[skinPath][slotKey]) return;
-    st[skinPath][slotKey] = st[skinPath][slotKey].filter(function (h) { return h !== hex; });
+    if (!st[skinPath] || !st[skinPath][gender] || !st[skinPath][gender][slotKey]) return;
+    st[skinPath][gender][slotKey] = st[skinPath][gender][slotKey].filter(function (h) { return h !== hex; });
     writeCustomStore(st);
   }
 
@@ -881,7 +888,7 @@
 
   function applyCustomColor(hex) {
     if (!customTarget || !hex) return;
-    addCustomHex(state.skinPath, customTarget, hex);
+    addCustomHex(state.skinPath, state.gender, customTarget, hex);
     var cols = effectiveColors(customTarget);
     state.slotChoice[customTarget] = cols.length - 1;
     customTarget = null;
@@ -985,7 +992,7 @@
   }
 
   function effectiveColors(slotKey) {
-    return basePalette(slotKey).concat(getCustomHexes(state.skinPath, slotKey));
+    return basePalette(slotKey).concat(getCustomHexes(state.skinPath, state.gender, slotKey));
   }
 
   function effectiveImageOptions(slotKey) {
@@ -1533,7 +1540,7 @@
             rm.title = "Remove custom color";
             rm.addEventListener("click", function (ev) {
               ev.stopPropagation();
-              removeCustomHex(state.skinPath, key, hex);
+              removeCustomHex(state.skinPath, state.gender, key, hex);
               state.slotChoice[key] = 0;
               buildSlotCards();
               buildMiniControls();
