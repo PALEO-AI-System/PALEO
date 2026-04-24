@@ -276,7 +276,7 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
       .is-true-mobile .mini-controls .mini-gender .icon {
-        transform: translateY(-9px);
+        transform: translateY(-8px);
       }
       .is-true-mobile .gender-choice .icon {
         transform: translateY(-8px);
@@ -929,12 +929,27 @@
 
   function renderDevkitImportBlock() {
     if (!devkitImportText || !state.manifest || !state.manifest.colorSlots) return;
-    function paletteFor(spec, gender) {
+    function mergeUnique(arrA, arrB) {
+      var seen = Object.create(null);
+      var out = [];
+      arrA.concat(arrB).forEach(function (h) {
+        var k = String(h || "").toUpperCase();
+        if (!k || seen[k]) return;
+        seen[k] = true;
+        out.push(k);
+      });
+      return out;
+    }
+    function paletteFor(slotKey, spec, gender) {
       if (!spec) return [];
+      var base = [];
       if (gender === "female" && Array.isArray(spec.femalePalette) && spec.femalePalette.length) {
-        return spec.femalePalette.slice();
+        base = spec.femalePalette.slice();
+      } else {
+        base = (spec.palette || []).slice();
       }
-      return (spec.palette || []).slice();
+      var custom = getCustomHexes(state.skinPath, gender, slotKey);
+      return mergeUnique(base, custom);
     }
     var entries = [];
     ["1", "2", "3", "4", "5", "6", "7"].forEach(function (k) {
@@ -945,8 +960,8 @@
         femaleArr = ["(R=0.500000,G=0.500000,B=0.500000,A=1.000000)"];
       } else {
         if (!state.manifest.colorSlots[k]) return;
-        var maleCols = paletteFor(state.manifest.colorSlots[k], "male");
-        var femaleCols = paletteFor(state.manifest.colorSlots[k], "female");
+        var maleCols = paletteFor(k, state.manifest.colorSlots[k], "male");
+        var femaleCols = paletteFor(k, state.manifest.colorSlots[k], "female");
         if (!maleCols.length && !femaleCols.length) return;
         if (!maleCols.length) maleCols = femaleCols.slice();
         if (!femaleCols.length) femaleCols = maleCols.slice();
