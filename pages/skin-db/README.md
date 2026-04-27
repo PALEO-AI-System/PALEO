@@ -41,3 +41,13 @@ When you list multiple swatches in `palette` / `femalePalette`, a useful convent
 
 - Extra swatches from the color picker are stored in **localStorage** under **`chromaStrata_customHex.v1`**, keyed by **skin path → gender (`male` / `female`) → slot (`"1"`–`"6"`)**. Male and female custom lists are **separate**: adding a custom color in one gender does not add it to the other.
 - The **Unreal-style DevKit import** block in Chroma Strata is regenerated from the **current skin’s** male/female manifest palettes **plus** those gender-scoped custom colors (deduplicated, merged in order: manifest first, then customs). It updates when you add or remove a custom color or change skin/gender.
+
+## Pre-push palette validation checklist
+
+Use this checklist after any palette/default edit and before pushing:
+
+1. **Requested colors were applied** to the correct `skin / gender / slot` lists.
+2. **Ordering convention holds** for each updated `palette` / `femalePalette`: ROYGBIV-like grouping, then darker → lighter, then less saturated → more saturated within similar hues.
+3. **Defaults still target intended hexes** after any reorder (re-map default indices as needed so selected swatches do not drift).
+4. **Hex format is normalized** (`#RRGGBB` uppercase) for consistency.
+5. **DevKit block remains aligned** with effective male/female palettes (including gender-scoped custom colors in browser state).
