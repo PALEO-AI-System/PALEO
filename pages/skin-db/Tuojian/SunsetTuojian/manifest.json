@@ -17,18 +17,18 @@
     "gender": "male",
     "patternIndex": 0,
     "male": {
-      "1": 0,
-      "2": 0,
+      "1": 1,
+      "2": 4,
       "3": 0,
-      "4": 0,
-      "5": 0
+      "4": 2,
+      "5": 1
     },
     "female": {
-      "1": 1,
+      "1": 2,
       "2": 0,
-      "3": 0,
-      "4": 1,
-      "5": 4
+      "3": 2,
+      "4": 3,
+      "5": 0
     }
   },
   "patterns": [
@@ -40,21 +40,21 @@
       "kind": "tintMask",
       "mask": "../Tuojian_Color1.png",
       "palette": [
+        "#C35560",
         "#C4574F",
-        "#c23c2e",
-        "#dd6840",
-        "#c25b24",
-        "#c94b2c",
-        "#c35560",
-        "#a74525"
+        "#DD6840",
+        "#C23C2E",
+        "#A74525",
+        "#C94B2C",
+        "#C25B24"
       ],
       "femalePalette": [
-        "#87c2d9",
-        "#99b6c2",
-        "#c0cecc",
-        "#84d2e1",
-        "#739ad9",
-        "#90d0c3"
+        "#90D0C3",
+        "#C0CECC",
+        "#99B6C2",
+        "#87C2D9",
+        "#84D2E1",
+        "#739AD9"
       ]
     },
     "2": {
@@ -62,19 +62,19 @@
       "kind": "tintMask",
       "mask": "SunsetTuojian_Color2.png",
       "palette": [
-        "#FE9746",
-        "#f0c57a",
-        "#f0c85c",
-        "#e8987d",
-        "#ec7751"
+        "#E8987D",
+        "#EC7751",
+        "#F0C57A",
+        "#F0C85C",
+        "#FE9746"
       ],
       "femalePalette": [
-        "#e0dcea",
-        "#8c80ac",
-        "#ac8be9",
-        "#b7a9fe",
-        "#8a7aff",
-        "#6972f2"
+        "#E0DCEA",
+        "#8C80AC",
+        "#B7A9FE",
+        "#8A7AFF",
+        "#6972F2",
+        "#AC8BE9"
       ]
     },
     "3": {
@@ -83,19 +83,19 @@
       "mask": "SunsetTuojian_Color3.png",
       "palette": [
         "#B18A8F",
-        "#b493a3",
-        "#c08277",
-        "#dd925f",
-        "#eaaa61",
-        "#b999c2",
-        "#a595d0"
+        "#C08277",
+        "#DD925F",
+        "#EAAA61",
+        "#A595D0",
+        "#B999C2",
+        "#B493A3"
       ],
       "femalePalette": [
-        "#e2e1e5",
-        "#dfb1a9",
-        "#dd9d88",
-        "#eddbf5",
-        "#dcdcfe"
+        "#DFB1A9",
+        "#DD9D88",
+        "#E2E1E5",
+        "#DCDCFE",
+        "#EDDBF5"
       ]
     },
     "4": {
@@ -103,39 +103,39 @@
       "kind": "tintMask",
       "mask": "SunsetTuojian_Color4.png",
       "palette": [
+        "#F1D393",
+        "#FEBB7C",
         "#FEBB56",
-        "#f1d393",
-        "#ded9c0",
-        "#febb7c",
-        "#d79e3c",
-        "#ead653"
+        "#D79E3C",
+        "#DED9C0",
+        "#EAD653"
       ],
       "femalePalette": [
-        "#dbdfe6",
-        "#adcae6",
-        "#c9d2ed",
-        "#98d8e2",
-        "#aaaac5",
-        "#51599a",
-        "#7c9be4"
+        "#DBDFE6",
+        "#AAAAC5",
+        "#C9D2ED",
+        "#ADCAE6",
+        "#98D8E2",
+        "#7C9BE4",
+        "#51599A"
       ]
     },
     "5": {
       "label": "Color 5 (pattern)",
       "kind": "patternTint",
       "palette": [
+        "#555388",
         "#434B82",
-        "#38547a",
-        "#473f83",
-        "#38487a",
-        "#555388"
+        "#473F83",
+        "#38547A",
+        "#38487A"
       ],
       "femalePalette": [
-        "#4a5978",
-        "#3d4376",
-        "#355f73",
-        "#60777b",
-        "#6d837e"
+        "#6D837E",
+        "#60777B",
+        "#4A5978",
+        "#3D4376",
+        "#355F73"
       ]
     }
   }
