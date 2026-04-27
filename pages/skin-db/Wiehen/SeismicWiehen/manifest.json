@@ -47,12 +47,19 @@
       "kind": "tintMask",
       "mask": "../Wiehen_Color1.png",
       "palette": [
-        "#6F5B49"
+        "#6F5B49",
+        "#675a37",
+        "#6e6845",
+        "#54423b",
+        "#675042",
+        "#42434d"
       ],
       "femalePalette": [
         "#1f0f0f",
         "#211912",
-        "#251d18"
+        "#251d18",
+        "#2b1808",
+        "#21242c"
       ]
     },
     "2": {
@@ -60,7 +67,11 @@
       "kind": "tintMask",
       "mask": "SeismicWiehen_Color2.png",
       "palette": [
-        "#DDDBB0"
+        "#DDDBB0",
+        "#b1a78c",
+        "#c4b87e",
+        "#b39784",
+        "#8f9a79"
       ],
       "femalePalette": [
         "#2d1d16",
@@ -76,7 +87,11 @@
       "kind": "tintMask",
       "mask": "SeismicWiehen_Color3.png",
       "palette": [
-        "#E7BC46"
+        "#E7BC46",
+        "#b5c251",
+        "#ce893b",
+        "#93b776",
+        "#e6d775"
       ],
       "femalePalette": [
         "#be4219",
@@ -92,7 +107,11 @@
       "kind": "tintMask",
       "mask": "SeismicWiehen_Color4.png",
       "palette": [
-        "#CE8022"
+        "#CE8022",
+        "#af5e12",
+        "#d49816",
+        "#994314",
+        "#e4c944"
       ],
       "femalePalette": [
         "#b01d0c",
@@ -109,13 +128,18 @@
       "label": "Color 5 (pattern)",
       "kind": "patternTint",
       "palette": [
-        "#463C25"
+        "#463C25",
+        "#332b1e",
+        "#1e1510",
+        "#231f1a",
+        "#242114"
       ],
       "femalePalette": [
         "#110b04",
         "#190501",
         "#1c0803",
-        "#0b0f14"
+        "#0b0f14",
+        "#121321"
       ]
     },
     "6": {
@@ -123,10 +147,19 @@
       "kind": "tintMask",
       "mask": "../Wiehen_Color6.png",
       "palette": [
-        "#888888"
+        "#d9d68c",
+        "#d2ad46",
+        "#72461d",
+        "#a9582d",
+        "#809c5e"
       ],
       "femalePalette": [
-        "#888888"
+        "#888888",
+        "#c53916",
+        "#d37427",
+        "#f0b924",
+        "#ed5135",
+        "#a0a5e3"
       ]
     }
   }
