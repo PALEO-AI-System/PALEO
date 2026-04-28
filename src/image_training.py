@@ -143,6 +143,9 @@ def _accuracy(logits: Any, targets: Any) -> float:
 
 def load_classifier(checkpoint_path: str | Path) -> Any:
     """Load a saved ResNet-18 checkpoint for inference."""
+    if torch is None or resnet18 is None or nn is None:
+        raise RuntimeError("torch + torchvision are required for classifier inference.")
+
     torch_module, nn_module, _, _, _, resnet18_fn = _require_torch_image_deps()
     ckpt = torch_module.load(checkpoint_path, map_location="cpu")
     model = resnet18_fn(weights=None)
@@ -150,7 +153,6 @@ def load_classifier(checkpoint_path: str | Path) -> Any:
     model.load_state_dict(ckpt["model_state"])
     model.eval()
     return model
-
 
 def train_serengeti_predator_on_disk(
     records: List[DatasetRecord],

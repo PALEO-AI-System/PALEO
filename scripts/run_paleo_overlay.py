@@ -17,6 +17,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.config import default_pot_config
+from src.image_training import load_classifier, torch
 from src.letta_tools import simulate_instinct_decision
 from src.pot import (
     ActionMapper,
@@ -90,6 +91,11 @@ def main() -> None:
     p.add_argument("--y", type=int, default=24)
     p.add_argument("--compact", action="store_true", help="Shorter debug text.")
     p.add_argument(
+        "--classifier-checkpoint",
+        default=None,
+        help="Optional path to a trained classifier checkpoint (.pt).",
+    )
+    p.add_argument(
         "--window-capture",
         action="store_true",
         help="Use fixed PotConfig region instead of full primary monitor.",
@@ -108,6 +114,21 @@ def main() -> None:
     mapper = ActionMapper(cfg)
     capture = ScreenCaptureWorker(cfg)
     controller = SafeInputController(cfg, mode=args.mode, enable_control=args.enable_control)
+    classifier_model = None
+    classifier_device = None
+    classifier_error = ""
+    if args.classifier_checkpoint:
+        try:
+            classifier_model = load_classifier(args.classifier_checkpoint)
+            if torch is None:
+                raise RuntimeError("torch is unavailable.")
+            classifier_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            classifier_model = classifier_model.to(classifier_device)
+            classifier_model.eval()
+        except Exception as exc:
+            classifier_model = None
+            classifier_device = None
+            classifier_error = str(exc)
 
     root = tk.Tk()
     root.title("PALEO Overlay")
@@ -266,6 +287,8 @@ def main() -> None:
         font=("Consolas", default_font),
     )
     status.pack(fill="x", anchor="w")
+    if classifier_error:
+        status_var.set(f"classifier disabled: {classifier_error}")
 
     def on_panel_configure(event):
         if event.widget is panel:
@@ -310,7 +333,11 @@ def main() -> None:
 
     def tick() -> None:
         frame = capture.capture_once()
-        obs = frame_to_observation(frame)
+        obs = frame_to_observation(
+            frame,
+            classifier_model=classifier_model,
+            classifier_device=classifier_device,
+        )
         result = simulate_instinct_decision(species=args.species, **obs)
         action = result["action"]
         keys = mapper.map_action(action)

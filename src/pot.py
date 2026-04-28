@@ -7,6 +7,7 @@ from pathlib import Path
 from time import sleep
 from time import time
 from typing import Dict, List, Tuple
+from .image_training import torch, transforms
 
 try:
     import numpy as np
@@ -15,8 +16,10 @@ except Exception:  # pragma: no cover - optional dependency
 
 try:
     import mss
+    import mss.tools as mss_tools
 except Exception:  # pragma: no cover - optional dependency
     mss = None
+    mss_tools = None
 
 try:
     import keyboard
@@ -56,6 +59,7 @@ class CaptureFrame:
     motion_score: float
     source: str
     error: str = ""
+    frame_bgr: object|None = None  # Optional raw frame 
 
 
 class ScreenCaptureWorker:
@@ -88,13 +92,16 @@ class ScreenCaptureWorker:
             return frame
 
         monitor = {"left": x, "top": y, "width": w, "height": h}
+        frame_bgr = None
         try:
             raw = self._sct.grab(monitor)
             if snapshot_path:
                 out = Path(snapshot_path)
                 out.parent.mkdir(parents=True, exist_ok=True)
-                mss.tools.to_png(raw.rgb, raw.size, output=str(out))
+                if mss_tools is not None:
+                    mss_tools.to_png(raw.rgb, raw.size, output=str(out))
             arr = np.asarray(raw, dtype=np.uint8)  # BGRA
+            frame_bgr = arr[:, :, :3]              # Drop alpha channel if present  
             b = arr[:, :, 0].astype(np.float32)
             g = arr[:, :, 1].astype(np.float32)
             r = arr[:, :, 2].astype(np.float32)
@@ -116,6 +123,7 @@ class ScreenCaptureWorker:
                 motion_score=0.0,
                 source="error",
                 error=str(exc),
+                frame_bgr=frame_bgr,
             )
             self._next_frame_id += 1
             return frame
@@ -129,16 +137,37 @@ class ScreenCaptureWorker:
             mean_brightness=mean_brightness,
             motion_score=motion_score,
             source="mss",
+            frame_bgr=frame_bgr,
         )
         self._next_frame_id += 1
         return frame
 
 
-def frame_to_observation(frame: CaptureFrame) -> Dict[str, float]:
+def frame_to_observation(
+    frame: CaptureFrame,
+    classifier_model=None,
+    classifier_device=None,
+) -> Dict[str, float]:
     """Convert raw frame stats into normalized instinct inputs."""
-    threat = max(0.0, min(1.0, frame.motion_score * 3.0 + max(0.0, frame.mean_brightness - 0.65) * 0.35))
+
+    heuristic_threat = max(0.0, min(1.0, frame.motion_score * 3.0 + max(0.0, frame.mean_brightness - 0.65) * 0.35))
+
+    if classifier_model is not None and classifier_device is not None and frame.frame_bgr is not None:
+        try:
+            classifier_threat = classify_frame_predator_probability(
+                frame.frame_bgr,
+                classifier_model,
+                classifier_device,
+            )
+            threat = max(heuristic_threat, classifier_threat)
+        except Exception:
+            threat = heuristic_threat
+    else:
+        threat = heuristic_threat
+
     prey_density = max(0.0, min(1.0, 1.0 - abs(frame.mean_brightness - 0.5) * 2.0))
     stamina = max(0.2, min(1.0, 1.0 - threat * 0.6))
+
     return {
         "predator_probability": round(threat, 4),
         "prey_density": round(prey_density, 4),
@@ -148,6 +177,29 @@ def frame_to_observation(frame: CaptureFrame) -> Dict[str, float]:
         "thirst": 0.35,
     }
 
+def classify_frame_predator_probability(frame_bgr, model, device):
+    """Return predator probability from a raw OpenCV BGR frame."""
+    if torch is None or transforms is None:
+        raise RuntimeError("torch + torchvision.transforms are required for classifier inference.")
+
+    import cv2
+    from PIL import Image
+
+    frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+    img = Image.fromarray(frame_rgb)
+
+    tfm = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+    ])
+
+    x = tfm(img).unsqueeze(0).to(device)
+    with torch.no_grad():
+        logits = model(x)
+        probs = torch.softmax(logits, dim=1)[0]
+    return float(probs[1].item())  # class 1 = predator
 
 @dataclass
 class ControlResult:
