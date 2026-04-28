@@ -1698,8 +1698,8 @@
         tbtn.className = "btn-ghost btn-tiny";
         tbtn.style.minWidth = "28px";
         var on = state.layerEnabled[key] !== false;
-        tbtn.textContent = on ? "−" : "+";
-        tbtn.title = on ? "Disable this layer" : "Enable this layer";
+        tbtn.textContent = on ? "+" : "-";
+        tbtn.title = on ? "Layer enabled (click to hide)" : "Layer hidden (click to show)";
         tbtn.addEventListener("click", function () {
           state.layerEnabled[key] = !(state.layerEnabled[key] !== false);
           buildSlotCards();
