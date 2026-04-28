@@ -16,6 +16,8 @@ high-level actions.
 - Instinct Agent + Primal Mind state and structured thought logs
 - Path of Titans integration assumptions and action key mapping
 - Letta tool surface definitions and local stubs
+- Classifier-wired `frame_to_observation()` in `pot.py`: ResNet-18 predator probability replaces pixel heuristic when checkpoint is provided
+- Path of Titans screen capture, action key mapping, and safe control loop with emergency stop
 
 ## Design notes
 
@@ -42,7 +44,9 @@ high-level actions.
 - `scripts/build_paleo_exe.py`: build `dist/PALEO.exe` with PyInstaller
 - `scripts/show_letta_tools.py`: print Letta tool schemas
 - `scripts/run_pipeline.py`: run integrated summary pipeline
-
+- `scripts/run_experiments.py`: hyperparamter sweep across ResNet-18
+- `scripts/make_figures.py`: generates convgernce curves, LR sensitvity, and final comparsion bar chart PNGs from saved experiment histories 
+- `script/build_combined_manifest.py`: merges sregnti+kaggle iamge records 
 ## Environment setup (reproducible)
 
 ### 1) Create virtual environment
@@ -77,6 +81,26 @@ python scripts/run_pipeline.py
 python scripts/show_letta_tools.py
 python -m unittest discover -s tests -p "test_*.py"
 ```
+### Hyper Parameter sweep + figures
+Run all training experiments (requires the downloaded seregeti images)
+
+```bash
+python scripts/run_experiments.py
+```
+Artficats saved to `results/experiments`:
+- `training_histories.json` - per-epoch loss and accuracy for all runs
+- `comparison_table.json` — final val accuracy per configuration
+
+Generate report figures from saved histories:
+
+```bash
+python scripts/make_figures.py
+```
+
+Output PNGs saved to `output/figures/`:
+- `convergence_curves.png`
+- `lr_sensitivity.png`
+- `final_comparison.png`
 
 ### Local PoT-style Companion HUD (no game install)
 
