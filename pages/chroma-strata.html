@@ -255,6 +255,56 @@
       display: grid;
       gap: 6px;
     }
+    .export-picker {
+      margin-top: 10px;
+      border: 1px solid var(--panel-edge);
+      border-radius: 10px;
+      background: #fffcf7;
+      padding: 8px;
+      display: grid;
+      gap: 8px;
+    }
+    .export-row {
+      border: 1px solid var(--panel-edge);
+      border-radius: 8px;
+      background: #fff;
+      padding: 6px;
+      display: grid;
+      gap: 6px;
+    }
+    .export-row-head {
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .export-gender {
+      display: grid;
+      gap: 4px;
+    }
+    .export-gender-label {
+      font-size: 0.7rem;
+      opacity: 0.8;
+    }
+    .export-swatches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .export-swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.2);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25);
+      cursor: pointer;
+      padding: 0;
+    }
+    .export-swatch[data-on="1"] {
+      outline: 2px solid #2a2438;
+      outline-offset: 1px;
+    }
     .hex-row {
       display: flex;
       align-items: flex-start;
@@ -713,6 +763,10 @@
         <div class="hex-current" id="hex-current"></div>
         <div class="hex-groups" id="hex-groups"></div>
         <div class="row" style="margin-top:12px;justify-content:flex-start;align-items:center;gap:6px;">
+          <h3 style="margin:0;">Export Selection (max 5 per region/gender)</h3>
+        </div>
+        <div class="export-picker" id="export-picker"></div>
+        <div class="row" style="margin-top:12px;justify-content:flex-start;align-items:center;gap:6px;">
           <h3 style="margin:0;">PoT DevKit Import</h3>
           <button type="button" class="btn-ghost btn-tiny btn-copy" id="devkit-copy-title" aria-label="Copy DevKit block" title="Copy DevKit block"><i data-lucide="copy"></i></button>
         </div>
@@ -773,6 +827,7 @@
   var hexGender = document.getElementById("hex-gender");
   var hexCurrent = document.getElementById("hex-current");
   var hexGroups = document.getElementById("hex-groups");
+  var exportPicker = document.getElementById("export-picker");
   var devkitImportText = document.getElementById("devkit-import-text");
   var devkitCopyTitle = document.getElementById("devkit-copy-title");
   var toastHost = document.getElementById("toast-host");
@@ -789,6 +844,8 @@
     lowMemPreview: localStorage.getItem(LS_LOW_MEM) === "1",
     patternIndex: 0,
     slotChoice: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0 },
+    layerEnabled: { "2": true, "3": true, "4": true, "5": true },
+    exportSelection: { male: {}, female: {} },
     canvasW: 1024,
     canvasH: 1024
   };
@@ -907,6 +964,7 @@
     buildSlotCards();
     buildMiniControls();
     renderHexPanel();
+    renderExportPicker();
     renderDevkitImportBlock();
     compose();
   }
@@ -931,30 +989,101 @@
     return { r: r.toFixed(6), g: g.toFixed(6), b: b.toFixed(6) };
   }
 
+  function mergeUniqueHexes(arrA, arrB) {
+    var seen = Object.create(null);
+    var out = [];
+    arrA.concat(arrB).forEach(function (h) {
+      var k = String(h || "").toUpperCase();
+      if (!k || seen[k]) return;
+      seen[k] = true;
+      out.push(k);
+    });
+    return out;
+  }
+
+  function paletteForGender(slotKey, spec, gender) {
+    if (!spec) return [];
+    var base = [];
+    if (gender === "female" && Array.isArray(spec.femalePalette) && spec.femalePalette.length) {
+      base = spec.femalePalette.slice();
+    } else {
+      base = (spec.palette || []).slice();
+    }
+    return mergeUniqueHexes(base, getCustomHexes(state.skinPath, gender, slotKey));
+  }
+
+  function ensureExportSelection() {
+    if (!state.manifest || !state.manifest.colorSlots) return;
+    if (!state.exportSelection) state.exportSelection = { male: {}, female: {} };
+    ["male", "female"].forEach(function (g) {
+      if (!state.exportSelection[g]) state.exportSelection[g] = {};
+      ["1", "2", "3", "4", "5", "6"].forEach(function (k) {
+        var spec = state.manifest.colorSlots[k];
+        if (!spec || !(spec.kind === "tintMask" || spec.kind === "patternTint")) {
+          delete state.exportSelection[g][k];
+          return;
+        }
+        var all = paletteForGender(k, spec, g);
+        var prev = (state.exportSelection[g][k] || []).map(function (h) { return String(h).toUpperCase(); });
+        var next = prev.filter(function (h) { return all.indexOf(h) >= 0; }).slice(0, 5);
+        if (!next.length) next = all.slice(0, 5);
+        state.exportSelection[g][k] = next;
+      });
+    });
+  }
+
+  function renderExportPicker() {
+    if (!exportPicker || !state.manifest || !state.manifest.colorSlots) return;
+    ensureExportSelection();
+    exportPicker.innerHTML = "";
+    ["1", "2", "3", "4", "5", "6"].forEach(function (k) {
+      var spec = state.manifest.colorSlots[k];
+      if (!spec || !(spec.kind === "tintMask" || spec.kind === "patternTint")) return;
+      var row = document.createElement("div");
+      row.className = "export-row";
+      var head = document.createElement("div");
+      head.className = "export-row-head";
+      head.innerHTML = "<strong>Color " + k + "</strong><span class='hint'>Select up to 5 per gender</span>";
+      row.appendChild(head);
+      ["male", "female"].forEach(function (g) {
+        var wrap = document.createElement("div");
+        wrap.className = "export-gender";
+        var lab = document.createElement("div");
+        lab.className = "export-gender-label";
+        lab.textContent = g === "male" ? "Male" : "Female";
+        wrap.appendChild(lab);
+        var sw = document.createElement("div");
+        sw.className = "export-swatches";
+        var all = paletteForGender(k, spec, g);
+        all.forEach(function (hx) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "export-swatch";
+          b.style.background = hx;
+          b.title = hx;
+          b.dataset.on = (state.exportSelection[g][k] || []).indexOf(hx) >= 0 ? "1" : "0";
+          b.addEventListener("click", function () {
+            var cur = (state.exportSelection[g][k] || []).slice();
+            var i = cur.indexOf(hx);
+            if (i >= 0) cur.splice(i, 1);
+            else if (cur.length < 5) cur.push(hx);
+            else showToast("Max 5 colors per region/gender.");
+            state.exportSelection[g][k] = cur;
+            renderExportPicker();
+            renderDevkitImportBlock();
+          });
+          sw.appendChild(b);
+        });
+        wrap.appendChild(sw);
+        row.appendChild(wrap);
+      });
+      exportPicker.appendChild(row);
+    });
+  }
+
   function renderDevkitImportBlock() {
     if (!devkitImportText || !state.manifest || !state.manifest.colorSlots) return;
-    function mergeUnique(arrA, arrB) {
-      var seen = Object.create(null);
-      var out = [];
-      arrA.concat(arrB).forEach(function (h) {
-        var k = String(h || "").toUpperCase();
-        if (!k || seen[k]) return;
-        seen[k] = true;
-        out.push(k);
-      });
-      return out;
-    }
-    function paletteFor(slotKey, spec, gender) {
-      if (!spec) return [];
-      var base = [];
-      if (gender === "female" && Array.isArray(spec.femalePalette) && spec.femalePalette.length) {
-        base = spec.femalePalette.slice();
-      } else {
-        base = (spec.palette || []).slice();
-      }
-      var custom = getCustomHexes(state.skinPath, gender, slotKey);
-      return mergeUnique(base, custom);
-    }
+    ensureExportSelection();
     var entries = [];
     ["1", "2", "3", "4", "5", "6", "7"].forEach(function (k) {
       var maleArr;
@@ -964,8 +1093,12 @@
         femaleArr = ["(R=0.500000,G=0.500000,B=0.500000,A=1.000000)"];
       } else {
         if (!state.manifest.colorSlots[k]) return;
-        var maleCols = paletteFor(k, state.manifest.colorSlots[k], "male");
-        var femaleCols = paletteFor(k, state.manifest.colorSlots[k], "female");
+        var maleAll = paletteForGender(k, state.manifest.colorSlots[k], "male");
+        var femaleAll = paletteForGender(k, state.manifest.colorSlots[k], "female");
+        var maleCols = ((state.exportSelection.male || {})[k] || []).filter(function (hx) { return maleAll.indexOf(hx) >= 0; }).slice(0, 5);
+        var femaleCols = ((state.exportSelection.female || {})[k] || []).filter(function (hx) { return femaleAll.indexOf(hx) >= 0; }).slice(0, 5);
+        if (!maleCols.length) maleCols = maleAll.slice(0, 5);
+        if (!femaleCols.length) femaleCols = femaleAll.slice(0, 5);
         if (!maleCols.length && !femaleCols.length) return;
         if (!maleCols.length) maleCols = femaleCols.slice();
         if (!femaleCols.length) femaleCols = maleCols.slice();
@@ -1240,6 +1373,7 @@
     ["1", "2", "3", "4"].forEach(function (key) {
       var spec = state.manifest.colorSlots[key];
       if (!spec) return;
+      if (key !== "1" && state.layerEnabled[key] === false) return;
       if (spec.kind === "tintMask") {
         var mask = getImg(spec.mask);
         drawTintMask(ctx, mask, hexForSlot(key), W, H, tintOntoStack);
@@ -1253,7 +1387,7 @@
     });
 
     var patterns = state.manifest.patterns || [];
-    if (patterns.length) {
+    if (patterns.length && state.layerEnabled["5"] !== false) {
       var pi = Math.min(state.patternIndex, patterns.length - 1);
       var pImg = getImg(patterns[pi]);
       var hex5 = hexForSlot("5");
@@ -1381,6 +1515,7 @@
         buildSlotCards();
         buildMiniControls();
         renderHexPanel();
+        renderExportPicker();
         renderDevkitImportBlock();
         compose();
         localStorage.setItem(LS_LAST_SKIN, skinPath);
@@ -1427,6 +1562,9 @@
           state.patternIndex = idx;
           buildPatternPills();
           buildMiniControls();
+          renderHexPanel();
+          renderExportPicker();
+          renderDevkitImportBlock();
           compose();
         });
         patternPills.appendChild(b);
@@ -1461,6 +1599,9 @@
           state.slotChoice[key] = idx;
           buildSlotCards();
           buildMiniControls();
+          renderHexPanel();
+          renderExportPicker();
+          renderDevkitImportBlock();
           compose();
         });
         swrap.appendChild(sw);
@@ -1485,6 +1626,9 @@
           state.patternIndex = idx;
           buildPatternPills();
           buildMiniControls();
+          renderHexPanel();
+          renderExportPicker();
+          renderDevkitImportBlock();
           compose();
         });
         miniPatternInline.appendChild(pb);
@@ -1532,6 +1676,23 @@
       var h3 = document.createElement("h3");
       h3.textContent = spec.label || ("Color " + key);
       card.appendChild(h3);
+      if (["2", "3", "4", "5"].indexOf(key) >= 0) {
+        var trow = document.createElement("div");
+        trow.className = "row";
+        trow.style.marginTop = "0";
+        var tbtn = document.createElement("button");
+        tbtn.type = "button";
+        tbtn.className = "btn-ghost btn-tiny";
+        var on = state.layerEnabled[key] !== false;
+        tbtn.textContent = on ? "Layer enabled" : "Layer hidden";
+        tbtn.addEventListener("click", function () {
+          state.layerEnabled[key] = !(state.layerEnabled[key] !== false);
+          buildSlotCards();
+          compose();
+        });
+        trow.appendChild(tbtn);
+        card.appendChild(trow);
+      }
 
       if (spec.kind === "tintMask" || spec.kind === "patternTint") {
         var sw = document.createElement("div");
@@ -1557,6 +1718,8 @@
             buildSlotCards();
             buildMiniControls();
             renderHexPanel();
+            renderExportPicker();
+            renderDevkitImportBlock();
             compose();
           });
           if (isCustom) {
@@ -1572,6 +1735,8 @@
               buildSlotCards();
               buildMiniControls();
               renderHexPanel();
+              renderExportPicker();
+              renderDevkitImportBlock();
               compose();
             });
             d.appendChild(rm);
@@ -1631,6 +1796,8 @@
             buildSlotCards();
             buildMiniControls();
             renderHexPanel();
+            renderExportPicker();
+            renderDevkitImportBlock();
             compose();
           });
           row.appendChild(imgEl);
@@ -1677,6 +1844,7 @@
     buildSlotCards();
     buildMiniControls();
     renderHexPanel();
+    renderExportPicker();
     renderDevkitImportBlock();
     compose();
   }
@@ -1688,6 +1856,7 @@
     buildPatternPills();
     buildMiniControls();
     renderHexPanel();
+    renderExportPicker();
     renderDevkitImportBlock();
     compose();
   }
@@ -1698,6 +1867,7 @@
     buildSlotCards();
     buildMiniControls();
     renderHexPanel();
+    renderExportPicker();
     renderDevkitImportBlock();
     compose();
     showToast("Reset to defaults.");
@@ -1744,6 +1914,7 @@
       ["1", "2", "3", "4"].forEach(function (key) {
         var spec = manifest.colorSlots[key];
         if (!spec) return;
+        if (key !== "1" && state.layerEnabled[key] === false) return;
         if (spec.kind === "tintMask") {
           drawTintMask(ctx, getImg(spec.mask), hexForSlot(key), fullW, fullH, "source-over");
         } else if (spec.kind === "imageOptions") {
@@ -1753,7 +1924,7 @@
         }
       });
       var pats = manifest.patterns || [];
-      if (pats.length) {
+      if (pats.length && state.layerEnabled["5"] !== false) {
         var pi = Math.min(state.patternIndex, pats.length - 1);
         drawTintMask(ctx, getImg(pats[pi]), hexForSlot("5"), fullW, fullH, "source-over");
       }
@@ -1855,6 +2026,7 @@
       buildSlotCards();
       buildMiniControls();
       renderHexPanel();
+      renderExportPicker();
       renderDevkitImportBlock();
       compose();
     });
@@ -1866,6 +2038,7 @@
       buildSlotCards();
       buildMiniControls();
       renderHexPanel();
+      renderExportPicker();
       renderDevkitImportBlock();
       compose();
     });
@@ -1877,6 +2050,7 @@
       buildSlotCards();
       buildMiniControls();
       renderHexPanel();
+      renderExportPicker();
       renderDevkitImportBlock();
       compose();
     });
