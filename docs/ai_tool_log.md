@@ -162,3 +162,6 @@
 - `pages/skin-db/README.md`: added a pre-push palette validation checklist covering applied-color verification, ordering convention checks, default-index remapping, uppercase hex normalization, and DevKit alignment checks.
 - Chroma Strata UI update: fixed live-update paths so mini-panel color/pattern interactions also refresh hex gender/current chips, Color 1-6 hex lists, export selector, and DevKit block even when hex panel is out of view; added Export Selection UI (max 5 colors per slot per gender, including gender-scoped custom colors) that drives DevKit output; and added large-panel layer visibility toggles for Color 2-5 applied to preview/export composition.
 - Chroma Strata polish: changed large-panel Color 2-5 layer toggles to inline `+`/`-` controls next to each Color header; updated Export Selection so one remaining selected color cannot be unselected (toast shown), and improved selected-state readability by dimming unselected swatches while keeping selected swatches full-opacity with outline.
+
+## 2026-04-29
+- `SunsetTuojian` manifest: added male Color 5 swatch `#23190B`, reordered `colorSlots["5"].palette` (ROYGBIV hue buckets, then darkness then saturation), and remapped `defaults.male["5"]` so the default tint remains `#434B82`.
