@@ -31,6 +31,21 @@ def _candidate_records(config, split: str | None) -> List[DatasetRecord]:
     return sorted(http_recs, key=lambda r: _stable_hash_key(r.sample_id, config.split_seed))
 
 
+def _balanced_candidate_records(
+    config,
+    split: str | None,
+    max_per_class: int,
+) -> List[DatasetRecord]:
+    candidates = _candidate_records(config, split)
+    predators = [r for r in candidates if r.predator_label == 1]
+    non_predators = [r for r in candidates if r.predator_label == 0]
+    per_class = min(max_per_class, len(predators), len(non_predators))
+    balanced: List[DatasetRecord] = []
+    for pred, non_pred in zip(predators[:per_class], non_predators[:per_class]):
+        balanced.extend([pred, non_pred])
+    return balanced
+
+
 def download_image(url: str, dest: Path, timeout: int = 60) -> None:
     req = Request(
         url,
@@ -52,6 +67,17 @@ def main() -> None:
     )
     p.add_argument("--max-images", type=int, default=8, help="Max images to download.")
     p.add_argument(
+        "--balanced",
+        action="store_true",
+        help="Download an equal number of predator and non-predator rows.",
+    )
+    p.add_argument(
+        "--max-per-class",
+        type=int,
+        default=500,
+        help="Class cap used with --balanced.",
+    )
+    p.add_argument(
         "--split",
         type=str,
         default="",
@@ -72,7 +98,10 @@ def main() -> None:
     ensure_data_dirs(config)
 
     split = args.split or None
-    candidates = _candidate_records(config, split)
+    if args.balanced:
+        candidates = _balanced_candidate_records(config, split, max(0, args.max_per_class))
+    else:
+        candidates = _candidate_records(config, split)
     picked = candidates[: max(0, args.max_images)]
 
     if not picked:

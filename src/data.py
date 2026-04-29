@@ -86,7 +86,7 @@ def create_manifest_from_csv(
             break
         species = _pick_row_value(
             row,
-            candidates=(species_field, "species", "Species", "specie"),
+            candidates=(species_field, "species", "Species", "specie", "question__species"),
             default="unknown",
         ).lower()
         sample_id = _pick_row_value(
@@ -103,6 +103,7 @@ def create_manifest_from_csv(
                 "Image",
                 "image_path",
                 "imagePath",
+                "image_path_rel",
             ),
             default="",
         )
@@ -136,14 +137,14 @@ def create_manifest_from_csv(
                             break
                         cid = _pick_row_value(
                             row,
-                            candidates=("CaptureEventID", "captureeventid"),
+                            candidates=("CaptureEventID", "captureeventid", "capture_id"),
                             default="",
                         )
                         if cid not in capture_ids:
                             continue
                         url_info = _pick_row_value(
                             row,
-                            candidates=("URL_Info", "url_info"),
+                            candidates=("URL_Info", "url_info", "image_path_rel"),
                             default="",
                         )
                         if url_info:

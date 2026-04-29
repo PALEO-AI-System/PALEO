@@ -39,6 +39,7 @@ high-level actions.
 - `scripts/train_serengeti_images.py`: fine-tune ResNet-18 on local Serengeti JPEGs
 - `scripts/evaluate_serengeti_images.py`: confusion matrix + class report for local checkpoint
 - `scripts/kaggle_stats.py`: column + row counts for CSVs under `data/raw/kaggle/`
+- `scripts/download_kaggle_image_sample.py`: download up to N Kaggle image files or extract N JPEG frames from Kaggle videos
 - `scripts/run_paleo_live.py`: one-command HUD launcher with optional live screen capture
 - `scripts/run_paleo_control_loop.py`: safe advice/control loop with kill switch + optional snapshots
 - `scripts/run_paleo_overlay.py`: transparent always-on-top overlay HUD
@@ -125,6 +126,8 @@ Output PNGs saved to `output/figures/`:
 - `convergence_curves.png`
 - `lr_sensitivity.png`
 - `final_comparison.png`
+
+To run the same experiment sweep in a Kaggle GPU notebook, see `docs/kaggle_experiments.md`.
 
 ### Local PoT-style Companion HUD (no game install)
 

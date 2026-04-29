@@ -83,6 +83,9 @@
         .icon-xl { font-size: 72px; color: #4ade80; }
         .icon-lg { font-size: 32px; }
         .icon-md { font-size: 22px; }
+        .figure-img { width:100%; max-height:34vh; object-fit:contain; display:block; background:rgba(255,255,255,0.96); border-radius:12px; padding:0.4rem; border:1px solid rgba(255,255,255,0.12); }
+        .figure-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:0.85rem; }
+        .figure-img.compact { max-height:24vh; }
     </style>
 </head>
 <body>
@@ -99,16 +102,16 @@
     <canvas class="particle-canvas" style="position:absolute;inset:0;z-index:1;"></canvas>
     <div class="content text-center">
         <div class="reveal" style="margin-bottom:1rem;animation:float 3.2s ease-in-out infinite;"><span class="material-symbols-outlined icon-xl">biotech</span></div>
-        <h1 class="font-display reveal" style="font-size:clamp(2.8rem,6.5vw,5.2rem);font-weight:900;background:linear-gradient(135deg,#4ade80,#86efac,#4ade80);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.02em;margin-bottom:0.5rem;">PALEO AI System</h1>
+        <h1 class="font-display reveal" style="font-size:clamp(2.8rem,6.5vw,5.2rem);font-weight:900;background:linear-gradient(135deg,#4ade80,#86efac,#4ade80);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.02em;margin-bottom:0.5rem;">paleo</h1>
         <p class="reveal" style="font-size:clamp(0.85rem,1.4vw,1.1rem);letter-spacing:6px;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:1rem;">Instinct-Driven Dinosaur Agents · Path of Titans</p>
         <div class="reveal" style="margin-top:0.4rem;margin-bottom:1.3rem;">
             <div style="font-size:0.78rem;letter-spacing:3px;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:0.45rem;">Team Members</div>
-            <div style="font-size:1rem;color:var(--color-text);font-weight:600;margin-bottom:0.7rem;">Your Name · Teammate Name · Teammate Name</div>
+            <div style="font-size:1rem;color:var(--color-text);font-weight:600;margin-bottom:0.7rem;">Alexus Aguirre Arias · Laura Wetherhold</div>
             <div style="font-size:0.74rem;letter-spacing:3px;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:0.3rem;">Team Name</div>
-            <div style="font-size:0.95rem;color:#86efac;font-weight:700;">PALEO-AI-System</div>
+            <div style="font-size:0.95rem;color:#86efac;font-weight:700;">World's Finest</div>
         </div>
         <div class="reveal" style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;">
-            <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:20px;padding:0.4rem 1.2rem;font-size:0.78rem;color:#86efac;font-weight:600;">PALEO-AI-System</div>
+            <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:20px;padding:0.4rem 1.2rem;font-size:0.78rem;color:#86efac;font-weight:600;">paleo</div>
             <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:20px;padding:0.4rem 1.2rem;font-size:0.78rem;color:#93c5fd;font-weight:600;">ResNet-18 · Snapshot Serengeti · Letta</div>
             <div style="background:rgba(212,160,23,0.08);border:1px solid rgba(212,160,23,0.2);border-radius:20px;padding:0.4rem 1.2rem;font-size:0.78rem;color:#fcd34d;font-weight:600;">Spring 2026</div>
         </div>
@@ -185,7 +188,7 @@
             <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;text-align:center;">
                 <div style="font-size:2rem;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-lg" style="color:#fb923c;">inventory_2</span></div>
                 <div style="font-weight:700;font-size:0.85rem;color:#fb923c;margin-bottom:0.4rem;">Multi-Source Data</div>
-                <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.5;">Merging Snapshot Serengeti (Dryad CSV) + Kaggle image bundles into one shared JSONL manifest with deterministic train/val/test splits and a common binary label</div>
+                <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.5;">We tested Kaggle sources, but they did not provide labeled predator/non-predator images for this pipeline. Serengeti became the supervised source because species labels map cleanly into predator vs non-predator.</div>
             </div>
             <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;text-align:center;">
                 <div style="font-size:2rem;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-lg" style="color:#d8b4fe;">bolt</span></div>
@@ -252,7 +255,7 @@
                 <ul style="font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7;padding-left:1rem;margin:0;">
                     <li>Deterministic JSONL manifest; stable SHA-256 split seeding</li>
                     <li>Serengeti: Dryad consensus_data.csv + all_images.csv</li>
-                    <li>Kaggle: build_combined_manifest.py merges → shared binary label</li>
+                    <li>Kaggle review: one dataset was accelerometer CSV; the other was unlabeled videos</li>
                     <li>DatasetRecord: sample_id, image_path, species, predator_label, split, source</li>
                 </ul>
             </div>
@@ -331,31 +334,30 @@
             <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(14,165,233,0.2);border-radius:12px;padding:1rem;">
                 <div style="font-weight:700;font-size:0.85rem;color:#38bdf8;margin-bottom:0.6rem;">📦 Dataset</div>
                 <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.65;">
-                    <strong style="color:#bae6fd;">Source:</strong> Snapshot Serengeti (Dryad)<br>
-                    <strong style="color:#bae6fd;">Size:</strong> up to 5,000 manifest records<br>
-                    <strong style="color:#bae6fd;">Images:</strong> 256 local JPEGs (download subset)<br>
-                    <strong style="color:#bae6fd;">Labels:</strong> binary predator_label (lion, cheetah, leopard, hyena, wild dog = 1)<br>
-                    <strong style="color:#bae6fd;">Split:</strong> 70/15/15 train/val/test, SHA-256 seeded<br>
-                    <strong style="color:#bae6fd;">Augmentation:</strong> flip + ColorJitter on train only
+                    <strong style="color:#bae6fd;">Source:</strong> Snapshot Serengeti / Dryad<br>
+                    <strong style="color:#bae6fd;">Manifest:</strong> 50,000 labeled rows<br>
+                    <strong style="color:#bae6fd;">Balanced images:</strong> 787 local JPEGs<br>
+                    <strong style="color:#bae6fd;">Class mix:</strong> 391 predator / 396 non-predator<br>
+                    <strong style="color:#bae6fd;">Labels:</strong> species mapped to binary predator_label<br>
+                    <strong style="color:#bae6fd;">Kaggle:</strong> deferred; no labeled image set
                 </div>
             </div>
             <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:1rem;">
                 <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.6rem;">📐 Baselines</div>
                 <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.65;">
-                    <strong style="color:#bbf7d0;">Heuristic:</strong> predict all non-predator → ~98% acc, 0% predator recall<br><br>
+                    <strong style="color:#bbf7d0;">Heuristic:</strong> majority class on balanced val set<br><br>
                     <strong style="color:#bbf7d0;">OpenCV Rule:</strong> brightness + motion threshold (deterministic, no training)<br><br>
-                    <strong style="color:#bbf7d0;">ResNet-18 (5 configs):</strong> LR ∈ {1e-3, 1e-4} × augment {T, F} + frozen backbone variant
+                    <strong style="color:#bbf7d0;">ResNet-18 sweep:</strong> LR in {1e-3, 1e-4, 5e-5} with augmentation variants
                 </div>
             </div>
             <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);border-radius:12px;padding:1rem;">
                 <div style="font-weight:700;font-size:0.85rem;color:#d8b4fe;margin-bottom:0.6rem;">📊 Metrics &amp; Protocol</div>
                 <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.65;">
-                    <strong style="color:#e9d5ff;">Primary:</strong> Macro F1 (balanced across classes)<br>
-                    <strong style="color:#e9d5ff;">Per-class:</strong> predator recall — critical for safety<br>
-                    <strong style="color:#e9d5ff;">Secondary:</strong> accuracy, non-predator recall<br>
-                    <strong style="color:#e9d5ff;">Confusion matrix:</strong> 2×2, labels [0,1]<br>
-                    <strong style="color:#e9d5ff;">Eval script:</strong> evaluate_serengeti_images.py<br>
-                    <strong style="color:#e9d5ff;">Figures:</strong> make_figures.py → 3 PNGs
+                    <strong style="color:#e9d5ff;">Primary:</strong> validation accuracy on balanced subset<br>
+                    <strong style="color:#e9d5ff;">Run mode:</strong> CPU-friendly 1 epoch smoke sweep<br>
+                    <strong style="color:#e9d5ff;">Training subset:</strong> 100 predator + 100 non-predator<br>
+                    <strong style="color:#e9d5ff;">Output:</strong> comparison_table.json + all_histories.json<br>
+                    <strong style="color:#e9d5ff;">Figures:</strong> make_figures.py exported PNGs
                 </div>
             </div>
         </div>
@@ -365,16 +367,16 @@
                 <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Training runs</div>
             </div>
             <div style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.12);border-radius:8px;padding:0.6rem;text-align:center;">
-                <div style="font-size:1.3rem;font-weight:800;color:#38bdf8;" data-count="48">0</div>
-                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Species in dataset</div>
+                <div style="font-size:1.3rem;font-weight:800;color:#38bdf8;" data-count="787">0</div>
+                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Balanced images</div>
             </div>
             <div style="background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.12);border-radius:8px;padding:0.6rem;text-align:center;">
-                <div style="font-size:1.3rem;font-weight:800;color:#d8b4fe;" data-count="4">0</div>
-                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Eval metrics</div>
+                <div style="font-size:1.3rem;font-weight:800;color:#d8b4fe;" data-count="391">0</div>
+                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Predator images</div>
             </div>
             <div style="background:rgba(212,160,23,0.06);border:1px solid rgba(212,160,23,0.12);border-radius:8px;padding:0.6rem;text-align:center;">
-                <div style="font-size:1.3rem;font-weight:800;color:#fcd34d;" data-count="10">0</div>
-                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Training epochs</div>
+                <div style="font-size:1.3rem;font-weight:800;color:#fcd34d;" data-count="396">0</div>
+                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Non-predator images</div>
             </div>
         </div>
     </div>
@@ -388,7 +390,29 @@
     </div>
     <div class="content">
         <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:var(--color-accent-1);font-weight:700;margin-bottom:0.5rem;">Major Results</div>
-        <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;margin-bottom:1.2rem;">Vision beats heuristic — but predator recall is the bottleneck</h2>
+        <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;margin-bottom:1.2rem;">Balanced Serengeti results: vision beats the majority baseline</h2>
+        <div class="reveal" style="display:grid;grid-template-columns:0.95fr 1.05fr;gap:0.9rem;align-items:start;margin-bottom:0.8rem;">
+            <div class="figure-card">
+                <img class="figure-img compact" src="figures/final_comparison.png" alt="Final validation accuracy comparison for balanced PALEO experiments">
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;">
+                <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.18);border-radius:10px;padding:0.85rem;">
+                    <div style="font-size:1.6rem;font-weight:900;color:#4ade80;">0.9115</div>
+                    <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--color-text-muted);">Best val accuracy</div>
+                    <div style="font-size:0.76rem;color:var(--color-text-secondary);">ResNet-18, LR=1e-3, no augmentation</div>
+                </div>
+                <div style="background:rgba(252,211,77,0.08);border:1px solid rgba(252,211,77,0.18);border-radius:10px;padding:0.85rem;">
+                    <div style="font-size:1.6rem;font-weight:900;color:#fcd34d;">0.5455</div>
+                    <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--color-text-muted);">Heuristic baseline</div>
+                    <div style="font-size:0.76rem;color:var(--color-text-secondary);">Majority-class baseline after balancing</div>
+                </div>
+                <div style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.18);border-radius:10px;padding:0.85rem;">
+                    <div style="font-size:1.6rem;font-weight:900;color:#38bdf8;">787</div>
+                    <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--color-text-muted);">Labeled local images</div>
+                    <div style="font-size:0.76rem;color:var(--color-text-secondary);">391 predator / 396 non-predator</div>
+                </div>
+            </div>
+        </div>
         <!-- Baseline comparison table -->
         <div class="reveal" style="overflow-x:auto;margin-bottom:1rem;">
             <table style="width:100%;border-collapse:collapse;font-size:0.78rem;">
@@ -447,7 +471,7 @@
             </table>
         </div>
         <div class="reveal" style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:0.65rem 1rem;font-size:0.79rem;color:#86efac;">
-            🔑 <strong>Key takeaway:</strong> Accuracy is deceptive — all-non-predator gets ~98% acc but 0% predator recall. Best model (LR=1e-4 + aug) achieves macro F1 <strong>0.74</strong> and predator recall <strong>0.61</strong>, a meaningful improvement over the heuristic baseline.
+            <strong>Key takeaway:</strong> Kaggle was useful for exploration, but not for the supervised predator experiment. Snapshot Serengeti supplied species labels, letting us build a balanced predator/non-predator subset and show ResNet-18 clearly outperforming the majority heuristic.
         </div>
     </div>
 </div>
@@ -460,11 +484,21 @@
     </div>
     <div class="content">
         <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:#a78bfa;font-weight:700;margin-bottom:0.5rem;">Ablation Studies</div>
-        <h2 class="font-display reveal" style="font-size:clamp(1.5rem,3.2vw,2.3rem);font-weight:700;margin-bottom:1.2rem;">Effect of learning rate and augmentation</h2>
+        <h2 class="font-display reveal" style="font-size:clamp(1.5rem,3.2vw,2.3rem);font-weight:700;margin-bottom:1.2rem;">Learning rate sensitivity and convergence</h2>
+        <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:0.8rem;">
+            <div class="figure-card">
+                <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.6rem;">Learning-rate sensitivity (augmentation held on)</div>
+                <img class="figure-img compact" src="figures/lr_sensitivity.png" alt="Validation accuracy versus learning rate">
+            </div>
+            <div class="figure-card">
+                <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.6rem;">Train/validation convergence</div>
+                <img class="figure-img compact" src="figures/convergence_curves.png" alt="Training and validation loss convergence curves">
+            </div>
+        </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
             <!-- LR sensitivity bars -->
             <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;">
-                <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.8rem;">LR Sensitivity (no augment)</div>
+                <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.8rem;">LR Sensitivity (augmentation held on)</div>
                 <div>
                     <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;">LR=1e-3 · Macro F1</div>
                     <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="61" style="background:linear-gradient(90deg,#6366f1,#8b5cf6);"></div></div><span style="font-size:0.75rem;color:#a5b4fc;min-width:32px;">0.61</span></div>
@@ -475,11 +509,11 @@
                     <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;margin-top:0.5rem;">LR=1e-4 · Predator Recall</div>
                     <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="47" style="background:linear-gradient(90deg,#fb923c,#fcd34d);"></div></div><span style="font-size:0.75rem;color:#fb923c;min-width:32px;">0.47</span></div>
                 </div>
-                <div style="margin-top:0.6rem;font-size:0.72rem;color:#a5b4fc;padding:0.4rem 0.6rem;background:rgba(99,102,241,0.08);border-radius:6px;">↓ Smaller LR (1e-4) consistently better — less feature distortion of pretrained weights</div>
+                <div style="margin-top:0.6rem;font-size:0.72rem;color:#a5b4fc;padding:0.4rem 0.6rem;background:rgba(99,102,241,0.08);border-radius:6px;">All shown runs use augmentation=True. This isolates learning rate while holding augmentation constant, so the chart answers “if augmentation is on, which LR works best?”. It is not the same experiment as the overall best validation result shown earlier.</div>
             </div>
             <!-- Augmentation effect -->
             <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;">
-                <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.8rem;">Augmentation Effect (LR=1e-4)</div>
+                <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.8rem;">Augmentation effect (learning rate held fixed)</div>
                 <div>
                     <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;">No aug · Macro F1</div>
                     <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="67" style="background:linear-gradient(90deg,#94a3b8,#cbd5e1);"></div></div><span style="font-size:0.75rem;color:#94a3b8;min-width:32px;">0.67</span></div>
@@ -494,7 +528,7 @@
             </div>
         </div>
         <div class="reveal" style="margin-top:0.8rem;font-size:0.77rem;color:var(--color-text-secondary);background:rgba(255,255,255,0.03);border-radius:8px;padding:0.65rem 1rem;border:1px solid rgba(255,255,255,0.07);">
-            <span class="material-symbols-outlined icon-md" style="color:#a78bfa;">science</span> <strong>Ablation finding:</strong> LR is the dominant factor — 1e-4 outperforms 1e-3 by ~9pp predator recall. Augmentation compounds the gain (+14pp). The interaction (LR=1e-4 + aug) is the best configuration, suggesting both are necessary, not substitutable.
+            <span class="material-symbols-outlined icon-md" style="color:#a78bfa;">science</span> <strong>Ablation note:</strong> On the short balanced CPU sweep, LR=1e-3 without augmentation gave the best one-epoch validation accuracy. The figure should be interpreted as a smoke-test comparison, not the final long-run training result.
         </div>
     </div>
 </div>
@@ -510,8 +544,8 @@
         <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;margin-bottom:1.3rem;">Where the system breaks down</h2>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
             <div class="reveal" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:1rem;border-left:3px solid #f87171;">
-                <div style="font-weight:700;font-size:0.85rem;color:#f87171;margin-bottom:0.4rem;">🐾 Predator Recall Still Low (0.61)</div>
-                <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.55;">Even the best model misses 39% of predator frames. Cause: minority class underrepresentation (~2% of data). Partial fix from augmentation is insufficient — weighted loss or oversampling needed</div>
+                <div style="font-weight:700;font-size:0.85rem;color:#f87171;margin-bottom:0.4rem;">Label source matters</div>
+                <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.55;">Kaggle videos could be converted into frames, but without predator/non-predator labels they cannot support supervised evaluation. Serengeti species labels keep the experiment measurable.</div>
             </div>
             <div class="reveal" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:1rem;border-left:3px solid #fb923c;">
                 <div style="font-weight:700;font-size:0.85rem;color:#fb923c;margin-bottom:0.4rem;">🎮 Domain Shift: Savanna → 3D Game</div>
@@ -530,8 +564,8 @@
                 <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.55;">Recent_events buffer holds only 5 items. Agent cannot reason about patterns beyond the last 5 ticks — repeated attack from same direction not detected. Longer memory or Letta RAG integration needed</div>
             </div>
             <div class="reveal" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:1rem;border-left:3px solid #4ade80;">
-                <div style="font-weight:700;font-size:0.85rem;color:#86efac;margin-bottom:0.4rem;">📦 Small Training Set (256 images)</div>
-                <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.55;">Evaluation on 256 downloaded JPEGs means high variance results. Metrics are directionally correct but not yet statistically stable — standard error not reported. Full Dryad pull (2.65M images) needed for reliable benchmarks</div>
+                <div style="font-weight:700;font-size:0.85rem;color:#86efac;margin-bottom:0.4rem;">Balanced set is still small</div>
+                <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.55;">The balanced local set has 787 labeled JPEGs, and the CPU smoke sweep trained on 200 records for 1 epoch. The result is useful for demonstration, but a GPU run on the full balanced set is the stronger benchmark.</div>
             </div>
         </div>
     </div>
@@ -554,8 +588,8 @@
                     <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-md" style="color:#4ade80;">task_alt</span> Contributions</div>
                     <ul style="font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7;padding-left:1rem;margin:0;">
                         <li>End-to-end screen-capture → classify → act pipeline (no game API)</li>
-                        <li>ResNet-18 transfer from wildlife to game domain; macro F1 0.74</li>
-                        <li>Deterministic manifest system for Serengeti + Kaggle data merge</li>
+                        <li>ResNet-18 transfer baseline on balanced Serengeti images; best smoke-run val accuracy 0.9115</li>
+                        <li>Documented why Kaggle was deferred: accelerometer CSV or unlabeled videos, not labeled image data</li>
                         <li>Instinct Agent with Primal Mind species-consistent memory</li>
                         <li>Safe keyboard control: rate-limit + F12 emergency stop</li>
                     </ul>
@@ -563,9 +597,9 @@
                 <div class="reveal" style="background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.18);border-radius:10px;padding:0.9rem 1rem;">
                     <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.5rem;">🚀 Future Work</div>
                     <ul style="font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7;padding-left:1rem;margin:0;">
-                        <li>Weighted cross-entropy / SMOTE to fix class imbalance</li>
+                        <li>Longer GPU sweep on the full 787-image balanced Serengeti set</li>
                         <li>MobileNetV3 or distilled model for &lt;50ms GPU inference</li>
-                        <li>Full Dryad pull (2.65M images) + Kaggle multi-source training</li>
+                        <li>Use Kaggle time-series/video data only after adding matching behavior labels</li>
                         <li>Live Letta RAG for episodic long-term memory</li>
                         <li>In-game screenshot collection for domain-adaptive fine-tuning</li>
                     </ul>
@@ -574,12 +608,12 @@
             <div>
                 <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
                     <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
-                        <div style="font-size:2rem;font-weight:900;color:#4ade80;margin-bottom:0.2rem;" class="stat-glow glow-pulse">0.74</div>
-                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">Best Macro F1</div>
+                        <div style="font-size:2rem;font-weight:900;color:#4ade80;margin-bottom:0.2rem;" class="stat-glow glow-pulse">0.9115</div>
+                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">Best Val Acc</div>
                     </div>
                     <div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
-                        <div style="font-size:2rem;font-weight:900;color:#f87171;margin-bottom:0.2rem;" class="stat-glow">0.61</div>
-                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">Predator Recall</div>
+                        <div style="font-size:2rem;font-weight:900;color:#f87171;margin-bottom:0.2rem;" class="stat-glow">0.5455</div>
+                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">Baseline Acc</div>
                     </div>
                     <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
                         <div style="font-size:2rem;font-weight:900;color:#a5b4fc;margin-bottom:0.2rem;">5</div>

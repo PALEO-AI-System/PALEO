@@ -14,3 +14,4 @@ uvicorn
 mss
 keyboard
 mouse
+kaggle

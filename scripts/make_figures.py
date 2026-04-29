@@ -12,7 +12,6 @@ if str(PROJECT_ROOT) not in sys.path:
 
 import plotly.graph_objects as go
 import plotly.express as px
-import plotly.io as pio
 
 RESULTS_ROOT = PROJECT_ROOT / "results" / "experiments"
 OUTPUT_DIR = PROJECT_ROOT / "output" / "figures"
@@ -23,6 +22,18 @@ def save_meta(path: Path, caption: str, description: str) -> None:
     path.with_suffix(path.suffix + ".meta.json").write_text(
         json.dumps({"caption": caption, "description": description}), encoding="utf-8"
     )
+
+
+def accuracy_axis_range(values: list[float]) -> list[float]:
+    clean = [float(v) for v in values if v is not None]
+    if not clean:
+        return [0, 1]
+    low = max(0, min(clean) - 0.05)
+    high = min(1.05, max(clean) + 0.05)
+    if high - low < 0.1:
+        low = max(0, low - 0.05)
+        high = min(1.05, high + 0.05)
+    return [low, high]
 
 
 def main() -> None:
@@ -79,6 +90,7 @@ def main() -> None:
     [r for r in comparison if r.get("learning_rate") is not None and r.get("augmentation") is True],
     key=lambda x: x["learning_rate"]
     )
+    lr_values = [r["final_val_acc"] for r in lr_rows if r.get("final_val_acc") is not None]
     fig2 = go.Figure(go.Scatter(
         x=[str(r["learning_rate"]) for r in lr_rows],
         y=[r["final_val_acc"] for r in lr_rows],
@@ -89,24 +101,26 @@ def main() -> None:
         title={"text": "Val Accuracy vs Learning Rate<br><span style='font-size:16px;font-weight:normal'>Higher = better · all runs 10 epochs</span>"}
     )
     fig2.update_xaxes(title_text="Learn rate")
-    fig2.update_yaxes(title_text="Val acc", range=[0.9, 1.01])
+    fig2.update_yaxes(title_text="Val acc", range=accuracy_axis_range(lr_values))
     out2 = OUTPUT_DIR / "lr_sensitivity.png"
     fig2.write_image(str(out2))
     save_meta(out2, "Learning-rate sensitivity", "Final validation accuracy across learning rate values.")
     print(f"Saved {out2}")
 
     # ── Figure 3: Final val accuracy comparison bar chart! ──────────────────
+    bar_rows = [r for r in comparison if r.get("final_val_acc") is not None]
+    bar_values = [r["final_val_acc"] for r in bar_rows]
     fig3 = px.bar(
-        x=[r["experiment"] for r in comparison],
-        y=[r["final_val_acc"] for r in comparison],
-        text=[f"{r['final_val_acc']:.3f}" for r in comparison]
+        x=[r["experiment"] for r in bar_rows],
+        y=[r["final_val_acc"] for r in bar_rows],
+        text=[f"{r['final_val_acc']:.3f}" for r in bar_rows]
     )
     fig3.update_traces(textposition="outside", cliponaxis=False)
     fig3.update_layout(
         title={"text": "Final Val Accuracy by Experiment<br><span style='font-size:16px;font-weight:normal'>Baseline vs ResNet-18 variants</span>"}
     )
     fig3.update_xaxes(title_text="Experiment", tickangle=-30)
-    fig3.update_yaxes(title_text="Val acc", range=[0.9, 1.05])
+    fig3.update_yaxes(title_text="Val acc", range=accuracy_axis_range(bar_values))
     out3 = OUTPUT_DIR / "final_comparison.png"
     fig3.write_image(str(out3))
     save_meta(out3, "Final val accuracy comparison", "Bar chart comparing heuristic baseline and all ResNet-18 training configurations.")
