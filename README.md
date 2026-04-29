@@ -18,6 +18,7 @@ high-level actions.
 - Letta tool surface definitions and local stubs
 - Classifier-wired `frame_to_observation()` in `pot.py`: ResNet-18 predator probability replaces pixel heuristic when checkpoint is provided
 - Path of Titans screen capture, action key mapping, and safe control loop with emergency stop
+- Static presentation deck for showcasing the project from GitHub Pages or a local browser
 
 ## Design notes
 
@@ -47,6 +48,8 @@ high-level actions.
 - `scripts/run_experiments.py`: hyperparamter sweep across ResNet-18
 - `scripts/make_figures.py`: generates convgernce curves, LR sensitvity, and final comparsion bar chart PNGs from saved experiment histories 
 - `script/build_combined_manifest.py`: merges sregnti+kaggle iamge records 
+- `pages/paleo-presentation.html`: full-screen project presentation deck
+
 ## Environment setup (reproducible)
 
 ### 1) Create virtual environment
@@ -81,6 +84,27 @@ python scripts/run_pipeline.py
 python scripts/show_letta_tools.py
 python -m unittest discover -s tests -p "test_*.py"
 ```
+
+### Showcase the presentation
+
+The project presentation is stored in `pages/paleo-presentation.html` and is linked from the `pages/index.html` navigation as **Presentation**.
+
+For a quick local showing of it, open the file directly in a browser:
+
+```bash
+start pages/paleo-presentation.html
+```
+
+For the full site-style preview, run the local companion/static server and open the deck through localhost:
+
+```bash
+python scripts/serve_companion.py
+```
+
+Then open `http://127.0.0.1:8765/paleo-presentation.html`.
+
+On GitHub Pages, use the **Presentation** tab from the site nav. The deck is static HTML!
+
 ### Hyper Parameter sweep + figures
 Run all training experiments (requires the downloaded seregeti images)
 

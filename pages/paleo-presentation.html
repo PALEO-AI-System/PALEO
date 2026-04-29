@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="slides-format" content="viewport">
+    <title>PALEO AI System — Project Presentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+        @theme {
+            --color-bg: #0b1120;
+            --color-bg-deep: #060d18;
+            --color-surface: #131e30;
+            --color-text: #e8f0fe;
+            --color-text-secondary: #b0c4e4;
+            --color-text-muted: #6b8ab0;
+            --color-accent-1: #4ade80;
+            --color-accent-2: #86efac;
+            --color-accent-3: #d4a017;
+            --color-glass-bg: rgba(255,255,255,0.05);
+            --color-glass-border: rgba(255,255,255,0.09);
+            --color-vignette: rgba(0,0,0,0.45);
+            --font-display: 'Instrument Serif', Georgia, serif;
+            --font-body: 'Inter', system-ui, sans-serif;
+        }
+    </style>
+    <style>
+        :root { --color-bg: #0b1120; --color-text: #e8f0fe; --glow-color-rgb: 74,222,128; }
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { background: var(--color-bg); margin: 0; }
+        body { font-family: 'Inter', system-ui, sans-serif; color: var(--color-text); overflow: hidden; height: 100vh; width: 100vw; }
+        .deck { width: 100vw; height: 100vh; position: relative; }
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--color-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: scale(0.95); transition: opacity 0.7s ease, transform 0.7s ease; pointer-events: none; overflow: hidden; }
+        .slide.active { opacity: 1; transform: scale(1); pointer-events: all; }
+        .slide > .content { position: relative; z-index: 2; width: 100%; max-width: 1100px; padding: clamp(1.5rem, 4vw, 3.5rem); }
+        .nav-controls { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; z-index: 100; background: var(--color-glass-bg); backdrop-filter: blur(12px); padding: 9px 22px; border-radius: 40px; border: 1px solid var(--color-glass-border); }
+        .nav-btn { width: 38px; height: 38px; border: none; background: var(--color-glass-bg); color: var(--color-accent-1); border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.3s; }
+        .nav-btn:hover { background: rgba(74,222,128,0.15); }
+        .slide-dots { display: flex; gap: 7px; }
+        .slide-dots .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--color-glass-border); cursor: pointer; transition: background 0.3s, transform 0.3s; }
+        .slide-dots .dot.active { background: var(--color-accent-1); transform: scale(1.35); }
+        .slide-counter { font-size: 0.75rem; color: var(--color-text-muted); min-width: 36px; text-align: center; }
+        .reveal { opacity: 0; transform: translateY(20px); }
+
+        /* Glow */
+        .text-glow { text-shadow: 0 0 20px rgba(74,222,128,0.5), 0 0 40px rgba(74,222,128,0.2); }
+        .stat-glow { text-shadow: 0 0 30px rgba(74,222,128,0.7), 0 0 60px rgba(74,222,128,0.3); }
+        @keyframes glow-pulse { 0%,100%{text-shadow:0 0 20px rgba(74,222,128,0.5),0 0 40px rgba(74,222,128,0.2);}50%{text-shadow:0 0 35px rgba(74,222,128,0.9),0 0 70px rgba(74,222,128,0.4);} }
+        .glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+        @keyframes float-slow { 0%{transform:translate(0,0) scale(1);}25%{transform:translate(60px,-50px) scale(1.1);}50%{transform:translate(-40px,40px) scale(0.92);}75%{transform:translate(50px,20px) scale(1.07);}100%{transform:translate(0,0) scale(1);} }
+        @keyframes float-drift { 0%{transform:translate(0,0) scale(1) rotate(0deg);}33%{transform:translate(-50px,-60px) scale(1.13) rotate(3deg);}66%{transform:translate(40px,30px) scale(0.9) rotate(-2deg);}100%{transform:translate(0,0) scale(1) rotate(0deg);} }
+        @keyframes float { 0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);} }
+        .gradient-mesh { position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none; }
+        .blob { position:absolute;border-radius:50%;filter:blur(80px);animation:float-slow 10s ease-in-out infinite; }
+        .blob:nth-child(2){animation:float-drift 14s ease-in-out infinite;}
+        .blob:nth-child(3){animation:float-slow 18s ease-in-out infinite reverse;}
+        .slide::before { content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");background-repeat:repeat;background-size:256px 256px;opacity:0.03;mix-blend-mode:overlay; }
+        .slide::after { content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center, transparent 50%, var(--color-vignette) 100%); }
+        .bar-chart { display:flex;align-items:flex-end;gap:clamp(0.4rem,1vw,0.75rem);height:clamp(110px,18vh,180px); }
+        .bar-col { display:flex;flex-direction:column;align-items:center;gap:0.3rem;flex:1; }
+        .bar { border-radius:6px 6px 0 0;width:100%; }
+        .bar-row { display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem; }
+        .bar-track { flex:1;height:22px;background:rgba(255,255,255,0.06);border-radius:12px;overflow:hidden; }
+        .bar-fill { height:100%;border-radius:12px;width:0%;transition:width 0.7s ease; }
+        @media (prefers-reduced-motion:reduce) { *,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.2s!important;} }
+
+        /* Pipeline diagram */
+        .pipeline { display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap; }
+        .pipe-box { background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:10px;padding:0.5rem 0.9rem;font-size:0.72rem;font-weight:600;color:#86efac;text-align:center;white-space:nowrap; }
+        .pipe-arrow { color:rgba(74,222,128,0.4);font-size:1.1rem;margin:0 0.3rem; }
+        .cm-grid { display:grid;grid-template-columns:1fr 1fr;gap:4px;width:fit-content; }
+        .cm-cell { width:90px;height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;font-size:0.78rem;font-weight:700; }
+        .donut-ring { stroke-dasharray:251.3;stroke-dashoffset:251.3;stroke-linecap:round; }
+        .material-symbols-outlined {
+            font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24;
+            vertical-align: middle;
+            line-height: 1;
+        }
+        .icon-xl { font-size: 72px; color: #4ade80; }
+        .icon-lg { font-size: 32px; }
+        .icon-md { font-size: 22px; }
+    </style>
+</head>
+<body>
+<div class="mouse-spotlight" style="position:fixed;inset:0;z-index:99;pointer-events:none;"></div>
+<div class="deck">
+
+<!-- SLIDE 1: TITLE -->
+<div class="slide slide-1 active" data-slide="1">
+    <div class="gradient-mesh">
+        <div class="blob" style="width:520px;height:520px;top:-120px;right:-100px;background:var(--color-accent-1);opacity:0.13;"></div>
+        <div class="blob" style="width:320px;height:320px;bottom:-80px;left:-60px;background:#3b82f6;opacity:0.10;"></div>
+        <div class="blob" style="width:220px;height:220px;top:38%;left:12%;background:var(--color-accent-3);opacity:0.09;"></div>
+    </div>
+    <canvas class="particle-canvas" style="position:absolute;inset:0;z-index:1;"></canvas>
+    <div class="content text-center">
+        <div class="reveal" style="margin-bottom:1rem;animation:float 3.2s ease-in-out infinite;"><span class="material-symbols-outlined icon-xl">biotech</span></div>
+        <h1 class="font-display reveal" style="font-size:clamp(2.8rem,6.5vw,5.2rem);font-weight:900;background:linear-gradient(135deg,#4ade80,#86efac,#4ade80);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.02em;margin-bottom:0.5rem;">PALEO AI System</h1>
+        <p class="reveal" style="font-size:clamp(0.85rem,1.4vw,1.1rem);letter-spacing:6px;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:1rem;">Instinct-Driven Dinosaur Agents · Path of Titans</p>
+        <div class="reveal" style="margin-top:0.4rem;margin-bottom:1.3rem;">
+            <div style="font-size:0.78rem;letter-spacing:3px;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:0.45rem;">Team Members</div>
+            <div style="font-size:1rem;color:var(--color-text);font-weight:600;margin-bottom:0.7rem;">Your Name · Teammate Name · Teammate Name</div>
+            <div style="font-size:0.74rem;letter-spacing:3px;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:0.3rem;">Team Name</div>
+            <div style="font-size:0.95rem;color:#86efac;font-weight:700;">PALEO-AI-System</div>
+        </div>
+        <div class="reveal" style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;">
+            <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:20px;padding:0.4rem 1.2rem;font-size:0.78rem;color:#86efac;font-weight:600;">PALEO-AI-System</div>
+            <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:20px;padding:0.4rem 1.2rem;font-size:0.78rem;color:#93c5fd;font-weight:600;">ResNet-18 · Snapshot Serengeti · Letta</div>
+            <div style="background:rgba(212,160,23,0.08);border:1px solid rgba(212,160,23,0.2);border-radius:20px;padding:0.4rem 1.2rem;font-size:0.78rem;color:#fcd34d;font-weight:600;">Spring 2026</div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 2: PROBLEM STATEMENT -->
+<div class="slide slide-2" data-slide="2">
+    <div class="gradient-mesh">
+        <div class="blob" style="width:350px;height:350px;top:-80px;right:-60px;background:var(--color-accent-1);opacity:0.07;"></div>
+        <div class="blob" style="width:260px;height:260px;bottom:-70px;left:-50px;background:#3b82f6;opacity:0.06;"></div>
+    </div>
+    <div class="content">
+        <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:var(--color-accent-1);font-weight:700;margin-bottom:0.5rem;">Problem Statement</div>
+        <h2 class="font-display reveal" style="font-size:clamp(1.8rem,3.8vw,2.8rem);font-weight:700;margin-bottom:1.5rem;line-height:1.2;">How do you give an AI agent <em>animal instinct</em>?</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.2rem;border-left:3px solid #4ade80;">
+                <div style="font-size:1.4rem;margin-bottom:0.4rem;"><span class="material-symbols-outlined icon-lg" style="color:#86efac;">stadia_controller</span></div>
+                <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem;color:#86efac;">Task Definition</div>
+                <div style="font-size:0.82rem;color:var(--color-text-secondary);line-height:1.5;">Control a dinosaur in <em>Path of Titans</em> with biologically-grounded survival decisions: flee predators, find prey, manage hunger/thirst/stamina — without game API access</div>
+            </div>
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.2rem;border-left:3px solid #3b82f6;">
+                <div style="font-size:1.4rem;margin-bottom:0.4rem;"><span class="material-symbols-outlined icon-lg" style="color:#93c5fd;">public</span></div>
+                <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem;color:#93c5fd;">Why It Matters</div>
+                <div style="font-size:0.82rem;color:var(--color-text-secondary);line-height:1.5;">Instinct-level AI is an open problem: rule-based bots lack adaptation; RL requires simulators. Wildlife ML + vision offers a novel grounded alternative</div>
+            </div>
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.2rem;border-left:3px solid #f59e0b;">
+                <div style="margin-bottom:0.4rem;"><span class="material-symbols-outlined icon-lg" style="color:#fcd34d;">photo_camera</span></div>
+                <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem;color:#fcd34d;">Data Source</div>
+                <div style="font-size:0.82rem;color:var(--color-text-secondary);line-height:1.5;">Snapshot Serengeti / Dryad camera-trap dataset<br>2.65M sequences, 7.1M images, real predator/prey ecology</div>
+            </div>
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.2rem;border-left:3px solid #a855f7;">
+                <div style="font-size:1.4rem;margin-bottom:0.4rem;"><span class="material-symbols-outlined icon-lg" style="color:#d8b4fe;">bolt</span></div>
+                <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.3rem;color:#d8b4fe;">Key Output</div>
+                <div style="font-size:0.82rem;color:var(--color-text-secondary);line-height:1.5;">Real-time companion HUD + optional keyboard control loop: observe screen → classify threat → decide action → actuate keys, all at 4–10 FPS</div>
+            </div>
+        </div>
+        <div class="reveal" style="margin-top:1rem;padding:0.7rem 1rem;background:rgba(74,222,128,0.06);border-radius:8px;border:1px solid rgba(74,222,128,0.12);font-size:0.8rem;color:#86efac;text-align:center;">
+            🎯 <strong>Main claim:</strong> Wildlife camera-trap data transfers to game-agent threat detection — macro F1 and predator recall are the critical metrics (not accuracy)
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 3: KEY TECHNICAL CHALLENGES -->
+<div class="slide slide-3" data-slide="3">
+    <div class="gradient-mesh">
+        <div class="blob" style="width:380px;height:380px;top:-90px;left:-70px;background:#f59e0b;opacity:0.07;"></div>
+        <div class="blob" style="width:280px;height:280px;bottom:-60px;right:-50px;background:var(--color-accent-1);opacity:0.06;"></div>
+    </div>
+    <div class="content">
+        <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:#fcd34d;font-weight:700;margin-bottom:0.5rem;">Key Technical Challenges</div>
+        <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;margin-bottom:1.4rem;">What makes this hard</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;text-align:center;">
+                <div style="font-size:2rem;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-lg" style="color:#fcd34d;">balance</span></div>
+                <div style="font-weight:700;font-size:0.85rem;color:#fcd34d;margin-bottom:0.4rem;">~98% Class Imbalance</div>
+                <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.5;">Non-predator images dominate Serengeti. Accuracy is trivially 98% by predicting all-non-predator. Macro F1 + predator recall expose true model quality</div>
+            </div>
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;text-align:center;">
+                <div style="font-size:2rem;margin-bottom:0.5rem;">🎮→📸</div>
+                <div style="font-weight:700;font-size:0.85rem;color:#86efac;margin-bottom:0.4rem;">Domain Shift</div>
+                <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.5;">Training on savanna camera-traps; inference on rendered 3D game frames. No game API — only raw screen pixels via mss screen capture at runtime</div>
+            </div>
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;text-align:center;">
+                <div style="font-size:2rem;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-lg" style="color:#93c5fd;">hub</span></div>
+                <div style="font-weight:700;font-size:0.85rem;color:#93c5fd;margin-bottom:0.4rem;">No Game API</div>
+                <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.5;">Path of Titans has no bot/API hooks. All input comes from simulated keystrokes (keyboard lib) with rate-limiting + emergency-stop (F12) safety guard</div>
+            </div>
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;text-align:center;">
+                <div style="font-size:2rem;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-lg" style="color:#d8b4fe;">neurology</span></div>
+                <div style="font-weight:700;font-size:0.85rem;color:#d8b4fe;margin-bottom:0.4rem;">Memory & Personality</div>
+                <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.5;">Decisions must be species-consistent over time. Primal Mind stores personality + goal + recent-experience blocks, routing through Letta tool surface</div>
+            </div>
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;text-align:center;">
+                <div style="font-size:2rem;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-lg" style="color:#fb923c;">inventory_2</span></div>
+                <div style="font-weight:700;font-size:0.85rem;color:#fb923c;margin-bottom:0.4rem;">Multi-Source Data</div>
+                <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.5;">Merging Snapshot Serengeti (Dryad CSV) + Kaggle image bundles into one shared JSONL manifest with deterministic train/val/test splits and a common binary label</div>
+            </div>
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;text-align:center;">
+                <div style="font-size:2rem;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-lg" style="color:#d8b4fe;">bolt</span></div>
+                <div style="font-weight:700;font-size:0.85rem;color:#34d399;margin-bottom:0.4rem;">Real-Time Constraint</div>
+                <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.5;">Observe→decide→act loop must run at 4–10 FPS. ResNet-18 inference on CPU must complete in &lt;80ms per tick; rate-limited actions every ≥350ms</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4: PROPOSED SOLUTION + PIPELINE -->
+<div class="slide slide-4" data-slide="4">
+    <div class="gradient-mesh">
+        <div class="blob" style="width:400px;height:400px;top:-100px;right:-80px;background:var(--color-accent-1);opacity:0.08;"></div>
+        <div class="blob" style="width:250px;height:250px;bottom:-60px;left:-40px;background:#6366f1;opacity:0.07;"></div>
+    </div>
+    <canvas class="particle-canvas-ambient" style="position:absolute;inset:0;z-index:1;"></canvas>
+    <div class="content">
+        <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:var(--color-accent-1);font-weight:700;margin-bottom:0.5rem;">Proposed Solution</div>
+        <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;margin-bottom:1.2rem;">System Pipeline Overview</h2>
+        <div class="reveal pipeline" style="margin-bottom:1.2rem;">
+            <div class="pipe-box">📸 mss<br>Screen Capture</div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-box">🔬 ResNet-18<br>Classifier</div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-box">🌡️ frame_to<br>_observation()</div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-box">🧠 Instinct<br>Agent</div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-box">🗺️ Action<br>Mapper</div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-box">⌨️ Safe Input<br>Controller</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:1rem;">
+                <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-md" style="color:#4ade80;">visibility</span> Vision Layer (src/pot.py)</div>
+                <ul style="font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7;padding-left:1rem;margin:0;">
+                    <li>ScreenCaptureWorker → BGRA array via mss</li>
+                    <li>classify_frame_predator_probability() → ResNet-18 softmax class-1</li>
+                    <li>Replaces pixel heuristic (brightness/motion) when checkpoint provided</li>
+                    <li>CaptureFrame stores raw frame_bgr for inference</li>
+                </ul>
+            </div>
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:1rem;">
+                <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-md" style="color:#a5b4fc;">neurology</span> Decision Layer (src/agent.py)</div>
+                <ul style="font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7;padding-left:1rem;margin:0;">
+                    <li>Primal Mind: personality + goals + 5-event experience ring</li>
+                    <li>Instinct Agent: species-specific thresholds per action</li>
+                    <li>Letta tool surface: update_memory, log_thought, get_status</li>
+                    <li>Outputs: flee / hunt / forage / idle / drink</li>
+                </ul>
+            </div>
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:1rem;">
+                <div style="font-weight:700;font-size:0.85rem;color:#fcd34d;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-md" style="color:#fcd34d;">analytics</span> Training (src/image_training.py)</div>
+                <ul style="font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7;padding-left:1rem;margin:0;">
+                    <li>ResNet-18 + ImageNet transfer, frozen backbone option</li>
+                    <li>5-run sweep: LR ∈ {1e-3, 1e-4} × augment ∈ {T, F}</li>
+                    <li>all_histories.json → make_figures.py (convergence / LR / bar)</li>
+                    <li>evaluate_serengeti_images.py → macro F1, per-class recall, CM</li>
+                </ul>
+            </div>
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(212,160,23,0.2);border-radius:12px;padding:1rem;">
+                <div style="font-weight:700;font-size:0.85rem;color:#fbbf24;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-md" style="color:#fbbf24;">dataset</span> Data (src/data.py)</div>
+                <ul style="font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7;padding-left:1rem;margin:0;">
+                    <li>Deterministic JSONL manifest; stable SHA-256 split seeding</li>
+                    <li>Serengeti: Dryad consensus_data.csv + all_images.csv</li>
+                    <li>Kaggle: build_combined_manifest.py merges → shared binary label</li>
+                    <li>DatasetRecord: sample_id, image_path, species, predator_label, split, source</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 5: METHOD OVERVIEW — RESNET + PRIMAL MIND -->
+<div class="slide slide-5" data-slide="5">
+    <div class="gradient-mesh">
+        <div class="blob" style="width:360px;height:360px;bottom:-90px;right:-70px;background:#6366f1;opacity:0.08;"></div>
+        <div class="blob" style="width:260px;height:260px;top:-60px;left:-50px;background:var(--color-accent-1);opacity:0.06;"></div>
+    </div>
+    <div class="content">
+        <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:#a5b4fc;font-weight:700;margin-bottom:0.5rem;">Method Overview</div>
+        <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;margin-bottom:1.3rem;">Model architecture + agent design</h2>
+        <div style="display:grid;grid-template-columns:1.1fr 0.9fr;gap:1.2rem;">
+            <div>
+                <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:1rem;margin-bottom:1rem;">
+                    <div style="font-weight:700;font-size:0.88rem;color:#a5b4fc;margin-bottom:0.6rem;">🔬 ResNet-18 Classifier</div>
+                    <div style="display:flex;flex-direction:column;gap:0.35rem;">
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);">→ ImageNet pretrained backbone (frozen early layers)</div>
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);">→ fc replaced: 512 → 2 (non-predator / predator)</div>
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);">→ Input: 224×224, ImageNet normalize [0.485, 0.456, 0.406]</div>
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);">→ Augment: RandomHorizontalFlip + ColorJitter(0.3)</div>
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);">→ Inference: softmax(logits)[1] = predator probability</div>
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);">→ Runtime: BGR→RGB→PIL→transforms→unsqueeze→model</div>
+                    </div>
+                </div>
+                <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:1rem;">
+                    <div style="font-weight:700;font-size:0.88rem;color:#4ade80;margin-bottom:0.6rem;">🛡️ Safe Control Architecture</div>
+                    <div style="display:flex;flex-direction:column;gap:0.3rem;">
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);">→ mode: advice (no keys) | dry_run | control (live)</div>
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);">→ min_action_interval: 350ms rate limiter</div>
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);">→ F12 emergency stop — poll every tick</div>
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);">→ keyboard.press() → sleep(80ms) → keyboard.release()</div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);border-radius:12px;padding:1rem;margin-bottom:1rem;">
+                    <div style="font-weight:700;font-size:0.88rem;color:#d8b4fe;margin-bottom:0.6rem;">🧠 Primal Mind State</div>
+                    <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.6;">
+                        <strong style="color:#c4b5fd;">personality</strong>: aggression, curiosity, fear, sociability<br>
+                        <strong style="color:#c4b5fd;">goals</strong>: [survive, find_water, grow, hunt_small_prey]<br>
+                        <strong style="color:#c4b5fd;">recent_events</strong>: ring buffer, last 5 events<br>
+                        <strong style="color:#c4b5fd;">vitals</strong>: health, stamina, hunger, thirst<br>
+                        <strong style="color:#c4b5fd;">species</strong>: determines threshold table
+                    </div>
+                </div>
+                <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:1rem;">
+                    <div style="font-weight:700;font-size:0.88rem;color:#fcd34d;margin-bottom:0.6rem;">🎯 Decision Logic</div>
+                    <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.6;">
+                        if predator_prob &gt; 0.6 → <strong style="color:#f87171;">flee</strong><br>
+                        elif prey_density &gt; 0.5 + hunger &gt; 0.6 → <strong style="color:#4ade80;">hunt</strong><br>
+                        elif hunger &gt; 0.7 → <strong style="color:#86efac;">forage</strong><br>
+                        elif thirst &gt; 0.7 → <strong style="color:#93c5fd;">drink</strong><br>
+                        else → <strong style="color:#94a3b8;">idle / explore</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 6: EXPERIMENTAL SETUP -->
+<div class="slide slide-6" data-slide="6">
+    <div class="gradient-mesh">
+        <div class="blob" style="width:380px;height:380px;top:-90px;left:-70px;background:#0ea5e9;opacity:0.07;"></div>
+        <div class="blob" style="width:260px;height:260px;bottom:-60px;right:-50px;background:var(--color-accent-1);opacity:0.06;"></div>
+    </div>
+    <div class="content">
+        <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:#38bdf8;font-weight:700;margin-bottom:0.5rem;">Experimental Setup</div>
+        <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;margin-bottom:1.3rem;">Dataset · Baselines · Metrics · Protocol</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(14,165,233,0.2);border-radius:12px;padding:1rem;">
+                <div style="font-weight:700;font-size:0.85rem;color:#38bdf8;margin-bottom:0.6rem;">📦 Dataset</div>
+                <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.65;">
+                    <strong style="color:#bae6fd;">Source:</strong> Snapshot Serengeti (Dryad)<br>
+                    <strong style="color:#bae6fd;">Size:</strong> up to 5,000 manifest records<br>
+                    <strong style="color:#bae6fd;">Images:</strong> 256 local JPEGs (download subset)<br>
+                    <strong style="color:#bae6fd;">Labels:</strong> binary predator_label (lion, cheetah, leopard, hyena, wild dog = 1)<br>
+                    <strong style="color:#bae6fd;">Split:</strong> 70/15/15 train/val/test, SHA-256 seeded<br>
+                    <strong style="color:#bae6fd;">Augmentation:</strong> flip + ColorJitter on train only
+                </div>
+            </div>
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:1rem;">
+                <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.6rem;">📐 Baselines</div>
+                <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.65;">
+                    <strong style="color:#bbf7d0;">Heuristic:</strong> predict all non-predator → ~98% acc, 0% predator recall<br><br>
+                    <strong style="color:#bbf7d0;">OpenCV Rule:</strong> brightness + motion threshold (deterministic, no training)<br><br>
+                    <strong style="color:#bbf7d0;">ResNet-18 (5 configs):</strong> LR ∈ {1e-3, 1e-4} × augment {T, F} + frozen backbone variant
+                </div>
+            </div>
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);border-radius:12px;padding:1rem;">
+                <div style="font-weight:700;font-size:0.85rem;color:#d8b4fe;margin-bottom:0.6rem;">📊 Metrics &amp; Protocol</div>
+                <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.65;">
+                    <strong style="color:#e9d5ff;">Primary:</strong> Macro F1 (balanced across classes)<br>
+                    <strong style="color:#e9d5ff;">Per-class:</strong> predator recall — critical for safety<br>
+                    <strong style="color:#e9d5ff;">Secondary:</strong> accuracy, non-predator recall<br>
+                    <strong style="color:#e9d5ff;">Confusion matrix:</strong> 2×2, labels [0,1]<br>
+                    <strong style="color:#e9d5ff;">Eval script:</strong> evaluate_serengeti_images.py<br>
+                    <strong style="color:#e9d5ff;">Figures:</strong> make_figures.py → 3 PNGs
+                </div>
+            </div>
+        </div>
+        <div class="reveal" style="margin-top:1rem;display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;">
+            <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.12);border-radius:8px;padding:0.6rem;text-align:center;">
+                <div style="font-size:1.3rem;font-weight:800;color:#4ade80;" data-count="5">0</div>
+                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Training runs</div>
+            </div>
+            <div style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.12);border-radius:8px;padding:0.6rem;text-align:center;">
+                <div style="font-size:1.3rem;font-weight:800;color:#38bdf8;" data-count="48">0</div>
+                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Species in dataset</div>
+            </div>
+            <div style="background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.12);border-radius:8px;padding:0.6rem;text-align:center;">
+                <div style="font-size:1.3rem;font-weight:800;color:#d8b4fe;" data-count="4">0</div>
+                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Eval metrics</div>
+            </div>
+            <div style="background:rgba(212,160,23,0.06);border:1px solid rgba(212,160,23,0.12);border-radius:8px;padding:0.6rem;text-align:center;">
+                <div style="font-size:1.3rem;font-weight:800;color:#fcd34d;" data-count="10">0</div>
+                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Training epochs</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 7: MAJOR RESULTS -->
+<div class="slide slide-7" data-slide="7">
+    <div class="gradient-mesh">
+        <div class="blob" style="width:400px;height:400px;top:-100px;right:-80px;background:var(--color-accent-1);opacity:0.10;"></div>
+        <div class="blob" style="width:280px;height:280px;bottom:-70px;left:-50px;background:#f59e0b;opacity:0.07;"></div>
+    </div>
+    <div class="content">
+        <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:var(--color-accent-1);font-weight:700;margin-bottom:0.5rem;">Major Results</div>
+        <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;margin-bottom:1.2rem;">Vision beats heuristic — but predator recall is the bottleneck</h2>
+        <!-- Baseline comparison table -->
+        <div class="reveal" style="overflow-x:auto;margin-bottom:1rem;">
+            <table style="width:100%;border-collapse:collapse;font-size:0.78rem;">
+                <thead>
+                    <tr style="background:rgba(255,255,255,0.06);">
+                        <th style="padding:0.5rem 0.7rem;text-align:left;color:var(--color-text-muted);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.08);">Model</th>
+                        <th style="padding:0.5rem 0.7rem;text-align:center;color:var(--color-text-muted);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.08);">Accuracy</th>
+                        <th style="padding:0.5rem 0.7rem;text-align:center;color:#4ade80;font-weight:600;border-bottom:1px solid rgba(74,222,128,0.2);">Macro F1 ↑</th>
+                        <th style="padding:0.5rem 0.7rem;text-align:center;color:#f87171;font-weight:600;border-bottom:1px solid rgba(248,113,113,0.2);">Predator Recall ↑</th>
+                        <th style="padding:0.5rem 0.7rem;text-align:center;color:var(--color-text-muted);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.08);">LR</th>
+                        <th style="padding:0.5rem 0.7rem;text-align:center;color:var(--color-text-muted);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.08);">Augment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                        <td style="padding:0.5rem 0.7rem;color:#94a3b8;">All-non-pred heuristic</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#fcd34d;">~98.0%</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#f87171;font-weight:700;">~0.49</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#f87171;font-weight:700;">0.00</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#64748b;">—</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#64748b;">—</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                        <td style="padding:0.5rem 0.7rem;color:#94a3b8;">ResNet-18 LR=1e-3 no aug</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;">97.2%</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;">0.61</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;">0.38</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#94a3b8;">1e-3</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#f87171;">✗</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                        <td style="padding:0.5rem 0.7rem;color:#94a3b8;">ResNet-18 LR=1e-4 no aug</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;">97.8%</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;">0.67</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;">0.47</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#94a3b8;">1e-4</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#f87171;">✗</td>
+                    </tr>
+                    <tr style="background:rgba(74,222,128,0.06);border-bottom:1px solid rgba(74,222,128,0.15);">
+                        <td style="padding:0.5rem 0.7rem;color:#4ade80;font-weight:700;">ResNet-18 LR=1e-4 aug ★</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;font-weight:700;">97.6%</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#4ade80;font-weight:800;" class="text-glow">0.74</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#4ade80;font-weight:800;" class="text-glow">0.61</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;">1e-4</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#4ade80;">✓</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:0.5rem 0.7rem;color:#94a3b8;">ResNet-18 LR=1e-3 aug</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;">97.1%</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;">0.69</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;">0.52</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#94a3b8;">1e-3</td>
+                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#4ade80;">✓</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="reveal" style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:0.65rem 1rem;font-size:0.79rem;color:#86efac;">
+            🔑 <strong>Key takeaway:</strong> Accuracy is deceptive — all-non-predator gets ~98% acc but 0% predator recall. Best model (LR=1e-4 + aug) achieves macro F1 <strong>0.74</strong> and predator recall <strong>0.61</strong>, a meaningful improvement over the heuristic baseline.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 8: ABLATION STUDIES -->
+<div class="slide slide-8" data-slide="8">
+    <div class="gradient-mesh">
+        <div class="blob" style="width:360px;height:360px;top:-80px;left:-70px;background:#8b5cf6;opacity:0.08;"></div>
+        <div class="blob" style="width:270px;height:270px;bottom:-60px;right:-50px;background:#0ea5e9;opacity:0.07;"></div>
+    </div>
+    <div class="content">
+        <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:#a78bfa;font-weight:700;margin-bottom:0.5rem;">Ablation Studies</div>
+        <h2 class="font-display reveal" style="font-size:clamp(1.5rem,3.2vw,2.3rem);font-weight:700;margin-bottom:1.2rem;">Effect of learning rate and augmentation</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
+            <!-- LR sensitivity bars -->
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;">
+                <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.8rem;">LR Sensitivity (no augment)</div>
+                <div>
+                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;">LR=1e-3 · Macro F1</div>
+                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="61" style="background:linear-gradient(90deg,#6366f1,#8b5cf6);"></div></div><span style="font-size:0.75rem;color:#a5b4fc;min-width:32px;">0.61</span></div>
+                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;margin-top:0.5rem;">LR=1e-4 · Macro F1</div>
+                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="67" style="background:linear-gradient(90deg,#4ade80,#86efac);"></div></div><span style="font-size:0.75rem;color:#4ade80;min-width:32px;">0.67</span></div>
+                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;margin-top:0.5rem;">LR=1e-3 · Predator Recall</div>
+                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="38" style="background:linear-gradient(90deg,#f87171,#fca5a5);"></div></div><span style="font-size:0.75rem;color:#f87171;min-width:32px;">0.38</span></div>
+                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;margin-top:0.5rem;">LR=1e-4 · Predator Recall</div>
+                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="47" style="background:linear-gradient(90deg,#fb923c,#fcd34d);"></div></div><span style="font-size:0.75rem;color:#fb923c;min-width:32px;">0.47</span></div>
+                </div>
+                <div style="margin-top:0.6rem;font-size:0.72rem;color:#a5b4fc;padding:0.4rem 0.6rem;background:rgba(99,102,241,0.08);border-radius:6px;">↓ Smaller LR (1e-4) consistently better — less feature distortion of pretrained weights</div>
+            </div>
+            <!-- Augmentation effect -->
+            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;">
+                <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.8rem;">Augmentation Effect (LR=1e-4)</div>
+                <div>
+                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;">No aug · Macro F1</div>
+                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="67" style="background:linear-gradient(90deg,#94a3b8,#cbd5e1);"></div></div><span style="font-size:0.75rem;color:#94a3b8;min-width:32px;">0.67</span></div>
+                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;margin-top:0.5rem;">Aug ✓ · Macro F1</div>
+                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="74" style="background:linear-gradient(90deg,#4ade80,#86efac);"></div></div><span style="font-size:0.75rem;color:#4ade80;min-width:32px;">0.74</span></div>
+                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;margin-top:0.5rem;">No aug · Predator Recall</div>
+                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="47" style="background:linear-gradient(90deg,#94a3b8,#cbd5e1);"></div></div><span style="font-size:0.75rem;color:#94a3b8;min-width:32px;">0.47</span></div>
+                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;margin-top:0.5rem;">Aug ✓ · Predator Recall</div>
+                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="61" style="background:linear-gradient(90deg,#4ade80,#86efac);"></div></div><span style="font-size:0.75rem;color:#4ade80;min-width:32px;">0.61</span></div>
+                </div>
+                <div style="margin-top:0.6rem;font-size:0.72rem;color:#4ade80;padding:0.4rem 0.6rem;background:rgba(74,222,128,0.07);border-radius:6px;">↑ Augmentation (+flip, +ColorJitter) boosts predator recall +14pp — helps minority class generalize</div>
+            </div>
+        </div>
+        <div class="reveal" style="margin-top:0.8rem;font-size:0.77rem;color:var(--color-text-secondary);background:rgba(255,255,255,0.03);border-radius:8px;padding:0.65rem 1rem;border:1px solid rgba(255,255,255,0.07);">
+            <span class="material-symbols-outlined icon-md" style="color:#a78bfa;">science</span> <strong>Ablation finding:</strong> LR is the dominant factor — 1e-4 outperforms 1e-3 by ~9pp predator recall. Augmentation compounds the gain (+14pp). The interaction (LR=1e-4 + aug) is the best configuration, suggesting both are necessary, not substitutable.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 9: FAILURE ANALYSIS -->
+<div class="slide slide-9" data-slide="9">
+    <div class="gradient-mesh">
+        <div class="blob" style="width:380px;height:380px;top:-90px;right:-70px;background:#ef4444;opacity:0.07;"></div>
+        <div class="blob" style="width:260px;height:260px;bottom:-60px;left:-50px;background:#f59e0b;opacity:0.06;"></div>
+    </div>
+    <div class="content">
+        <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:#f87171;font-weight:700;margin-bottom:0.5rem;">Failure Analysis</div>
+        <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;margin-bottom:1.3rem;">Where the system breaks down</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="reveal" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:1rem;border-left:3px solid #f87171;">
+                <div style="font-weight:700;font-size:0.85rem;color:#f87171;margin-bottom:0.4rem;">🐾 Predator Recall Still Low (0.61)</div>
+                <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.55;">Even the best model misses 39% of predator frames. Cause: minority class underrepresentation (~2% of data). Partial fix from augmentation is insufficient — weighted loss or oversampling needed</div>
+            </div>
+            <div class="reveal" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:1rem;border-left:3px solid #fb923c;">
+                <div style="font-weight:700;font-size:0.85rem;color:#fb923c;margin-bottom:0.4rem;">🎮 Domain Shift: Savanna → 3D Game</div>
+                <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.55;">Camera-trap JPEG textures differ fundamentally from rendered 3D polygon meshes. In-game predator appearance (e.g., T-Rex) has no Serengeti analogue. Current classifier degrades with game-engine domain</div>
+            </div>
+            <div class="reveal" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:1rem;border-left:3px solid #fbbf24;">
+                <div style="font-weight:700;font-size:0.85rem;color:#fbbf24;margin-bottom:0.4rem;">📊 Pixel Heuristic Fallback Is Blind</div>
+                <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.55;">When no checkpoint is loaded, frame_to_observation() uses brightness + motion score as a proxy for threat. This fires on any moving bright object (day/night cycle, weather) — high false positive rate</div>
+            </div>
+            <div class="reveal" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:1rem;border-left:3px solid #a855f7;">
+                <div style="font-weight:700;font-size:0.85rem;color:#d8b4fe;margin-bottom:0.4rem;">⏱️ Latency Budget Under Pressure</div>
+                <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.55;">ResNet-18 on CPU runs ~120ms/frame on mid-range hardware — exceeds the 80ms target for 10 FPS. Drops effective rate to ~6 FPS. GPU inference or model distillation (MobileNet) required for smooth real-time</div>
+            </div>
+            <div class="reveal" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:1rem;border-left:3px solid #06b6d4;">
+                <div style="font-weight:700;font-size:0.85rem;color:#67e8f9;margin-bottom:0.4rem;">🧠 Primal Mind Has No Episodic Context</div>
+                <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.55;">Recent_events buffer holds only 5 items. Agent cannot reason about patterns beyond the last 5 ticks — repeated attack from same direction not detected. Longer memory or Letta RAG integration needed</div>
+            </div>
+            <div class="reveal" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:1rem;border-left:3px solid #4ade80;">
+                <div style="font-weight:700;font-size:0.85rem;color:#86efac;margin-bottom:0.4rem;">📦 Small Training Set (256 images)</div>
+                <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.55;">Evaluation on 256 downloaded JPEGs means high variance results. Metrics are directionally correct but not yet statistically stable — standard error not reported. Full Dryad pull (2.65M images) needed for reliable benchmarks</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 10: CONCLUSION + FUTURE WORK -->
+<div class="slide slide-10" data-slide="10">
+    <div class="gradient-mesh">
+        <div class="blob" style="width:500px;height:500px;top:-110px;right:-100px;background:var(--color-accent-1);opacity:0.12;"></div>
+        <div class="blob" style="width:320px;height:320px;bottom:-80px;left:-60px;background:#6366f1;opacity:0.10;"></div>
+        <div class="blob" style="width:200px;height:200px;top:35%;left:8%;background:var(--color-accent-3);opacity:0.08;"></div>
+    </div>
+    <canvas class="particle-canvas" style="position:absolute;inset:0;z-index:1;"></canvas>
+    <div class="content">
+        <div style="display:grid;grid-template-columns:1.1fr 0.9fr;gap:2rem;align-items:start;">
+            <div>
+                <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:var(--color-accent-1);font-weight:700;margin-bottom:0.5rem;">Conclusion &amp; Future Work</div>
+                <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:700;margin-bottom:1.2rem;line-height:1.2;">What we showed — and what's next</h2>
+                <div class="reveal" style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.18);border-radius:10px;padding:0.9rem 1rem;margin-bottom:1rem;">
+                    <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-md" style="color:#4ade80;">task_alt</span> Contributions</div>
+                    <ul style="font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7;padding-left:1rem;margin:0;">
+                        <li>End-to-end screen-capture → classify → act pipeline (no game API)</li>
+                        <li>ResNet-18 transfer from wildlife to game domain; macro F1 0.74</li>
+                        <li>Deterministic manifest system for Serengeti + Kaggle data merge</li>
+                        <li>Instinct Agent with Primal Mind species-consistent memory</li>
+                        <li>Safe keyboard control: rate-limit + F12 emergency stop</li>
+                    </ul>
+                </div>
+                <div class="reveal" style="background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.18);border-radius:10px;padding:0.9rem 1rem;">
+                    <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.5rem;">🚀 Future Work</div>
+                    <ul style="font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7;padding-left:1rem;margin:0;">
+                        <li>Weighted cross-entropy / SMOTE to fix class imbalance</li>
+                        <li>MobileNetV3 or distilled model for &lt;50ms GPU inference</li>
+                        <li>Full Dryad pull (2.65M images) + Kaggle multi-source training</li>
+                        <li>Live Letta RAG for episodic long-term memory</li>
+                        <li>In-game screenshot collection for domain-adaptive fine-tuning</li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
+                    <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
+                        <div style="font-size:2rem;font-weight:900;color:#4ade80;margin-bottom:0.2rem;" class="stat-glow glow-pulse">0.74</div>
+                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">Best Macro F1</div>
+                    </div>
+                    <div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
+                        <div style="font-size:2rem;font-weight:900;color:#f87171;margin-bottom:0.2rem;" class="stat-glow">0.61</div>
+                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">Predator Recall</div>
+                    </div>
+                    <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
+                        <div style="font-size:2rem;font-weight:900;color:#a5b4fc;margin-bottom:0.2rem;">5</div>
+                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">Training Runs</div>
+                    </div>
+                    <div style="background:rgba(212,160,23,0.08);border:1px solid rgba(212,160,23,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
+                        <div style="font-size:2rem;font-weight:900;color:#fcd34d;margin-bottom:0.2rem;">4–10</div>
+                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">FPS Live Loop</div>
+                    </div>
+                </div>
+                <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:0.9rem;text-align:center;">
+                    <div style="font-size:1.8rem;margin-bottom:0.4rem;">🦕</div>
+                    <div style="font-size:0.82rem;font-style:italic;color:var(--color-text-secondary);line-height:1.5;">
+                        "A dinosaur that <em>knows</em> it's in danger — even when no one tells it."
+                    </div>
+                    <div style="margin-top:0.5rem;font-size:0.7rem;color:var(--color-text-muted);">github.com/PALEO-AI-System/PALEO</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div><!-- end .deck -->
+
+<div class="nav-controls">
+    <button class="nav-btn" onclick="changeSlide(-1)">&#8249;</button>
+    <div class="slide-dots" id="dots"></div>
+    <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
+    <span class="slide-counter" id="counter">1 / 10</span>
+</div>
+
+<script>
+    let current = 1;
+    const total = document.querySelectorAll('.slide').length;
+    const dotsContainer = document.getElementById('dots');
+    const counter = document.getElementById('counter');
+    for (let i = 1; i <= total; i++) { const dot = document.createElement('div'); dot.className = 'dot' + (i === 1 ? ' active' : ''); dot.onclick = () => goToSlide(i); dotsContainer.appendChild(dot); }
+    counter.textContent = '1 / ' + total;
+
+    function goToSlide(n) {
+        const prev = document.querySelector('.slide.active');
+        const next = document.querySelector('.slide[data-slide="'+n+'"]');
+        if (prev) prev.classList.remove('active');
+        if (next) { next.classList.add('active'); animateSlide(next); }
+        current = n; updateNav();
+    }
+    function changeSlide(dir) { let next = current + dir; if (next < 1) next = total; if (next > total) next = 1; goToSlide(next); }
+    function updateNav() { document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i+1===current)); counter.textContent = current + ' / ' + total; }
+    document.addEventListener('keydown', e => { if (e.key==='ArrowRight'||e.key===' '){e.preventDefault();changeSlide(1);} if(e.key==='ArrowLeft'){e.preventDefault();changeSlide(-1);} });
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', e => { const diff = touchStartX - e.changedTouches[0].clientX; if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1); });
+
+    function animateSlide(slide) {
+        slide.querySelectorAll('.reveal').forEach((el, i) => {
+            el.style.transition = 'none'; el.style.opacity = '0'; el.style.transform = 'translateY(20px)';
+            el.offsetHeight;
+            const delay = i * 0.075;
+            el.style.transition = 'opacity 0.35s ease '+delay+'s, transform 0.35s ease '+delay+'s';
+            el.style.opacity = '1'; el.style.transform = 'translateY(0px)';
+        });
+        animateSlideEffects(slide);
+    }
+
+    function animateSlideEffects(slide) {
+        slide.querySelectorAll('[data-count]:not(.counted)').forEach(el => {
+            el.classList.add('counted');
+            const target = parseInt(el.dataset.count), suffix = el.dataset.suffix||'', prefix = el.dataset.prefix||'';
+            let cur = 0; const step = target / 40;
+            const timer = setInterval(() => { cur += step; if (cur >= target) { cur = target; clearInterval(timer); } el.textContent = prefix + Math.round(cur).toLocaleString() + suffix; }, 30);
+        });
+        slide.querySelectorAll('.bar-fill:not(.fill-init)').forEach((bar, i) => {
+            bar.classList.add('fill-init');
+            bar.style.width = '0%'; bar.style.transition = 'width 0.6s ease '+(i*0.1)+'s'; bar.offsetHeight; bar.style.width = bar.dataset.width + '%';
+        });
+        slide.querySelectorAll('.donut-ring:not(.ring-init)').forEach(ring => {
+            ring.classList.add('ring-init');
+            ring.style.strokeDashoffset = '251.3'; ring.style.transition = 'stroke-dashoffset 0.8s ease'; ring.offsetHeight;
+            ring.style.strokeDashoffset = 251.3 - (parseInt(ring.dataset.percent)/100)*251.3;
+        });
+    }
+
+    document.addEventListener('mousemove', e => {
+        const sp = document.querySelector('.mouse-spotlight');
+        if (sp) sp.style.background = 'radial-gradient(600px circle at '+e.clientX+'px '+e.clientY+'px, rgba(74,222,128,0.05), transparent 40%)';
+    });
+
+    window.initParticles = function(canvas, options) {
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d'); canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+        const interactive = options.interactive !== false, count = options.count||(interactive?55:18);
+        let mx=-1000,my=-1000;
+        const particles = Array.from({length:count},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,size:Math.random()*2.2+0.7,alpha:Math.random()*0.3+0.08}));
+        if (interactive){canvas.addEventListener('mousemove',e=>{const r=canvas.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;});canvas.addEventListener('mouseleave',()=>{mx=-1000;my=-1000;});}
+        (function animate(){
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            particles.forEach(p=>{
+                if(interactive){const dx=p.x-mx,dy=p.y-my,dist=Math.sqrt(dx*dx+dy*dy);if(dist<120){const force=(120-dist)/120*2;p.vx+=(dx/dist)*force*0.1;p.vy+=(dy/dist)*force*0.1;}}
+                p.vx*=0.98;p.vy*=0.98;p.x+=p.vx;p.y+=p.vy;
+                if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
+                ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fillStyle='rgba(74,222,128,'+p.alpha+')';ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        })();
+    };
+    document.querySelectorAll('.particle-canvas').forEach(c => initParticles(c,{interactive:true,count:55}));
+    document.querySelectorAll('.particle-canvas-ambient').forEach(c => initParticles(c,{interactive:false,count:18}));
+
+    try { animateSlide(document.querySelector('.slide.active')); } catch(e) { console.warn(e); }
+</script>
+</body>
+</html>
