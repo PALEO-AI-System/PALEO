@@ -287,10 +287,30 @@
       font-size: 0.7rem;
       opacity: 0.8;
     }
+    .export-gender-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
     .export-swatches {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
+      flex: 1;
+    }
+    .export-count {
+      font-size: 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.08);
+      padding: 1px 7px;
+      color: #6e667f;
+      background: rgba(0, 0, 0, 0.04);
+      white-space: nowrap;
+    }
+    .export-count.is-full {
+      color: #27683f;
+      background: rgba(39, 104, 63, 0.12);
+      border-color: rgba(39, 104, 63, 0.24);
     }
     .export-swatch {
       width: 18px;
@@ -1056,6 +1076,8 @@
         lab.className = "export-gender-label";
         lab.textContent = g === "male" ? "Male" : "Female";
         wrap.appendChild(lab);
+        var rowLine = document.createElement("div");
+        rowLine.className = "export-gender-row";
         var sw = document.createElement("div");
         sw.className = "export-swatches";
         var all = paletteForGender(k, spec, g);
@@ -1084,7 +1106,14 @@
           });
           sw.appendChild(b);
         });
-        wrap.appendChild(sw);
+        var count = document.createElement("span");
+        count.className = "export-count";
+        var selCount = (state.exportSelection[g][k] || []).length;
+        count.textContent = selCount + "/5";
+        if (selCount >= 5) count.classList.add("is-full");
+        rowLine.appendChild(sw);
+        rowLine.appendChild(count);
+        wrap.appendChild(rowLine);
         row.appendChild(wrap);
       });
       exportPicker.appendChild(row);
