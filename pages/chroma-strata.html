@@ -1110,7 +1110,12 @@
         count.className = "export-count";
         var selCount = (state.exportSelection[g][k] || []).length;
         count.textContent = selCount + "/5";
-        if (selCount >= 5) count.classList.add("is-full");
+        if (selCount >= 5) {
+          count.classList.add("is-full");
+          count.title = "Selection full (5/5).";
+        } else {
+          count.title = "Select " + (5 - selCount) + " more color" + (selCount === 4 ? "" : "s") + ".";
+        }
         rowLine.appendChild(sw);
         rowLine.appendChild(count);
         wrap.appendChild(rowLine);
