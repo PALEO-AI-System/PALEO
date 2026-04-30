@@ -89,6 +89,24 @@
     return shots[index % shots.length].src;
   }
 
+  function buildSubnav(sections) {
+    const host = document.getElementById("profileSubnav");
+    if (!host) return;
+    host.innerHTML = "";
+    const inner = el("div", "profile-subnav-inner");
+    sections.forEach(({ id, label }) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "profile-subnav-tab";
+      btn.textContent = label;
+      btn.addEventListener("click", () => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      inner.appendChild(btn);
+    });
+    host.appendChild(inner);
+  }
+
   function clamp01(v) {
     return Math.max(0, Math.min(1, v));
   }
