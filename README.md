@@ -33,6 +33,7 @@ high-level actions.
 - `src/agent.py`: Instinct Agent + Primal Mind decision logic
 - `src/pot.py`: PoT capture/control assumptions and keymap
 - `src/letta_tools.py`: Letta tool schemas and stubs
+- `src/wiki_rag.py`: local chunked wiki RAG (TF-IDF + cosine retrieval)
 - `src/pipeline.py`: end-to-end lightweight pipeline summary
 - `scripts/prepare_data.py`: manifest build command
 - `scripts/download_serengeti_images.py`: fetch a small subset of manifest image URLs locally
@@ -45,6 +46,8 @@ high-level actions.
 - `scripts/run_paleo_overlay.py`: transparent always-on-top overlay HUD
 - `scripts/build_paleo_exe.py`: build `dist/PALEO.exe` with PyInstaller
 - `scripts/show_letta_tools.py`: print Letta tool schemas
+- `scripts/build_wiki_rag_index.py`: prebuild local wiki RAG index file
+- `scripts/ingest_pot_wiki.py`: fetch PoT wiki/resource URLs into local JSONL corpus for RAG
 - `scripts/run_pipeline.py`: run integrated summary pipeline
 - `scripts/run_experiments.py`: hyperparamter sweep across ResNet-18
 - `scripts/make_figures.py`: generates convgernce curves, LR sensitvity, and final comparsion bar chart PNGs from saved experiment histories 
@@ -83,6 +86,8 @@ From repository root:
 python scripts/prepare_data.py
 python scripts/run_pipeline.py
 python scripts/show_letta_tools.py
+python scripts/build_wiki_rag_index.py
+python scripts/ingest_pot_wiki.py --rebuild-index
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
