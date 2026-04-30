@@ -486,10 +486,10 @@
 
   <div class="exe-flow" id="exeFlowPanel">
     <div class="exe-flow-inner">
-      <strong>PALEO.exe workflow:</strong>
-      <code>PALEO.exe</code> runs this Companion HUD in your browser (local Python server + Instinct Agent).
+      <strong>Recommended runtime:</strong>
+      <code>PALEOOverlay.exe</code> is the main in-game runtime (always-on-top capture + debug beside Path of Titans).
+      <code>PALEO.exe</code> runs this Companion HUD in your browser (local Python server + Instinct Agent) for monitoring and manual testing.
       Use sliders or <strong>live capture</strong> when enabled, then <strong>Run Instinct tick</strong> / Auto.
-      <code>PALEOOverlay.exe</code> is a separate always-on-top window for capture + debug beside the game; it does not replace this page.
       Full keyboard/mouse control is optional via <code>run_paleo_control_loop.py</code> (see README) with F12 emergency stop.
       <div class="exe-flow-tools">
         <button type="button" id="hudFontDown" title="Shrink monospace panels">Smaller text</button>
@@ -517,6 +517,11 @@
               <code id="cmdServeText">python scripts/serve_companion.py</code>
               <button type="button" class="copy-btn" id="btnCopyCmd">Copy command</button>
             </div>
+            <span class="howto-hint">
+              Optional classifier wiring for live HUD threat: run
+              <code>python scripts/serve_companion.py --classifier-checkpoint results/experiments/serengeti_disk_resnet18/resnet18_serengeti_disk.pt</code>
+              (path should point to your trained checkpoint).
+            </span>
             <span class="howto-hint">
               Port already in use? Use
               <code>python scripts/serve_companion.py --port 8766</code>
