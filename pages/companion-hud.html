@@ -508,6 +508,26 @@
           For outputs that match <code>simulate_instinct_decision</code> in the repo, run the small local server below once per session.
         </p>
         <ol class="howto-steps">
+          <li>
+            <strong>Recommended in-game runtime (overlay):</strong>
+            <div class="copy-row">
+              <code>py -3 scripts/run_paleo_overlay.py --mode advice --classifier-checkpoint results/experiments/serengeti_disk_resnet18/resnet18_serengeti_disk.pt</code>
+            </div>
+            <span class="howto-hint">
+              For guarded keyboard control tests, use
+              <code>py -3 scripts/run_paleo_overlay.py --mode control --enable-control --classifier-checkpoint results/experiments/serengeti_disk_resnet18/resnet18_serengeti_disk.pt</code>
+              (keep F12 emergency stop ready).
+            </span>
+          </li>
+          <li>
+            <strong>PALEO.exe-style HUD runtime (browser companion):</strong>
+            <div class="copy-row">
+              <code>py -3 scripts/run_paleo_live.py --classifier-checkpoint results/experiments/serengeti_disk_resnet18/resnet18_serengeti_disk.pt</code>
+            </div>
+            <span class="howto-hint">
+              This starts the local Companion HUD server and opens this page with live capture + classifier path.
+            </span>
+          </li>
           <li>Open a terminal (PowerShell, Command Prompt, Terminal, etc.) and <code>cd</code> to your PALEO repository root — the folder that contains <code>scripts/</code> next to <code>src/</code> and <code>pages/</code>.</li>
           <li>
             Start the companion server. In that same terminal, run exactly:

@@ -541,6 +541,17 @@
       </article>
     </section>
 
+    <section class="card reveal">
+      <div class="icon-line"><i class="fa-solid fa-play" aria-hidden="true"></i> Run Now</div>
+      <h2>In-Game and HUD Commands</h2>
+      <ul>
+        <li><strong>Recommended in-game overlay (advice mode):</strong><br /><code>py -3 scripts/run_paleo_overlay.py --mode advice --classifier-checkpoint results/experiments/serengeti_disk_resnet18/resnet18_serengeti_disk.pt</code></li>
+        <li><strong>Guarded control smoke test (overlay):</strong><br /><code>py -3 scripts/run_paleo_overlay.py --mode control --enable-control --classifier-checkpoint results/experiments/serengeti_disk_resnet18/resnet18_serengeti_disk.pt</code></li>
+        <li><strong>PALEO.exe-style browser HUD runtime:</strong><br /><code>py -3 scripts/run_paleo_live.py --classifier-checkpoint results/experiments/serengeti_disk_resnet18/resnet18_serengeti_disk.pt</code></li>
+      </ul>
+      <p class="muted">Use overlay for active in-game runtime; keep F12 emergency stop ready during control tests.</p>
+    </section>
+
     <div class="section-divider tracks reveal" aria-hidden="true">
       <svg viewBox="0 0 1200 30" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <g class="divider-move">

@@ -135,6 +135,8 @@
 - Added `pages/project-checkin-2.html` in the same visual style as `pages/project-checkin-1.html`, populated with Check-in 2 sections/content; intentionally not wired into site nav/index yet.
 - Wired `project-checkin-2.html` into site nav/cards (`pages/index.html`, `pages/technical.html`, `pages/project-checkin-1.html`).
 - Companion HUD classifier wiring: `scripts/serve_companion.py` now accepts `--classifier-checkpoint`, loads model for live capture path, passes model/device into `frame_to_observation()`, and reports classifier status in `/api/hud`; `scripts/run_paleo_live.py` forwards `--classifier-checkpoint` to the server command (so `PALEO.exe` flow can use it when provided).
+- `pages/companion-hud.html`: added explicit one-line run commands for (1) recommended in-game `run_paleo_overlay.py` advice/control + classifier checkpoint and (2) `run_paleo_live.py` (PALEO.exe-style browser HUD) with classifier checkpoint.
+- `pages/technical.html`: added a **Run Now** block with overlay advice/control commands and PALEO.exe-style HUD command (all include classifier checkpoint example path).
 
 ## 2026-04-21
 - Added standalone `pages/chroma-strata.html` (**Chroma Strata**): separate editorial visual system from PALEO home / Profiles / Companion HUD; layered base color + optional base image bank + overlay regions with per-region image banks, thumbnail pickers, **Randomize stack** and **R** shortcut, reorder/remove regions, **Download PNG** (canvas composite), **Clear all images**; uploads append per layer until cleared. Linked from `pages/index.html` and `pages/technical.html`; documented in `README.md`.
