@@ -31,6 +31,11 @@ def main() -> None:
         action="store_true",
         help="Do not auto-open the HUD URL.",
     )
+    p.add_argument(
+        "--classifier-checkpoint",
+        default="",
+        help="Optional path to classifier checkpoint passed to serve_companion.py.",
+    )
     args = p.parse_args()
 
     cmd = [
@@ -45,6 +50,8 @@ def main() -> None:
         cmd.append("--live-capture")
         if not args.window_capture:
             cmd.append("--full-screen")
+    if args.classifier_checkpoint:
+        cmd.extend(["--classifier-checkpoint", args.classifier_checkpoint])
 
     url = f"http://{args.host}:{args.port}/companion-hud.html"
     print(f"Starting PALEO HUD server: {' '.join(cmd)}")

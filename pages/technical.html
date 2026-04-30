@@ -416,6 +416,7 @@
         <a class="btn" href="companion-hud.html" title="Requires python scripts/serve_companion.py for live API">Companion HUD</a>
         <a class="btn" href="chroma-strata.html" title="Browser-only 2D skin layer stack + randomize">Chroma Strata</a>
         <a class="btn" href="project-checkin-1.html">Check-in 1</a>
+        <a class="btn" href="project-checkin-2.html">Check-in 2</a>
         <a class="btn repo-btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
         <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode" aria-pressed="false">Dark Mode</button>
       </div>
@@ -443,8 +444,8 @@
     <section class="grid reveal" aria-label="Project metrics">
       <article class="card">
         <h3>Current Milestone</h3>
-        <p class="metric">Check-in 1</p>
-        <p class="muted">Prompt response drafted and published to project pages.</p>
+        <p class="metric">Check-in 2</p>
+        <p class="muted">Progress update published with live runtime and command guidance.</p>
       </article>
       <article class="card">
         <h3>Primary Approach</h3>
@@ -490,6 +491,10 @@
           <div class="link-title">Project Check-in 1</div>
           <div>Current write-up and placeholders for experiment outputs.</div>
         </a>
+        <a class="dash-link" href="project-checkin-2.html">
+          <div class="link-title">Project Check-in 2</div>
+          <div>Current progress update with live pipeline status and next steps.</div>
+        </a>
         <div class="dash-link dash-link-disabled" aria-disabled="true">
           <div class="link-title">Model Results Dashboard (Placeholder)</div>
           <div>Planned: loss/accuracy curves, confusion matrix, and baseline table.</div>
@@ -532,8 +537,19 @@
           <li><code>python scripts/run_pipeline.py</code></li>
           <li><code>python -m unittest discover -s tests -p "test_*.py"</code></li>
         </ul>
-        <p class="muted">Training/evaluation commands will be added after the classifier pipeline lands.</p>
+        <p class="muted">Core smoke-test and verification commands are listed here; full experiment/report commands remain in README.</p>
       </article>
+    </section>
+
+    <section class="card reveal">
+      <div class="icon-line"><i class="fa-solid fa-play" aria-hidden="true"></i> Run Now</div>
+      <h2>In-Game and HUD Commands</h2>
+      <ul>
+        <li><strong>Recommended in-game overlay (advice mode):</strong><br /><code>py -3 scripts/run_paleo_overlay.py --mode advice --classifier-checkpoint results/experiments/serengeti_disk_resnet18/resnet18_serengeti_disk.pt</code></li>
+        <li><strong>Guarded control smoke test (overlay):</strong><br /><code>py -3 scripts/run_paleo_overlay.py --mode control --enable-control --classifier-checkpoint results/experiments/serengeti_disk_resnet18/resnet18_serengeti_disk.pt</code></li>
+        <li><strong>PALEO.exe-style browser HUD runtime:</strong><br /><code>py -3 scripts/run_paleo_live.py --classifier-checkpoint results/experiments/serengeti_disk_resnet18/resnet18_serengeti_disk.pt</code></li>
+      </ul>
+      <p class="muted">Use overlay for active in-game runtime; keep F12 emergency stop ready during control tests.</p>
     </section>
 
     <div class="section-divider tracks reveal" aria-hidden="true">

@@ -56,7 +56,7 @@ Examples may include accuracy, F1 score, mAP,  success rate, latency, user satis
 
 ## 8. Current Progress
 
-- **Live screen feed:** **Working**—`run_paleo_live.py`, `serve_companion.py` + `companion-hud.html`, and `run_paleo_overlay.py` use **live screen capture** (`README.md`).
+- **Live game feed:** **Working**—`run_paleo_live.py`, `serve_companion.py` + `companion-hud.html`, and `run_paleo_overlay.py` use **live screen capture** (`README.md`).
 - **Keyboard output:** **Working in prototype**—`run_paleo_control_loop.py` can run **advice-only** or **control** with **`--enable-control`** and an **F12** emergency stop (`README.md`). This is the path for “hold W to walk” style tests once the game window is focused.
 - **Agent loop in code:** **Instinct Agent** decisions, **Primal Mind** state, thought formatting, and PoT-style key mapping exist in `src/agent.py`, `src/pot.py`, with **`simulate_dino.py`** to sample scenarios and **`run_pipeline.py`** for a one-shot integrated demo.
 - **Training / data path (wildlife):** Manifest pipeline (`prepare_data`), image download, **ResNet fine-tune** (`train_serengeti_images`), **eval** (`evaluate_serengeti_images`), and **experiment sweep + JSON outputs** (`run_experiments.py`) are in the repo; results appear under `results/experiments/` **after you run them locally** (not committed).
@@ -72,4 +72,3 @@ HUD/overlay screenshots optional; metrics JSON under `results/experiments/` when
 - What experiments will be run? **Play Path of Titans with PALEO running**: confirm **live capture sees the game**, **advice mode** looks sane, then **control mode** smoke tests (e.g. **walk forward**) with **low FPS** and **kill switch** ready.
 - What improvements will be made? More **in-game** hours, tighter **metrics** for class work, and clearer **report figures** from saved runs.
 - What timeline do you expect for the next milestones? **Soon:** Letta hookup + first successful **in-PoT** capture/control trial; **after that:** richer behavior and report polish.
-

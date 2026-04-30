@@ -133,6 +133,11 @@
 - Rewrote `docs/project_checkin2/response2.md` and `response2.txt` to a cleaner PALEO-only Check-in 2 narrative (removed teammate-specific references, simplified wording, and aligned claims to implemented repo components/scripts).
 - Second pass on `response2.md` / `response2.txt`: shorter plain-language Check-in 2 aligned to repo (`serve_companion`, live capture, control loop, image train/eval/pipeline scripts, Letta stubs); expanded problem motivation (immersive NPCs, combat practice); ML+CV+RAG + Letta as main agent layer; current progress + PoT in-game testing called out as not yet done.
 - Added `pages/project-checkin-2.html` in the same visual style as `pages/project-checkin-1.html`, populated with Check-in 2 sections/content; intentionally not wired into site nav/index yet.
+- Wired `project-checkin-2.html` into site nav/cards (`pages/index.html`, `pages/technical.html`, `pages/project-checkin-1.html`).
+- Companion HUD classifier wiring: `scripts/serve_companion.py` now accepts `--classifier-checkpoint`, loads model for live capture path, passes model/device into `frame_to_observation()`, and reports classifier status in `/api/hud`; `scripts/run_paleo_live.py` forwards `--classifier-checkpoint` to the server command (so `PALEO.exe` flow can use it when provided).
+- `pages/companion-hud.html`: added explicit one-line run commands for (1) recommended in-game `run_paleo_overlay.py` advice/control + classifier checkpoint and (2) `run_paleo_live.py` (PALEO.exe-style browser HUD) with classifier checkpoint.
+- `pages/technical.html`: added a **Run Now** block with overlay advice/control commands and PALEO.exe-style HUD command (all include classifier checkpoint example path).
+- `pages/technical.html`: small copy cleanup (milestone now **Check-in 2**; reproducibility note updated to reflect current command coverage).
 
 ## 2026-04-21
 - Added standalone `pages/chroma-strata.html` (**Chroma Strata**): separate editorial visual system from PALEO home / Profiles / Companion HUD; layered base color + optional base image bank + overlay regions with per-region image banks, thumbnail pickers, **Randomize stack** and **R** shortcut, reorder/remove regions, **Download PNG** (canvas composite), **Clear all images**; uploads append per layer until cleared. Linked from `pages/index.html` and `pages/technical.html`; documented in `README.md`.
@@ -152,6 +157,14 @@
 - Chroma Strata: set `AsagiYang` `defaults.male["2"]` to index `2` (third option, browner swatch) and increased mobile-only icon lift for gender symbols (`mini-gender` `-6px`, large-panel `gender-choice` `-5px`) while leaving text baseline unchanged.
 - Chroma Strata: increased mobile-only gender icon lift again (`mini-gender` icon `-7px`, large-panel `gender-choice` icon `-6px`) while keeping label text baseline unchanged.
 - Chroma Strata: switched mini-panel gender button back to a softer pastel-only scheme (male `#dbe6f3`/`#5a7290`, female `#f0deea`/`#8f5f78`) while leaving large-panel gender buttons unchanged.
+
+## 2026-04-30
+- Replaced basic keyword wiki lookup with richer local RAG in `src/wiki_rag.py`: markdown chunking, TF-IDF vectorization (1-2 grams), cosine similarity ranking, cached index loading, and persisted index file at `data/processed/wiki_rag_index.pkl`.
+- Added `scripts/build_wiki_rag_index.py` for explicit index build/rebuild.
+- Added `tests/test_wiki_rag.py` to validate chunk generation and retrieval behavior.
+- Updated `README.md` project layout + run commands with wiki RAG components.
+- Added `scripts/ingest_pot_wiki.py`: discovers PoT-related URLs from docs, fetches and cleans page text into `data/processed/wiki_pages.jsonl`, with optional `--rebuild-index` handoff.
+- Updated `src/wiki_rag.py` to ingest both curated snippets and fetched JSONL corpus when building/querying the local index.
 - Chroma Strata: increased mobile-only gender icon lift again (`mini-gender` `-7px`, large-panel `gender-choice` `-6px`) and explicitly pinned desktop icon lift to `0` so split-screen desktop keeps baseline alignment.
 - Chroma Strata: updated `SeismicWiehen` female palettes for Color 1-5 (removed leading gray and added provided female-only options), made custom hex storage gender-scoped (`skinPath -> gender -> slot`) so male/female custom colors stay separate, added desktop-only icon bolding for gender symbols, and increased mobile-only icon lift (`mini -8px`, large-button icon -7px).
 - Chroma Strata: reordered `SeismicWiehen` female palettes (ROYGBIV-style with dark/light and saturation grouping), set female defaults to `#251d18/#61271a/#e49847/#e13d14/#110b04`, added Seismic Color 6 using `../Wiehen_Color6.png` with neutral gray for both genders, switched hex detail rows to reflect currently selected slot hex values, bumped desktop-only gender icon weight to `900`, and gated mobile icon lift behind a true-mobile device class so split-screen Windows laptops do not get mobile lift.
@@ -162,3 +175,6 @@
 - `pages/skin-db/README.md`: added a pre-push palette validation checklist covering applied-color verification, ordering convention checks, default-index remapping, uppercase hex normalization, and DevKit alignment checks.
 - Chroma Strata UI update: fixed live-update paths so mini-panel color/pattern interactions also refresh hex gender/current chips, Color 1-6 hex lists, export selector, and DevKit block even when hex panel is out of view; added Export Selection UI (max 5 colors per slot per gender, including gender-scoped custom colors) that drives DevKit output; and added large-panel layer visibility toggles for Color 2-5 applied to preview/export composition.
 - Chroma Strata polish: changed large-panel Color 2-5 layer toggles to inline `+`/`-` controls next to each Color header; updated Export Selection so one remaining selected color cannot be unselected (toast shown), and improved selected-state readability by dimming unselected swatches while keeping selected swatches full-opacity with outline.
+
+## 2026-04-29
+- `SunsetTuojian` manifest: added male Color 5 swatch `#23190B`, reordered `colorSlots["5"].palette` (ROYGBIV hue buckets, then darkness then saturation), and remapped `defaults.male["5"]` so the default tint remains `#434B82`.

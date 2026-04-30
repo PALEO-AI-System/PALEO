@@ -25,6 +25,7 @@ if str(_ROOT) not in sys.path:
 
 from src.letta_tools import get_species_fast_facts, simulate_instinct_decision  # noqa: E402
 from src.config import default_pot_config  # noqa: E402
+from src.image_training import load_classifier, torch  # noqa: E402
 from src.pot import ActionMapper  # noqa: E402
 from src.pot import ScreenCaptureWorker, frame_to_observation, primary_monitor_region  # noqa: E402
 
@@ -60,10 +61,14 @@ def make_handler(
     pages_dir: Path,
     live_capture: bool = False,
     full_screen: bool = False,
+    classifier_checkpoint: str = "",
 ):
     capture_worker = None
     mapper = ActionMapper()
     live_frame_file = project_root / "results" / "live_hud" / "latest.png"
+    classifier_model = None
+    classifier_device = None
+    classifier_error = ""
     if live_capture:
         cfg = default_pot_config()
         if full_screen:
@@ -71,6 +76,18 @@ def make_handler(
             if region is not None:
                 cfg.capture_region = region
         capture_worker = ScreenCaptureWorker(cfg)
+        if classifier_checkpoint:
+            try:
+                classifier_model = load_classifier(classifier_checkpoint)
+                if torch is None:
+                    raise RuntimeError("torch is unavailable.")
+                classifier_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+                classifier_model = classifier_model.to(classifier_device)
+                classifier_model.eval()
+            except Exception as exc:
+                classifier_model = None
+                classifier_device = None
+                classifier_error = str(exc)
 
     class CompanionRequestHandler(SimpleHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
@@ -122,7 +139,11 @@ def make_handler(
                     timestamp_ms=int(time.time() * 1000),
                     snapshot_path=live_frame_file,
                 )
-                obs = frame_to_observation(live_frame)
+                obs = frame_to_observation(
+                    live_frame,
+                    classifier_model=classifier_model,
+                    classifier_device=classifier_device,
+                )
                 predator_probability = obs["predator_probability"]
                 prey_density = obs["prey_density"]
                 health = obs["health"]
@@ -178,6 +199,12 @@ def make_handler(
                     "ts_ms": int(time.time() * 1000),
                 },
             }
+            if classifier_checkpoint:
+                payload["classifier"] = {
+                    "enabled": classifier_model is not None,
+                    "checkpoint": classifier_checkpoint,
+                    "error": classifier_error,
+                }
             if live_frame is not None:
                 payload["capture"] = {
                     "frame_id": live_frame.frame_id,
@@ -225,6 +252,11 @@ def main() -> None:
         action="store_true",
         help="Capture the full primary monitor instead of fixed config region.",
     )
+    parser.add_argument(
+        "--classifier-checkpoint",
+        default="",
+        help="Optional path to a trained classifier checkpoint (.pt) for live threat estimation.",
+    )
     args = parser.parse_args()
 
     pages_dir = _ROOT / "pages"
@@ -236,6 +268,7 @@ def main() -> None:
         pages_dir,
         live_capture=args.live_capture,
         full_screen=args.full_screen,
+        classifier_checkpoint=args.classifier_checkpoint,
     )
     httpd = HTTPServer((args.host, args.port), handler)
     print(f"Serving {pages_dir} at http://{args.host}:{args.port}/")
@@ -244,6 +277,8 @@ def main() -> None:
         print("Live capture mode enabled: /api/hud uses real screen region metrics.")
     if args.full_screen:
         print("Capture region set to primary monitor bounds.")
+    if args.classifier_checkpoint:
+        print(f"Classifier checkpoint requested: {args.classifier_checkpoint}")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

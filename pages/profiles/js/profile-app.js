@@ -107,6 +107,246 @@
     host.appendChild(inner);
   }
 
+  function clamp01(v) {
+    return Math.max(0, Math.min(1, v));
+  }
+
+  function renderPips(value, label) {
+    const wrap = el("div", "agent-pips");
+    const fill = Math.round(clamp01(value) * 10);
+    const row = el("div", "agent-pip-row");
+    for (let i = 0; i < 10; i++) {
+      const pip = el("span", `agent-pip ${i < fill ? "on" : "off"}`);
+      row.appendChild(pip);
+    }
+    wrap.appendChild(el("span", "agent-pip-label", label));
+    wrap.appendChild(row);
+    return wrap;
+  }
+
+  function renderTraitBar(value, label) {
+    const item = el("div", "agent-trait-item");
+    item.appendChild(el("div", "agent-trait-head", `<span>${label}</span><strong>${Math.round(clamp01(value) * 100)}%</strong>`));
+    const track = el("div", "agent-trait-track");
+    const fill = el("div", "agent-trait-fill");
+    fill.style.width = `${Math.round(clamp01(value) * 100)}%`;
+    track.appendChild(fill);
+    item.appendChild(track);
+    return item;
+  }
+
+  const AGENT_SPECIES_OPTIONS = [
+    { id: "allosaurus", label: "Allosaurus", role: "generalist carnivore", note: "Balanced land hunter; flanks and repositions." },
+    { id: "styracosaurus", label: "Styracosaurus", role: "aggressive frontliner", note: "Horned herbivore; thrives in direct pressure." },
+    { id: "achillobator", label: "Achillobator", role: "pack raptor", note: "Fast medium carnivore; pack or lone-hunter style." },
+    { id: "tylosaurus", label: "Tylosaurus", role: "apex aquatic", note: "Water apex; strong ambush and drag control." },
+    { id: "kto_pachyrhinosaurus", label: "KTO Pachyrhino", role: "tank support", note: "Defensive ceratopsian with strong group value." },
+    { id: "kto_yangchuanosaurus", label: "KTO Yangchuanosaurus", role: "bruiser carnivore", note: "Sustained pressure and positioning focus." },
+  ];
+
+  const AGENT_ARCHITECTURE = {
+    agent_name: "PALEO Instinct Agent",
+    agent_id: "agent-4c9b0339-20de-4f22-8897-7eb4ba8f8258",
+    conversation_id: "conv-82a63dd9-55fe-43be-b564-4723125db844",
+    description: "Instinct-driven dinosaur AI for Path of Titans.",
+    tools: [
+      "query_pot_wiki",
+      "simulate_instinct_decision",
+      "set_personality_traits",
+      "get_species_fast_facts",
+      "get_dataset_stats",
+      "run_pot_agent",
+      "get_kaggle_local_inventory",
+    ],
+    system_prompt: [
+      "You are the PALEO Instinct Agent.",
+      "Perceive -> think -> remember -> decide -> act.",
+      "Use calls, body language, and structured decisions.",
+      "Never speak normally.",
+    ],
+    memory_blocks: [
+      { name: "dinosaur", chars: 1847, limit: 5000, summary: "Species identity, traits, survival priorities, and class context." },
+      { name: "persona", chars: 862, limit: 5000, summary: "Behavioral instructions and survival style." },
+      { name: "primal_mind", chars: 1940, limit: 10000, summary: "Recent experiences, decisions, allies, rivals, and territory memory." },
+      { name: "species_knowledge", chars: 3314, limit: 10000, summary: "Species roles, mechanics, calls, and survival heuristics." },
+      { name: "paleo_behavior_spec_merged", chars: 5139, limit: 100000, summary: "Merged exhaustive behavior reference." },
+      { name: "paleo_context_strategy", chars: 572, limit: 100000, summary: "Hybrid memory + retrieval guidance." },
+    ],
+    archival_memory: [
+      "No dedicated archival block is currently engaged.",
+      "Older conversation history remains retrievable through conversation search.",
+    ],
+    live_state: {
+      species: "allosaurus",
+      lifeStage: "adult",
+      goal: "survive_and_explore",
+      traits: {
+        aggressiveness: 0.5,
+        friendliness: 0.5,
+        curiosity: 0.6,
+        bravery: 0.5,
+        morality: 0.5,
+      },
+      loop: ["Perceive", "Think", "Remember", "Decide", "Act"],
+      state: {
+        predator_probability: 0.3,
+        prey_density: 0.5,
+        health: 0.8,
+        stamina: 0.7,
+        hunger: 0.4,
+        thirst: 0.3,
+      },
+    },
+  };
+
+  function renderAgentVisualTab(root) {
+    const agent = AGENT_ARCHITECTURE.live_state;
+    const sections = [
+      { id: "agent-avatar", label: "Avatar card" },
+      { id: "agent-hud", label: "Live HUD" },
+      { id: "agent-scene", label: "Animated scene" },
+      { id: "agent-arch", label: "Architecture" },
+    ];
+    buildSubnav(sections);
+
+    const hero = el("section", "profile-section agent-visual-hero");
+    hero.appendChild(el("h1", "profile-title", "PALEO Agent"));
+    hero.appendChild(el("p", "profile-intro", "A presentation view of the instinct agent: three ways to show identity, survival state, and the perceive → think → remember → decide → act loop."));
+
+    const speciesSwitcher = el("div", "agent-species-switcher");
+    AGENT_SPECIES_OPTIONS.forEach((sp, i) => {
+      const btn = el("button", `agent-species-chip ${i === 0 ? "active" : ""}`);
+      btn.type = "button";
+      btn.dataset.species = sp.id;
+      btn.innerHTML = `<strong>${sp.label}</strong><span>${sp.role}</span>`;
+      speciesSwitcher.appendChild(btn);
+    });
+    hero.appendChild(speciesSwitcher);
+
+    const loop = el("div", "agent-loop-rail");
+    agent.loop.forEach((step, i) => {
+      const chip = el("span", `agent-loop-chip ${i === 0 ? "active" : ""}`, step);
+      loop.appendChild(chip);
+    });
+    hero.appendChild(loop);
+    root.appendChild(hero);
+
+    const avatar = el("section", "profile-section agent-tab-panel");
+    avatar.id = "agent-avatar";
+    avatar.appendChild(el("h2", null, "Avatar card"));
+    const card = el("div", "agent-avatar-card");
+    const vis = el("div", "agent-avatar-visual");
+    vis.innerHTML = `<div class="agent-shadow"></div><div class="agent-body"></div><div class="agent-head"></div><div class="agent-tail"></div>`;
+    card.appendChild(vis);
+    const cardBody = el("div", "agent-avatar-body");
+    cardBody.appendChild(el("div", "eyebrow", "Instinct agent"));
+    cardBody.appendChild(el("h3", null, `${agent.species.toUpperCase()} · ${agent.lifeStage}`));
+    cardBody.appendChild(el("p", null, `Goal: ${agent.goal}`));
+    cardBody.appendChild(renderTraitBar(agent.traits.aggressiveness, "Aggressiveness"));
+    cardBody.appendChild(renderTraitBar(agent.traits.friendliness, "Friendliness"));
+    cardBody.appendChild(renderTraitBar(agent.traits.curiosity, "Curiosity"));
+    cardBody.appendChild(renderTraitBar(agent.traits.bravery, "Bravery"));
+    cardBody.appendChild(renderTraitBar(agent.traits.morality, "Morality"));
+    card.appendChild(cardBody);
+    avatar.appendChild(card);
+    root.appendChild(avatar);
+
+    const hud = el("section", "profile-section agent-tab-panel");
+    hud.id = "agent-hud";
+    hud.appendChild(el("h2", null, "Live HUD"));
+    const hudGrid = el("div", "agent-hud-grid");
+    Object.entries(agent.state).forEach(([key, value]) => {
+      const box = el("div", "agent-hud-box");
+      box.appendChild(el("span", "qf-label", key.replace(/_/g, " ")));
+      box.appendChild(el("strong", "agent-hud-value", `${Math.round(value * 100)}%`));
+      box.appendChild(renderPips(value, ""));
+      hudGrid.appendChild(box);
+    });
+    hud.appendChild(hudGrid);
+    const decision = el("div", "agent-decision-card");
+    decision.innerHTML = `<h3>Decision bias</h3><p>Low threat, moderate hunger, good stamina: hold position or explore before committing to forage or hunt.</p>`;
+    hud.appendChild(decision);
+    root.appendChild(hud);
+
+    const scene = el("section", "profile-section agent-tab-panel");
+    scene.id = "agent-scene";
+    scene.appendChild(el("h2", null, "Animated scene"));
+    const stage = el("div", "agent-scene-stage");
+    const sky = el("div", "agent-scene-sky");
+    const ground = el("div", "agent-scene-ground");
+    const dino = el("div", "agent-scene-dino");
+    dino.innerHTML = `<div class="agent-scene-aurora"></div><div class="agent-scene-head"></div><div class="agent-scene-body"></div><div class="agent-scene-tail"></div>`;
+    stage.appendChild(sky);
+    stage.appendChild(ground);
+    stage.appendChild(dino);
+    scene.appendChild(stage);
+    scene.appendChild(el("p", "muted", "A stylized motion scene for presentation slides — calm stance, alert head, subtle tail sway, and a clear silhouette."));
+    root.appendChild(scene);
+
+    const arch = el("section", "profile-section agent-tab-panel");
+    arch.id = "agent-arch";
+    arch.appendChild(el("h2", null, "Architecture"));
+    const archGrid = el("div", "agent-arch-grid");
+    const identityCard = el("div", "agent-arch-card");
+    identityCard.appendChild(el("h3", null, AGENT_ARCHITECTURE.agent_name));
+    identityCard.appendChild(el("p", null, AGENT_ARCHITECTURE.description));
+    identityCard.appendChild(el("p", "muted", `Agent ID: ${AGENT_ARCHITECTURE.agent_id}`));
+    identityCard.appendChild(el("p", "muted", `Conversation: ${AGENT_ARCHITECTURE.conversation_id}`));
+    archGrid.appendChild(identityCard);
+
+    const promptCard = el("div", "agent-arch-card");
+    promptCard.appendChild(el("h3", null, "System prompt"));
+    const promptList = el("ul", "agent-arch-list");
+    AGENT_ARCHITECTURE.system_prompt.forEach((line) => promptList.appendChild(el("li", null, line)));
+    promptCard.appendChild(promptList);
+    archGrid.appendChild(promptCard);
+
+    const toolsCard = el("div", "agent-arch-card");
+    toolsCard.appendChild(el("h3", null, "Tools"));
+    const toolsList = el("div", "agent-tool-cloud");
+    AGENT_ARCHITECTURE.tools.forEach((tool) => toolsList.appendChild(el("span", "agent-tool-chip", tool)));
+    toolsCard.appendChild(toolsList);
+    archGrid.appendChild(toolsCard);
+
+    const memoryCard = el("div", "agent-arch-card");
+    memoryCard.appendChild(el("h3", null, "Memory blocks"));
+    const memoryList = el("div", "agent-memory-list");
+    AGENT_ARCHITECTURE.memory_blocks.forEach((m) => {
+      const row = el("div", "agent-memory-row");
+      row.appendChild(el("strong", null, `${m.name} · ${m.chars}/${m.limit}`));
+      row.appendChild(el("p", null, m.summary));
+      memoryList.appendChild(row);
+    });
+    memoryCard.appendChild(memoryList);
+    archGrid.appendChild(memoryCard);
+
+    const archiveCard = el("div", "agent-arch-card");
+    archiveCard.appendChild(el("h3", null, "Archival memory"));
+    const archiveList = el("ul", "agent-arch-list");
+    AGENT_ARCHITECTURE.archival_memory.forEach((line) => archiveList.appendChild(el("li", null, line)));
+    archiveCard.appendChild(archiveList);
+    archGrid.appendChild(archiveCard);
+
+    arch.appendChild(archGrid);
+    root.appendChild(arch);
+
+    const switcher = hero.querySelector(".agent-species-switcher");
+    if (switcher) {
+      switcher.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-species]");
+        if (!btn) return;
+        switcher.querySelectorAll("button").forEach((b) => b.classList.toggle("active", b === btn));
+        const picked = AGENT_SPECIES_OPTIONS.find((x) => x.id === btn.dataset.species);
+        if (!picked) return;
+        cardBody.querySelector("h3").textContent = `${picked.label.toUpperCase()} · ${agent.lifeStage}`;
+        cardBody.querySelectorAll("p")[0].textContent = `Goal: ${picked.role}`;
+        decision.querySelector("p").textContent = `${picked.label} perspective: ${picked.note}`;
+      });
+    }
+
+    return true;
+  }
+
   function thIcon(label, iconClass) {
     const th = document.createElement("th");
     th.className = "th-stat-icon";
@@ -204,6 +444,12 @@
 
   async function init() {
     root.classList.add("loading");
+    if (slug === "agent-visual") {
+      renderAgentVisualTab(root);
+      root.classList.remove("loading");
+      return;
+    }
+
     let data;
     try {
       const res = await fetch(`data/${slug}.json`, { cache: "no-cache" });
