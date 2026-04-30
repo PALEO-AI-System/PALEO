@@ -75,6 +75,20 @@
     .muted { color: var(--ink-soft); }
     p { margin: 0 0 10px; max-width: 70ch; line-height: 1.6; }
 
+    /* View selector mini-cards */
+    .view-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+    @media (max-width: 640px) { .view-cards { grid-template-columns: 1fr; } }
+    .view-card {
+      display: grid; gap: 6px; padding: 14px 16px; border-radius: 14px;
+      border: 2px solid var(--line); background: var(--panel); cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+    }
+    .view-card:hover { transform: translateY(-2px); border-color: var(--accent-2); }
+    .view-card.active { border-color: var(--accent); background: rgba(86,169,132,0.12); }
+    .view-card .vc-icon { font-size: 1.4rem; color: var(--accent); }
+    .view-card strong { font-size: 0.92rem; }
+    .view-card span { font-size: 0.76rem; color: var(--ink-soft); }
+
     /* Species switcher */
     .species-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 18px; }
     .species-chip { display: grid; gap: 4px; text-align: left; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; font-family: inherit; font-size: inherit; }
@@ -132,6 +146,10 @@
     .s-head { width: 18%; height: 14%; left: 54%; bottom: 38%; border-radius: 58% 48% 44% 54% / 50% 48% 52% 50%; transform: rotate(-10deg); }
     .s-tail { width: 30%; height: 7%; left: 14%; bottom: 28%; border-radius: 999px; animation: tailScene 3.6s ease-in-out infinite; }
     @keyframes tailScene { 0%,100%{transform:rotate(-18deg)} 50%{transform:rotate(-7deg)} }
+
+    /* View panels */
+    .view-panel { display: none; }
+    .view-panel.visible { display: block; }
   </style>
 </head>
 <body>
@@ -158,23 +176,45 @@
   <main class="wrap" id="mainContent" aria-label="PALEO Agent Visual content">
     <section class="card">
       <h1><i class="fa-solid fa-eye" aria-hidden="true"></i> PALEO Agent Visual</h1>
-      <p class="muted">Three ways to show the instinct agent's identity, survival state, and the perceive → think → remember → decide → act loop.</p>
+      <p class="muted">Three ways to show the instinct agent's identity, survival state, and the perceive &rarr; think &rarr; remember &rarr; decide &rarr; act loop.</p>
       <div class="loop-rail" id="loopRail"></div>
       <div class="species-grid" id="speciesGrid"></div>
     </section>
 
-    <section class="card" id="avatarSection">
+    <!-- View selector mini-cards -->
+    <div class="view-cards" id="viewCards">
+      <button class="view-card active" data-view="avatar" type="button">
+        <span class="vc-icon"><i class="fa-solid fa-id-card" aria-hidden="true"></i></span>
+        <strong>Avatar card</strong>
+        <span>Species identity, traits, goal</span>
+      </button>
+      <button class="view-card" data-view="hud" type="button">
+        <span class="vc-icon"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i></span>
+        <strong>Live HUD</strong>
+        <span>Survival state, pips, decision</span>
+      </button>
+      <button class="view-card" data-view="scene" type="button">
+        <span class="vc-icon"><i class="fa-solid fa-film" aria-hidden="true"></i></span>
+        <strong>Animated scene</strong>
+        <span>Stylized motion for presentations</span>
+      </button>
+    </div>
+
+    <!-- Avatar card view -->
+    <section class="card view-panel visible" id="avatarPanel">
       <h2><i class="fa-solid fa-id-card" aria-hidden="true"></i> Avatar card</h2>
       <div class="avatar-card" id="avatarCard"></div>
     </section>
 
-    <section class="card" id="hudSection">
+    <!-- Live HUD view -->
+    <section class="card view-panel" id="hudPanel">
       <h2><i class="fa-solid fa-gauge-high" aria-hidden="true"></i> Live HUD</h2>
       <div class="hud-grid" id="hudGrid"></div>
       <div class="decision-card" id="decisionCard"></div>
     </section>
 
-    <section class="card" id="sceneSection">
+    <!-- Animated scene view -->
+    <section class="card view-panel" id="scenePanel">
       <h2><i class="fa-solid fa-film" aria-hidden="true"></i> Animated scene</h2>
       <div class="scene-stage">
         <div class="scene-sky"></div>
@@ -238,6 +278,19 @@
         grid.appendChild(btn);
       });
 
+      /* View selector */
+      var viewCards = document.getElementById("viewCards");
+      var panels = { avatar: document.getElementById("avatarPanel"), hud: document.getElementById("hudPanel"), scene: document.getElementById("scenePanel") };
+      function showView(id) {
+        viewCards.querySelectorAll(".view-card").forEach(function (c) { c.classList.toggle("active", c.dataset.view === id); });
+        Object.keys(panels).forEach(function (k) { panels[k].classList.toggle("visible", k === id); });
+      }
+      viewCards.addEventListener("click", function (e) {
+        var card = e.target.closest(".view-card");
+        if (!card) return;
+        showView(card.dataset.view);
+      });
+
       /* Avatar card */
       var avatarCard = document.getElementById("avatarCard");
       var vis = document.createElement("div");
@@ -248,7 +301,7 @@
       body.className = "avatar-body";
       body.innerHTML = '<div class="eyebrow">Instinct agent</div>';
       var h3 = document.createElement("h3");
-      h3.textContent = "ALLOSAURUS · adult";
+      h3.textContent = "ALLOSAURUS \u00B7 adult";
       body.appendChild(h3);
       var goalP = document.createElement("p");
       goalP.className = "muted";
@@ -298,7 +351,7 @@
         grid.querySelectorAll("button").forEach(function (b) { b.classList.toggle("active", b === btn); });
         var picked = species.find(function (x) { return x.id === btn.dataset.species; });
         if (!picked) return;
-        h3.textContent = picked.label.toUpperCase() + " · adult";
+        h3.textContent = picked.label.toUpperCase() + " \u00B7 adult";
         goalP.textContent = "Goal: " + picked.role;
         decisionCard.querySelector("p").textContent = picked.label + " perspective: " + picked.note;
       });
