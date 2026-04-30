@@ -49,13 +49,6 @@
       a.appendChild(img);
       a.appendChild(body);
 
-      if (c.slug === "agent-visual") {
-        const badge = document.createElement("span");
-        badge.className = "creature-card-badge";
-        badge.textContent = "Presentation tab";
-        a.appendChild(badge);
-      }
-
       grid.appendChild(a);
     });
   }

@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PALEO | Agent Visual</title>
+  <meta name="description" content="Visual representation of the PALEO Instinct Agent: avatar card, live HUD, and animated scene views." />
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    :root {
+      --bg: #f4f9f2;
+      --panel: rgba(255, 255, 255, 0.86);
+      --ink: #1f3b31;
+      --ink-soft: #35584b;
+      --line: #c7decd;
+      --accent: #4e9d92;
+      --accent-2: #56a984;
+      --cream: #f9f2e2;
+      --shadow: rgba(30, 62, 50, 0.16);
+      --focus-ring: #1d7f67;
+    }
+    body.dark {
+      --bg: #0f1e1a;
+      --panel: rgba(23, 38, 32, 0.82);
+      --ink: #e5f5eb;
+      --ink-soft: #c6e2d5;
+      --line: #2b4e43;
+      --accent: #6bb9c3;
+      --accent-2: #75cb9f;
+      --cream: #2f2a21;
+      --shadow: rgba(5, 10, 8, 0.35);
+      --focus-ring: #9eead3;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Urbanist", "Segoe UI", sans-serif;
+      color: var(--ink);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 7% 3%, rgba(86, 169, 132, 0.18), transparent 33%),
+        radial-gradient(circle at 90% 5%, rgba(78, 157, 146, 0.16), transparent 31%),
+        repeating-radial-gradient(circle at 20% 20%, rgba(86, 169, 132, 0.04) 0 6px, transparent 6px 22px),
+        var(--bg);
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+    .skip-link { position: absolute; top: -44px; left: 10px; z-index: 120; padding: 9px 12px; border-radius: 10px; background: #fff; color: #134c3c; border: 2px solid var(--focus-ring); text-decoration: none; font-weight: 700; }
+    .skip-link:focus { top: 8px; }
+    .nav { position: sticky; top: 0; z-index: 90; backdrop-filter: blur(9px); background: rgba(244, 249, 242, 0.75); border-bottom: 1px solid var(--line); }
+    body.dark .nav { background: rgba(15, 30, 26, 0.75); }
+    .nav-inner { max-width: 1120px; margin: 0 auto; padding: 12px 18px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+    .brand { font-family: "Fraunces", serif; font-size: 1.3rem; font-weight: 700; }
+    .nav-links { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .btn { text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; font-weight: 600; background: rgba(255, 255, 255, 0.45); transition: transform 0.15s ease, border-color 0.15s ease; }
+    .btn:hover { transform: translateY(-1px); border-color: var(--accent-2); }
+    .btn.active { background: rgba(86, 169, 132, 0.2); border-color: #86c6a3; }
+    .repo-btn { color: #fff; border: 0; background: linear-gradient(120deg, #63b884, #4e9d92, #8bcf9f, #66b5c4); background-size: 300% 300%; box-shadow: 0 8px 18px rgba(79, 157, 146, 0.42); animation: repoFlow 6s ease infinite; }
+    @keyframes repoFlow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+    .mode-toggle { border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--ink); padding: 8px 12px; font-weight: 700; cursor: pointer; }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 22px 18px 56px; }
+    .card { background: linear-gradient(125deg, var(--panel), rgba(249, 242, 226, 0.72)); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 8px 22px var(--shadow); padding: 18px; margin-bottom: 14px; }
+    body.dark .card { background: linear-gradient(125deg, var(--panel), rgba(47, 42, 33, 0.5)); }
+    h1, h2, h3 { margin: 0 0 11px; letter-spacing: 0.1px; }
+    h1, h2 { font-family: "Fraunces", serif; }
+    h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+    h2 { font-size: 1.35rem; color: var(--accent); }
+    h3 { font-size: 1.03rem; color: var(--accent); }
+    .muted { color: var(--ink-soft); }
+    p { margin: 0 0 10px; max-width: 70ch; line-height: 1.6; }
+
+    /* Species switcher */
+    .species-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 18px; }
+    .species-chip { display: grid; gap: 4px; text-align: left; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; font-family: inherit; font-size: inherit; }
+    .species-chip strong { font-size: 0.92rem; }
+    .species-chip span { font-size: 0.76rem; color: var(--ink-soft); }
+    .species-chip.active { border-color: var(--accent); background: rgba(86, 169, 132, 0.15); }
+
+    /* Loop chips */
+    .loop-rail { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .loop-chip { padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--ink-soft); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+    .loop-chip.active { border-color: var(--accent); background: rgba(86, 169, 132, 0.15); color: var(--accent); }
+
+    /* Avatar card */
+    .avatar-card { display: grid; grid-template-columns: minmax(260px, 0.85fr) minmax(280px, 1.15fr); gap: 18px; align-items: stretch; }
+    @media (max-width: 760px) { .avatar-card { grid-template-columns: 1fr; } }
+    .avatar-visual { position: relative; min-height: 280px; border-radius: 14px; background: radial-gradient(circle at 50% 22%, rgba(255,255,255,0.14), transparent 24%), radial-gradient(circle at 50% 50%, rgba(86,169,132,0.26), transparent 48%), linear-gradient(180deg, #1a2230, #0c1017); overflow: hidden; }
+    body.dark .avatar-visual { background: radial-gradient(circle at 50% 22%, rgba(255,255,255,0.1), transparent 24%), radial-gradient(circle at 50% 50%, rgba(107,196,165,0.2), transparent 48%), linear-gradient(180deg, #152923, #0f1e1a); }
+    .a-shadow { position: absolute; left: 18%; right: 18%; bottom: 14%; height: 14px; border-radius: 999px; background: rgba(0,0,0,0.42); filter: blur(8px); }
+    .a-body, .a-head, .a-tail { position: absolute; background: linear-gradient(180deg, #364052, #202734); border: 1px solid rgba(255,255,255,0.06); }
+    .a-body { width: 44%; height: 20%; left: 28%; bottom: 22%; border-radius: 48% 52% 46% 54% / 62% 56% 44% 38%; transform: skewX(-10deg); }
+    .a-head { width: 22%; height: 16%; left: 53%; bottom: 38%; border-radius: 60% 50% 46% 52% / 50% 48% 52% 50%; transform: rotate(-12deg); }
+    .a-tail { width: 32%; height: 8%; left: 12%; bottom: 28%; border-radius: 999px; transform: rotate(-18deg); transform-origin: right center; animation: tailSway 3.2s ease-in-out infinite; }
+    @keyframes tailSway { 0%,100%{transform:rotate(-20deg)} 50%{transform:rotate(-8deg)} }
+    .avatar-body .eyebrow { margin-bottom: 6px; font-size: 0.78rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+    .trait-item { display: grid; gap: 6px; margin-bottom: 8px; }
+    .trait-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); }
+    .trait-head strong { color: var(--accent); font-size: 0.82rem; }
+    .trait-track { height: 10px; border-radius: 999px; background: var(--cream); border: 1px solid var(--line); overflow: hidden; }
+    body.dark .trait-track { background: rgba(0,0,0,0.25); }
+    .trait-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), rgba(255,255,255,0.55)); transition: width 0.4s ease; }
+
+    /* HUD */
+    .hud-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+    .hud-box { padding: 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); }
+    .hud-label { font-size: 0.78rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
+    .hud-value { display: block; font-size: 1.5rem; color: var(--accent); font-family: "Fraunces", serif; margin: 4px 0 8px; }
+    .pip-row { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+    .pip { height: 8px; border-radius: 999px; background: var(--line); }
+    .pip.on { background: var(--accent); }
+    .decision-card { padding: 16px 18px; border-radius: 14px; border: 1px solid rgba(78,157,146,0.28); background: rgba(17,30,46,0.06); margin-top: 14px; }
+    body.dark .decision-card { background: rgba(107,196,165,0.06); }
+
+    /* Scene */
+    .scene-stage { position: relative; min-height: 320px; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: linear-gradient(180deg, #1d2a42 0%, #0d1118 55%, #10151d 100%); }
+    body.dark .scene-stage { background: linear-gradient(180deg, #152923 0%, #0f1e1a 55%, #10151d 100%); }
+    .scene-sky, .scene-ground, .scene-dino { position: absolute; inset: 0; }
+    .scene-sky { background: radial-gradient(circle at 50% 28%, rgba(86,169,132,0.22), transparent 30%); }
+    .scene-ground { top: 62%; background: linear-gradient(180deg, rgba(34,47,29,0.3), rgba(13,17,24,0.95)); }
+    .scene-dino { width: 58%; left: 20%; top: 18%; animation: sceneBob 4s ease-in-out infinite; }
+    @keyframes sceneBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    .s-aurora, .s-head, .s-body, .s-tail { position: absolute; background: linear-gradient(180deg, #3f4a5f, #242b38); }
+    .s-aurora { inset: 12% 12% auto; height: 10px; border-radius: 999px; background: linear-gradient(90deg, transparent, rgba(86,169,132,0.45), transparent); filter: blur(4px); animation: glow 3.4s ease-in-out infinite; }
+    @keyframes glow { 0%,100%{opacity:0.5} 50%{opacity:1} }
+    .s-body { width: 38%; height: 18%; left: 28%; bottom: 24%; border-radius: 50% 50% 46% 54% / 58% 54% 46% 42%; }
+    .s-head { width: 18%; height: 14%; left: 54%; bottom: 38%; border-radius: 58% 48% 44% 54% / 50% 48% 52% 50%; transform: rotate(-10deg); }
+    .s-tail { width: 30%; height: 7%; left: 14%; bottom: 28%; border-radius: 999px; animation: tailScene 3.6s ease-in-out infinite; }
+    @keyframes tailScene { 0%,100%{transform:rotate(-18deg)} 50%{transform:rotate(-7deg)} }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
+  <nav class="nav" aria-label="Site navigation">
+    <div class="nav-inner">
+      <div class="brand">PALEO</div>
+      <div class="nav-links">
+        <a class="btn" href="index.html">Home</a>
+        <a class="btn" href="profiles/index.html">Profiles</a>
+        <a class="btn" href="technical.html">Technical</a>
+        <a class="btn active" href="agent-visual.html" aria-current="page">Agent Visual</a>
+        <a class="btn" href="agent-architecture.html">Agent Architecture</a>
+        <a class="btn" href="companion-hud.html" title="Requires python scripts/serve_companion.py for live API">Companion HUD</a>
+        <a class="btn" href="chroma-strata.html">Chroma Strata</a>
+        <a class="btn" href="project-checkin-1.html">Check-in 1</a>
+        <a class="btn" href="project-checkin-2.html">Check-in 2</a>
+        <a class="btn repo-btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode" aria-pressed="false">Dark Mode</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="wrap" id="mainContent" aria-label="PALEO Agent Visual content">
+    <section class="card">
+      <h1><i class="fa-solid fa-eye" aria-hidden="true"></i> PALEO Agent Visual</h1>
+      <p class="muted">Three ways to show the instinct agent's identity, survival state, and the perceive → think → remember → decide → act loop.</p>
+      <div class="loop-rail" id="loopRail"></div>
+      <div class="species-grid" id="speciesGrid"></div>
+    </section>
+
+    <section class="card" id="avatarSection">
+      <h2><i class="fa-solid fa-id-card" aria-hidden="true"></i> Avatar card</h2>
+      <div class="avatar-card" id="avatarCard"></div>
+    </section>
+
+    <section class="card" id="hudSection">
+      <h2><i class="fa-solid fa-gauge-high" aria-hidden="true"></i> Live HUD</h2>
+      <div class="hud-grid" id="hudGrid"></div>
+      <div class="decision-card" id="decisionCard"></div>
+    </section>
+
+    <section class="card" id="sceneSection">
+      <h2><i class="fa-solid fa-film" aria-hidden="true"></i> Animated scene</h2>
+      <div class="scene-stage">
+        <div class="scene-sky"></div>
+        <div class="scene-ground"></div>
+        <div class="scene-dino">
+          <div class="s-aurora"></div>
+          <div class="s-head"></div>
+          <div class="s-body"></div>
+          <div class="s-tail"></div>
+        </div>
+      </div>
+      <p class="muted">A stylized motion scene for presentation slides — calm stance, alert head, subtle tail sway, and a clear silhouette.</p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      /* Dark mode */
+      var modeToggle = document.getElementById("modeToggle");
+      var key = "paleo-mode";
+      var saved = localStorage.getItem(key);
+      function setMode(dark) {
+        document.body.classList.toggle("dark", dark);
+        modeToggle.textContent = dark ? "Light Mode" : "Dark Mode";
+        modeToggle.setAttribute("aria-pressed", dark ? "true" : "false");
+        localStorage.setItem(key, dark ? "dark" : "light");
+      }
+      setMode(saved === "dark");
+      modeToggle.addEventListener("click", function () { setMode(!document.body.classList.contains("dark")); });
+
+      /* Data */
+      var species = [
+        { id: "allosaurus", label: "Allosaurus", role: "generalist carnivore", note: "Balanced land hunter; flanks and repositions." },
+        { id: "styracosaurus", label: "Styracosaurus", role: "aggressive frontliner", note: "Horned herbivore; thrives in direct pressure." },
+        { id: "achillobator", label: "Achillobator", role: "pack raptor", note: "Fast medium carnivore; pack or lone-hunter style." },
+        { id: "tylosaurus", label: "Tylosaurus", role: "apex aquatic", note: "Water apex; strong ambush and drag control." },
+        { id: "kto_pachyrhinosaurus", label: "KTO Pachyrhino", role: "tank support", note: "Defensive ceratopsian with strong group value." },
+        { id: "kto_yangchuanosaurus", label: "KTO Yangchuanosaurus", role: "bruiser carnivore", note: "Sustained pressure and positioning focus." }
+      ];
+      var loop = ["Perceive", "Think", "Remember", "Decide", "Act"];
+      var state = { predator_probability: 0.3, prey_density: 0.5, health: 0.8, stamina: 0.7, hunger: 0.4, thirst: 0.3 };
+      var traits = { aggressiveness: 0.5, friendliness: 0.5, curiosity: 0.6, bravery: 0.5, morality: 0.5 };
+
+      /* Loop chips */
+      var rail = document.getElementById("loopRail");
+      loop.forEach(function (s, i) {
+        var chip = document.createElement("span");
+        chip.className = "loop-chip" + (i === 0 ? " active" : "");
+        chip.textContent = s;
+        rail.appendChild(chip);
+      });
+
+      /* Species switcher */
+      var grid = document.getElementById("speciesGrid");
+      species.forEach(function (sp, i) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "species-chip" + (i === 0 ? " active" : "");
+        btn.dataset.species = sp.id;
+        btn.innerHTML = "<strong>" + sp.label + "</strong><span>" + sp.role + "</span>";
+        grid.appendChild(btn);
+      });
+
+      /* Avatar card */
+      var avatarCard = document.getElementById("avatarCard");
+      var vis = document.createElement("div");
+      vis.className = "avatar-visual";
+      vis.innerHTML = '<div class="a-shadow"></div><div class="a-body"></div><div class="a-head"></div><div class="a-tail"></div>';
+      avatarCard.appendChild(vis);
+      var body = document.createElement("div");
+      body.className = "avatar-body";
+      body.innerHTML = '<div class="eyebrow">Instinct agent</div>';
+      var h3 = document.createElement("h3");
+      h3.textContent = "ALLOSAURUS · adult";
+      body.appendChild(h3);
+      var goalP = document.createElement("p");
+      goalP.className = "muted";
+      goalP.textContent = "Goal: generalist carnivore";
+      body.appendChild(goalP);
+      Object.entries(traits).forEach(function (pair) {
+        var k = pair[0], v = pair[1];
+        var item = document.createElement("div");
+        item.className = "trait-item";
+        item.innerHTML = '<div class="trait-head"><span>' + k.replace(/_/g, " ") + '</span><strong>' + Math.round(v * 100) + '%</strong></div><div class="trait-track"><div class="trait-fill" style="width:' + Math.round(v * 100) + '%"></div></div>';
+        body.appendChild(item);
+      });
+      avatarCard.appendChild(body);
+
+      /* HUD */
+      var hudGrid = document.getElementById("hudGrid");
+      Object.entries(state).forEach(function (pair) {
+        var k = pair[0], v = pair[1];
+        var box = document.createElement("div");
+        box.className = "hud-box";
+        var label = document.createElement("span");
+        label.className = "hud-label";
+        label.textContent = k.replace(/_/g, " ");
+        box.appendChild(label);
+        var val = document.createElement("strong");
+        val.className = "hud-value";
+        val.textContent = Math.round(v * 100) + "%";
+        box.appendChild(val);
+        var pipRow = document.createElement("div");
+        pipRow.className = "pip-row";
+        var fill = Math.round(v * 10);
+        for (var i = 0; i < 10; i++) {
+          var pip = document.createElement("span");
+          pip.className = "pip " + (i < fill ? "on" : "");
+          pipRow.appendChild(pip);
+        }
+        box.appendChild(pipRow);
+        hudGrid.appendChild(box);
+      });
+      var decisionCard = document.getElementById("decisionCard");
+      decisionCard.innerHTML = "<h3>Decision bias</h3><p>Low threat, moderate hunger, good stamina: hold position or explore before committing to forage or hunt.</p>";
+
+      /* Species switcher click */
+      grid.addEventListener("click", function (e) {
+        var btn = e.target.closest("button[data-species]");
+        if (!btn) return;
+        grid.querySelectorAll("button").forEach(function (b) { b.classList.toggle("active", b === btn); });
+        var picked = species.find(function (x) { return x.id === btn.dataset.species; });
+        if (!picked) return;
+        h3.textContent = picked.label.toUpperCase() + " · adult";
+        goalP.textContent = "Goal: " + picked.role;
+        decisionCard.querySelector("p").textContent = picked.label + " perspective: " + picked.note;
+      });
+    })();
+  </script>
+</body>
+</html>

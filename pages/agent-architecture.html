@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PALEO | Agent Architecture</title>
+  <meta name="description" content="Live architecture view of the PALEO Instinct Agent: agent identity, tools, system prompt, memory blocks, and archival memory." />
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Urbanist:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    :root {
+      --bg: #f4f9f2;
+      --panel: rgba(255, 255, 255, 0.86);
+      --ink: #1f3b31;
+      --ink-soft: #35584b;
+      --line: #c7decd;
+      --accent: #4e9d92;
+      --accent-2: #56a984;
+      --cream: #f9f2e2;
+      --shadow: rgba(30, 62, 50, 0.16);
+      --focus-ring: #1d7f67;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+    body.dark {
+      --bg: #0f1e1a;
+      --panel: rgba(23, 38, 32, 0.82);
+      --ink: #e5f5eb;
+      --ink-soft: #c6e2d5;
+      --line: #2b4e43;
+      --accent: #6bb9c3;
+      --accent-2: #75cb9f;
+      --cream: #2f2a21;
+      --shadow: rgba(5, 10, 8, 0.35);
+      --focus-ring: #9eead3;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Urbanist", "Segoe UI", sans-serif;
+      color: var(--ink);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 7% 3%, rgba(86, 169, 132, 0.18), transparent 33%),
+        radial-gradient(circle at 90% 5%, rgba(78, 157, 146, 0.16), transparent 31%),
+        repeating-radial-gradient(circle at 20% 20%, rgba(86, 169, 132, 0.04) 0 6px, transparent 6px 22px),
+        var(--bg);
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+    .skip-link { position: absolute; top: -44px; left: 10px; z-index: 120; padding: 9px 12px; border-radius: 10px; background: #fff; color: #134c3c; border: 2px solid var(--focus-ring); text-decoration: none; font-weight: 700; }
+    .skip-link:focus { top: 8px; }
+    .nav { position: sticky; top: 0; z-index: 90; backdrop-filter: blur(9px); background: rgba(244, 249, 242, 0.75); border-bottom: 1px solid var(--line); }
+    body.dark .nav { background: rgba(15, 30, 26, 0.75); }
+    .nav-inner { max-width: 1120px; margin: 0 auto; padding: 12px 18px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+    .brand { font-family: "Fraunces", serif; font-size: 1.3rem; font-weight: 700; }
+    .nav-links { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .btn { text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; font-weight: 600; background: rgba(255, 255, 255, 0.45); transition: transform 0.15s ease, border-color 0.15s ease; }
+    .btn:hover { transform: translateY(-1px); border-color: var(--accent-2); }
+    .btn.active { background: rgba(86, 169, 132, 0.2); border-color: #86c6a3; }
+    .repo-btn { color: #fff; border: 0; background: linear-gradient(120deg, #63b884, #4e9d92, #8bcf9f, #66b5c4); background-size: 300% 300%; box-shadow: 0 8px 18px rgba(79, 157, 146, 0.42); animation: repoFlow 6s ease infinite; }
+    @keyframes repoFlow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+    .mode-toggle { border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--ink); padding: 8px 12px; font-weight: 700; cursor: pointer; }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 22px 18px 56px; }
+    .card { background: linear-gradient(125deg, var(--panel), rgba(249, 242, 226, 0.72)); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 8px 22px var(--shadow); padding: 18px; margin-bottom: 14px; }
+    body.dark .card { background: linear-gradient(125deg, var(--panel), rgba(47, 42, 33, 0.5)); }
+    h1, h2, h3 { margin: 0 0 11px; letter-spacing: 0.1px; }
+    h1, h2 { font-family: "Fraunces", serif; }
+    h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+    h2 { font-size: 1.35rem; color: var(--accent); }
+    h3 { font-size: 1.03rem; color: var(--accent); }
+    .muted { color: var(--ink-soft); }
+    p { margin: 0 0 10px; max-width: 70ch; line-height: 1.6; }
+
+    /* Architecture layout */
+    .arch-layout { display: grid; grid-template-columns: 260px 1fr 280px; gap: 14px; align-items: start; }
+    @media (max-width: 900px) { .arch-layout { grid-template-columns: 1fr; } }
+    .arch-rail { display: grid; gap: 8px; }
+    .arch-rail-item { padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); cursor: pointer; transition: border-color 0.15s ease; }
+    .arch-rail-item:hover { border-color: var(--accent); }
+    .arch-rail-item.active { border-color: var(--accent); background: rgba(86,169,132,0.12); }
+    .arch-rail-item strong { display: block; font-size: 0.88rem; margin-bottom: 2px; }
+    .arch-rail-item span { font-size: 0.76rem; color: var(--ink-soft); }
+    .arch-center { min-height: 400px; }
+    .arch-meta { display: grid; gap: 10px; }
+    .meta-card { padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); }
+    .meta-card h4 { margin: 0 0 6px; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); }
+    .meta-card p { margin: 0; font-size: 0.82rem; color: var(--ink-soft); word-break: break-all; }
+    .meta-card code { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); }
+
+    /* Tool cloud */
+    .tool-cloud { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .tool-chip { padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(78,157,146,0.28); background: rgba(78,157,146,0.1); color: var(--accent); font-size: 0.76rem; font-weight: 700; }
+
+    /* Memory blocks */
+    .mem-list { display: grid; gap: 10px; margin-top: 10px; }
+    .mem-row { padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: rgba(0,0,0,0.04); }
+    body.dark .mem-row { background: rgba(0,0,0,0.15); }
+    .mem-row strong { display: block; font-size: 0.88rem; margin-bottom: 2px; }
+    .mem-row .mem-meta { font-size: 0.76rem; color: var(--ink-soft); font-family: var(--mono); margin-bottom: 4px; }
+    .mem-row p { margin: 0; font-size: 0.86rem; color: var(--ink-soft); }
+
+    /* Prompt block */
+    .prompt-block { font-family: var(--mono); font-size: 0.82rem; line-height: 1.55; white-space: pre-wrap; padding: 14px; border-radius: 12px; border: 1px solid var(--line); background: rgba(0,0,0,0.04); color: var(--ink-soft); margin-top: 10px; }
+    body.dark .prompt-block { background: rgba(0,0,0,0.2); }
+
+    /* Archival */
+    .archival-list { margin: 0; padding-left: 18px; color: var(--ink-soft); font-size: 0.88rem; }
+    .archival-list li + li { margin-top: 6px; }
+
+    /* Section panels */
+    .section-panel { display: none; }
+    .section-panel.visible { display: block; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
+  <nav class="nav" aria-label="Site navigation">
+    <div class="nav-inner">
+      <div class="brand">PALEO</div>
+      <div class="nav-links">
+        <a class="btn" href="index.html">Home</a>
+        <a class="btn" href="profiles/index.html">Profiles</a>
+        <a class="btn" href="technical.html">Technical</a>
+        <a class="btn" href="agent-visual.html">Agent Visual</a>
+        <a class="btn active" href="agent-architecture.html" aria-current="page">Agent Architecture</a>
+        <a class="btn" href="companion-hud.html" title="Requires python scripts/serve_companion.py for live API">Companion HUD</a>
+        <a class="btn" href="chroma-strata.html">Chroma Strata</a>
+        <a class="btn" href="project-checkin-1.html">Check-in 1</a>
+        <a class="btn" href="project-checkin-2.html">Check-in 2</a>
+        <a class="btn repo-btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode" aria-pressed="false">Dark Mode</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="wrap" id="mainContent" aria-label="PALEO Agent Architecture content">
+    <section class="card">
+      <h1><i class="fa-solid fa-brain" aria-hidden="true"></i> PALEO Agent Architecture</h1>
+      <p class="muted">Live view of the Letta-based Instinct Agent internals — identity, tools, system prompt, memory blocks, and archival memory. Click a section in the left rail to explore.</p>
+    </section>
+
+    <div class="arch-layout">
+      <div class="arch-rail" id="archRail"></div>
+      <div class="arch-center" id="archCenter"></div>
+      <div class="arch-meta" id="archMeta"></div>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      /* Dark mode */
+      var modeToggle = document.getElementById("modeToggle");
+      var key = "paleo-mode";
+      var saved = localStorage.getItem(key);
+      function setMode(dark) {
+        document.body.classList.toggle("dark", dark);
+        modeToggle.textContent = dark ? "Light Mode" : "Dark Mode";
+        modeToggle.setAttribute("aria-pressed", dark ? "true" : "false");
+        localStorage.setItem(key, dark ? "dark" : "light");
+      }
+      setMode(saved === "dark");
+      modeToggle.addEventListener("click", function () { setMode(!document.body.classList.contains("dark")); });
+
+      /* Architecture data */
+      var arch = {
+        agent_name: "PALEO Instinct Agent",
+        agent_id: "agent-4c9b0339-20de-4f22-8897-7eb4ba8f8258",
+        conversation_id: "conv-82a63dd9-55fe-43be-b564-4723125db844",
+        description: "Instinct-driven dinosaur AI for Path of Titans.",
+        tools: [
+          "query_pot_wiki",
+          "simulate_instinct_decision",
+          "set_personality_traits",
+          "get_species_fast_facts",
+          "get_dataset_stats",
+          "run_pot_agent",
+          "get_kaggle_local_inventory"
+        ],
+        system_prompt: [
+          "You are the PALEO Instinct Agent — an instinct-driven dinosaur AI for Path of Titans.",
+          "Your core purpose is to demonstrate the perceive → think → remember → decide → act loop.",
+          "You ARE a dinosaur. Respond as that dinosaur would — filtered through personality, informed by experience, driven by instincts.",
+          "When given an observation state, you: 1) Perceive, 2) Think, 3) Remember, 4) Decide, 5) Act.",
+          "You cannot speak — you communicate through broadcast calls, friendly calls, threaten calls, help/distress calls, and emotes.",
+          "Produce structured thought logs explaining every decision you make."
+        ],
+        memory_blocks: [
+          { name: "dinosaur", chars: 1847, limit: 5000, summary: "Species identity, traits, survival priorities, and class context." },
+          { name: "persona", chars: 862, limit: 5000, summary: "Behavioral instructions and survival style." },
+          { name: "primal_mind", chars: 1940, limit: 10000, summary: "Recent experiences, decisions, allies, rivals, and territory memory." },
+          { name: "species_knowledge", chars: 3314, limit: 10000, summary: "Species roles, mechanics, calls, and survival heuristics." },
+          { name: "paleo_behavior_spec_merged", chars: 5139, limit: 100000, summary: "Merged exhaustive behavior reference." },
+          { name: "paleo_context_strategy", chars: 572, limit: 100000, summary: "Hybrid memory + retrieval guidance." }
+        ],
+        archival_memory: [
+          "No dedicated archival block is currently engaged.",
+          "Older conversation history remains retrievable through conversation search.",
+          "189 previous messages between the agent and the user are stored in recall memory."
+        ]
+      };
+
+      var sections = [
+        { id: "identity", label: "Identity", icon: "fa-solid fa-fingerprint", desc: "Agent name, ID, and description" },
+        { id: "tools", label: "Tools", icon: "fa-solid fa-wrench", desc: "7 tool surfaces" },
+        { id: "prompt", label: "System prompt", icon: "fa-solid fa-scroll", desc: "Core behavioral instructions" },
+        { id: "memory", label: "Memory blocks", icon: "fa-solid fa-database", desc: "6 active blocks" },
+        { id: "archival", label: "Archival memory", icon: "fa-solid fa-box-archive", desc: "Recall and conversation history" }
+      ];
+
+      var rail = document.getElementById("archRail");
+      var center = document.getElementById("archCenter");
+      var meta = document.getElementById("archMeta");
+
+      /* Build rail */
+      sections.forEach(function (s, i) {
+        var item = document.createElement("div");
+        item.className = "arch-rail-item" + (i === 0 ? " active" : "");
+        item.dataset.section = s.id;
+        item.innerHTML = '<strong><i class="' + s.icon + '" aria-hidden="true"></i> ' + s.label + '</strong><span>' + s.desc + '</span>';
+        rail.appendChild(item);
+      });
+
+      /* Build panels */
+      var panels = {};
+
+      /* Identity */
+      var idPanel = document.createElement("div");
+      idPanel.className = "section-panel";
+      idPanel.innerHTML = '<h2><i class="fa-solid fa-fingerprint" aria-hidden="true"></i> Agent Identity</h2>' +
+        '<p style="font-size:1.1rem;font-weight:700;margin-bottom:4px;">' + arch.agent_name + '</p>' +
+        '<p class="muted">' + arch.description + '</p>';
+      panels.identity = idPanel;
+
+      /* Tools */
+      var toolsPanel = document.createElement("div");
+      toolsPanel.className = "section-panel";
+      var toolCloud = '<div class="tool-cloud">';
+      arch.tools.forEach(function (t) { toolCloud += '<span class="tool-chip">' + t + '</span>'; });
+      toolCloud += '</div>';
+      toolsPanel.innerHTML = '<h2><i class="fa-solid fa-wrench" aria-hidden="true"></i> Tools</h2><p class="muted">The agent can invoke these tool surfaces during the decide-act phase of its loop.</p>' + toolCloud;
+      panels.tools = toolsPanel;
+
+      /* System prompt */
+      var promptPanel = document.createElement("div");
+      promptPanel.className = "section-panel";
+      var promptText = arch.system_prompt.join("\n\n");
+      promptPanel.innerHTML = '<h2><i class="fa-solid fa-scroll" aria-hidden="true"></i> System prompt</h2><p class="muted">The core behavioral instructions loaded into the agent at compile time.</p><div class="prompt-block">' + promptText + '</div>';
+      panels.prompt = promptPanel;
+
+      /* Memory blocks */
+      var memPanel = document.createElement("div");
+      memPanel.className = "section-panel";
+      var memHtml = '<h2><i class="fa-solid fa-database" aria-hidden="true"></i> Memory blocks</h2><p class="muted">Persistent state carried across conversations. Each block has a character budget and a specific role.</p><div class="mem-list">';
+      arch.memory_blocks.forEach(function (m) {
+        var pct = Math.round((m.chars / m.limit) * 100);
+        memHtml += '<div class="mem-row"><strong>' + m.name + '</strong><div class="mem-meta">' + m.chars + ' / ' + m.limit + ' chars (' + pct + '% used)</div><p>' + m.summary + '</p></div>';
+      });
+      memHtml += '</div>';
+      memPanel.innerHTML = memHtml;
+      panels.memory = memPanel;
+
+      /* Archival */
+      var archPanel = document.createElement("div");
+      archPanel.className = "section-panel";
+      var archHtml = '<h2><i class="fa-solid fa-box-archive" aria-hidden="true"></i> Archival memory</h2><p class="muted">Long-term storage beyond the active memory blocks. Conversation history is persisted and retrievable.</p><ul class="archival-list">';
+      arch.archival_memory.forEach(function (line) { archHtml += '<li>' + line + '</li>'; });
+      archHtml += '</ul>';
+      archPanel.innerHTML = archHtml;
+      panels.archival = archPanel;
+
+      /* Append all panels */
+      Object.values(panels).forEach(function (p) { center.appendChild(p); });
+
+      /* Build meta sidebar */
+      meta.innerHTML =
+        '<div class="meta-card"><h4>Agent ID</h4><p><code>' + arch.agent_id + '</code></p></div>' +
+        '<div class="meta-card"><h4>Conversation</h4><p><code>' + arch.conversation_id + '</code></p></div>' +
+        '<div class="meta-card"><h4>Model</h4><p>Letta-managed LLM</p></div>' +
+        '<div class="meta-card"><h4>Memory blocks</h4><p>6 active · ' + arch.memory_blocks.reduce(function (a, m) { return a + m.chars; }, 0).toLocaleString() + ' chars used</p></div>' +
+        '<div class="meta-card"><h4>Tools</h4><p>' + arch.tools.length + ' surfaces</p></div>' +
+        '<div class="meta-card"><h4>Recall messages</h4><p>189 previous messages</p></div>';
+
+      /* Rail click handler */
+      function showSection(id) {
+        rail.querySelectorAll(".arch-rail-item").forEach(function (item) {
+          item.classList.toggle("active", item.dataset.section === id);
+        });
+        Object.keys(panels).forEach(function (k) {
+          panels[k].classList.toggle("visible", k === id);
+        });
+      }
+      rail.addEventListener("click", function (e) {
+        var item = e.target.closest(".arch-rail-item");
+        if (!item) return;
+        showSection(item.dataset.section);
+      });
+      showSection("identity");
+    })();
+  </script>
+</body>
+</html>
