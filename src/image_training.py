@@ -141,6 +141,18 @@ def _accuracy(logits: Any, targets: Any) -> float:
         return float((pred == targets).float().mean().item())
 
 
+def is_torch_available() -> bool:
+    """Return True if torch and torchvision are importable and ready."""
+    return (
+        torch is not None
+        and nn is not None
+        and DataLoader is not None
+        and transforms is not None
+        and ResNet18_Weights is not None
+        and resnet18 is not None
+    )
+
+
 def load_classifier(checkpoint_path: str | Path) -> Any:
     """Load a saved ResNet-18 checkpoint for inference."""
     if torch is None or resnet18 is None or nn is None:
@@ -219,6 +231,7 @@ def train_serengeti_predator_on_disk(
     train_accs: List[float] = []
 
     for epoch in range(1, config.epochs + 1):
+        print(f"Training epoch {epoch}/{config.epochs}...")
         model.train()
         running = 0.0
         n_batches = 0
@@ -254,6 +267,12 @@ def train_serengeti_predator_on_disk(
         val_losses.append(round(val_loss, 4))
         val_accs.append(round(val_acc, 4))
         train_accs.append(round(train_acc_ep, 4))
+
+        print(
+            f"Epoch {epoch}/{config.epochs}: "
+            f"train_loss={train_loss:.4f}, train_acc={train_acc_ep:.4f}, "
+            f"val_loss={val_loss:.4f}, val_acc={val_acc:.4f}"
+        )
 
     out_dir = Path(config.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
