@@ -540,9 +540,13 @@
 
       var idPanel = document.createElement("div");
       idPanel.className = "section-panel";
+      var idDescText = arch.system_prompt.join("\n\n");
       idPanel.innerHTML = '<h2><i class="fa-solid fa-fingerprint" aria-hidden="true"></i> Agent Identity</h2>' +
         '<p style="font-size:1.1rem;font-weight:700;margin-bottom:4px;">' + arch.agent_name + '</p>' +
-        '<p class="muted">' + arch.description + '</p>';
+        '<p class="muted" style="margin-bottom:14px;">' + arch.description + '</p>' +
+        '<h3><i class="fa-solid fa-scroll" aria-hidden="true"></i> Agent Description</h3>' +
+        '<p class="muted">The full behavioral instructions that define the agent\'s identity and decision-making loop.</p>' +
+        '<div class="prompt-block">' + idDescText + '</div>';
       panels.identity = idPanel;
 
       var toolsPanel = document.createElement("div");
@@ -714,9 +718,12 @@
         /* Identity panel */
         var adeIdPanel = document.createElement("div");
         adeIdPanel.className = "section-panel";
+        var adeIdDescText = adeArch.system_prompt.join("\n\n");
         adeIdPanel.innerHTML = '<h2><i class="fa-solid fa-fingerprint" aria-hidden="true"></i> Agent Identity</h2>' +
           '<div class="ade-card"><p style="font-size:1.1rem;font-weight:700;margin-bottom:4px;color:var(--ink);">' + adeArch.agent_name + '</p>' +
           '<p class="muted">' + adeArch.description + '</p></div>' +
+          '<div class="ade-card"><h4>Agent Description</h4><p class="muted" style="margin-bottom:8px;">The full behavioral instructions that define the agent\'s identity and decision-making loop.</p>' +
+          '<div class="prompt-block">' + adeIdDescText + '</div></div>' +
           '<div class="ade-card"><h4>Agent ID</h4><p><code>' + adeArch.agent_id + '</code></p></div>' +
           '<div class="ade-card"><h4>Conversation ID</h4><p><code>' + adeArch.conversation_id + '</code></p></div>';
         adePanels.identity = adeIdPanel;
@@ -819,33 +826,73 @@
           var gc = document.getElementById("graphCanvas");
           if (!gc) return;
           var w = gc.offsetWidth, h = gc.offsetHeight;
+          var cx = w / 2, cy = h / 2;
+
+          /* Core node */
           var core = document.createElement("div");
           core.className = "graph-node core-node";
           core.textContent = "Agent";
-          core.style.left = (w / 2 - 22) + "px";
-          core.style.top = (h / 2 - 10) + "px";
+          core.style.left = (cx - 22) + "px";
+          core.style.top = (cy - 10) + "px";
           gc.appendChild(core);
+
+          /* SVG lines from center to each node */
+          var svgNS = "http://www.w3.org/2000/svg";
+          var svg = document.createElementNS(svgNS, "svg");
+          svg.setAttribute("width", w);
+          svg.setAttribute("height", h);
+          svg.style.position = "absolute";
+          svg.style.top = "0";
+          svg.style.left = "0";
+          svg.style.pointerEvents = "none";
+          gc.appendChild(svg);
+
+          /* Tool nodes — outer ring */
           var toolNames = adeArch.tools;
+          var toolR = Math.min(w, h) * 0.42;
           toolNames.forEach(function (t, i) {
+            var angle = (Math.PI * 2 * i / toolNames.length) - Math.PI / 2;
+            var nx = cx + Math.cos(angle) * toolR;
+            var ny = cy + Math.sin(angle) * toolR;
+            /* line */
+            var line = document.createElementNS(svgNS, "line");
+            line.setAttribute("x1", cx); line.setAttribute("y1", cy);
+            line.setAttribute("x2", nx); line.setAttribute("y2", ny);
+            line.setAttribute("stroke", "rgba(107,185,163,0.2)");
+            line.setAttribute("stroke-width", "1");
+            svg.appendChild(line);
+            /* node */
             var n = document.createElement("div");
             n.className = "graph-node tool-node";
             n.textContent = t.replace(/_/g, " ").substring(0, 18);
-            var angle = (Math.PI * 2 * i / toolNames.length) - Math.PI / 2;
-            var r = Math.min(w, h) * 0.38;
-            n.style.left = (w / 2 + Math.cos(angle) * r - 40) + "px";
-            n.style.top = (h / 2 + Math.sin(angle) * r - 10) + "px";
+            n.style.left = (nx - n.offsetWidth / 2) + "px";
+            n.style.top = (ny - 10) + "px";
+            /* center after append */
             gc.appendChild(n);
+            n.style.left = (nx - n.offsetWidth / 2) + "px";
           });
+
+          /* Memory nodes — inner ring */
           var memNames = adeArch.memory_blocks.map(function (m) { return m.name; });
+          var memR = Math.min(w, h) * 0.22;
           memNames.forEach(function (m, i) {
+            var angle = (Math.PI * 2 * i / memNames.length) + Math.PI / 6;
+            var nx = cx + Math.cos(angle) * memR;
+            var ny = cy + Math.sin(angle) * memR;
+            /* line */
+            var line = document.createElementNS(svgNS, "line");
+            line.setAttribute("x1", cx); line.setAttribute("y1", cy);
+            line.setAttribute("x2", nx); line.setAttribute("y2", ny);
+            line.setAttribute("stroke", "rgba(117,203,159,0.2)");
+            line.setAttribute("stroke-width", "1");
+            svg.appendChild(line);
+            /* node */
             var n = document.createElement("div");
             n.className = "graph-node mem-node";
             n.textContent = m.substring(0, 16);
-            var angle = (Math.PI * 2 * i / memNames.length) + Math.PI / 4;
-            var r = Math.min(w, h) * 0.38;
-            n.style.left = (w / 2 + Math.cos(angle) * r - 40) + "px";
-            n.style.top = (h / 2 + Math.sin(angle) * r - 10) + "px";
             gc.appendChild(n);
+            n.style.left = (nx - n.offsetWidth / 2) + "px";
+            n.style.top = (ny - 10) + "px";
           });
         }
 
