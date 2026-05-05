@@ -210,3 +210,6 @@
 
 ## 2026-04-29
 - `SunsetTuojian` manifest: added male Color 5 swatch `#23190B`, reordered `colorSlots["5"].palette` (ROYGBIV hue buckets, then darkness then saturation), and remapped `defaults.male["5"]` so the default tint remains `#434B82`.
+
+## 2026-05-05
+- Added `pages/gallery.html` (Google Drive photo folder) and a **Gallery** item in the main site nav on `index.html`, `technical.html`, `project-checkin-1.html`, `agent-visual.html`, `agent-architecture.html`, `project-checkin-2.html`, and `companion-hud.html`.
