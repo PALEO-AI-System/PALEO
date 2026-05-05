@@ -86,6 +86,74 @@
         .figure-img { width:100%; max-height:34vh; object-fit:contain; display:block; background:rgba(255,255,255,0.96); border-radius:12px; padding:0.4rem; border:1px solid rgba(255,255,255,0.12); }
         .figure-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:0.85rem; }
         .figure-img.compact { max-height:24vh; }
+        .slide-images-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:1rem; align-items:start; }
+        @media (max-width: 720px) { .slide-images-grid { grid-template-columns: 1fr; } }
+        .slide-images-grid .figure-img.compact { max-height: min(28vh, 220px); }
+        .mods-gallery-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+        }
+        .mods-row {
+            display: grid;
+            gap: 0.55rem;
+            align-items: stretch;
+        }
+        .mods-row-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .mods-row-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            width: 66.666%;
+            max-width: 100%;
+            margin-inline: auto;
+        }
+        .mods-row figure { margin: 0; min-width: 0; }
+        .mods-row a {
+            display: block;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: transparent;
+            line-height: 0;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .mods-row a:hover {
+            transform: translateY(-2px);
+            border-color: rgba(74,222,128,0.4);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .mods-row img {
+            width: 100%;
+            height: clamp(92px, 14.5vh, 152px);
+            object-fit: contain;
+            object-position: center;
+            display: block;
+            padding: 0;
+            margin: 0;
+            background: transparent;
+        }
+        .mods-row-game img {
+            height: clamp(118px, 21vh, 210px);
+        }
+        .slide-demo-video-wrap {
+            width: 100%;
+            max-width: min(100%, 960px);
+            margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: #000;
+            line-height: 0;
+        }
+        .slide-demo-video-wrap video {
+            width: 100%;
+            max-height: min(72vh, 540px);
+            display: block;
+            object-fit: contain;
+        }
+        @media (max-width: 700px) {
+            .mods-row-3 { grid-template-columns: 1fr; }
+            .mods-row-2 { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -118,8 +186,37 @@
     </div>
 </div>
 
-<!-- SLIDE 2: PROBLEM STATEMENT -->
+<!-- SLIDE 2: VISUALS -->
 <div class="slide slide-2" data-slide="2">
+    <div class="gradient-mesh">
+        <div class="blob" style="width:420px;height:420px;top:-110px;right:-90px;background:var(--color-accent-1);opacity:0.08;"></div>
+        <div class="blob" style="width:300px;height:300px;bottom:-70px;left:-50px;background:#3b82f6;opacity:0.06;"></div>
+    </div>
+    <div class="content" style="max-height:100%;overflow-y:auto;">
+        <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:var(--color-accent-1);font-weight:700;margin-bottom:0.5rem;">Gallery</div>
+        <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.2vw,2.4rem);font-weight:700;margin-bottom:0.5rem;line-height:1.2;">Path of Titans mods</h2>
+        <p class="reveal" style="font-size:0.78rem;color:var(--color-text-secondary);margin-bottom:0.85rem;">Mods in <code style="background:rgba(255,255,255,0.08);padding:0.1rem 0.4rem;border-radius:6px;font-size:0.74rem;">pages/paleo-presentation/mods/</code> — click a tile to open full size.</p>
+        <div class="reveal mods-gallery-wrap">
+            <div class="mods-row mods-row-3">
+                <figure><a href="paleo-presentation/mods/image%281%29.png" target="_blank" rel="noopener noreferrer"><img src="paleo-presentation/mods/image%281%29.png" alt="" loading="lazy" decoding="async" /></a></figure>
+                <figure><a href="paleo-presentation/mods/image%282%29.png" target="_blank" rel="noopener noreferrer"><img src="paleo-presentation/mods/image%282%29.png" alt="" loading="lazy" decoding="async" /></a></figure>
+                <figure><a href="paleo-presentation/mods/image%283%29.png" target="_blank" rel="noopener noreferrer"><img src="paleo-presentation/mods/image%283%29.png" alt="" loading="lazy" decoding="async" /></a></figure>
+            </div>
+            <div class="mods-row mods-row-2">
+                <figure><a href="paleo-presentation/mods/image%283%29.png" target="_blank" rel="noopener noreferrer"><img src="paleo-presentation/mods/image%283%29.png" alt="" loading="lazy" decoding="async" /></a></figure>
+                <figure><a href="paleo-presentation/mods/image%284%29.png" target="_blank" rel="noopener noreferrer"><img src="paleo-presentation/mods/image%284%29.png" alt="" loading="lazy" decoding="async" /></a></figure>
+            </div>
+            <div class="mods-row mods-row-3">
+                <figure><a href="paleo-presentation/mods/image.png" target="_blank" rel="noopener noreferrer"><img src="paleo-presentation/mods/image.png" alt="" loading="lazy" decoding="async" /></a></figure>
+                <figure><a href="paleo-presentation/mods/image%286%29.png" target="_blank" rel="noopener noreferrer"><img src="paleo-presentation/mods/image%286%29.png" alt="" loading="lazy" decoding="async" /></a></figure>
+                <figure><a href="paleo-presentation/mods/torvo.jpg" target="_blank" rel="noopener noreferrer"><img src="paleo-presentation/mods/torvo.jpg" alt="" loading="lazy" decoding="async" /></a></figure>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 3: PROBLEM STATEMENT -->
+<div class="slide slide-3" data-slide="3">
     <div class="gradient-mesh">
         <div class="blob" style="width:350px;height:350px;top:-80px;right:-60px;background:var(--color-accent-1);opacity:0.07;"></div>
         <div class="blob" style="width:260px;height:260px;bottom:-70px;left:-50px;background:#3b82f6;opacity:0.06;"></div>
@@ -155,8 +252,8 @@
     </div>
 </div>
 
-<!-- SLIDE 3: KEY TECHNICAL CHALLENGES -->
-<div class="slide slide-3" data-slide="3">
+<!-- SLIDE 4: KEY TECHNICAL CHALLENGES -->
+<div class="slide slide-4" data-slide="4">
     <div class="gradient-mesh">
         <div class="blob" style="width:380px;height:380px;top:-90px;left:-70px;background:#f59e0b;opacity:0.07;"></div>
         <div class="blob" style="width:280px;height:280px;bottom:-60px;right:-50px;background:var(--color-accent-1);opacity:0.06;"></div>
@@ -199,8 +296,8 @@
     </div>
 </div>
 
-<!-- SLIDE 4: PROPOSED SOLUTION + PIPELINE -->
-<div class="slide slide-4" data-slide="4">
+<!-- SLIDE 5: PROPOSED SOLUTION + PIPELINE -->
+<div class="slide slide-5" data-slide="5">
     <div class="gradient-mesh">
         <div class="blob" style="width:400px;height:400px;top:-100px;right:-80px;background:var(--color-accent-1);opacity:0.08;"></div>
         <div class="blob" style="width:250px;height:250px;bottom:-60px;left:-40px;background:#6366f1;opacity:0.07;"></div>
@@ -264,8 +361,28 @@
     </div>
 </div>
 
-<!-- SLIDE 5: METHOD OVERVIEW — RESNET + PRIMAL MIND -->
-<div class="slide slide-5" data-slide="5">
+<!-- SLIDE 6: IN-GAME GALLERY -->
+<div class="slide slide-6" data-slide="6">
+    <div class="gradient-mesh">
+        <div class="blob" style="width:380px;height:380px;top:-95px;right:-75px;background:#6366f1;opacity:0.07;"></div>
+        <div class="blob" style="width:280px;height:280px;bottom:-65px;left:-45px;background:var(--color-accent-1);opacity:0.06;"></div>
+    </div>
+    <div class="content" style="max-height:100%;overflow-y:auto;">
+        <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:var(--color-accent-1);font-weight:700;margin-bottom:0.5rem;">In-game</div>
+        <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.2vw,2.35rem);font-weight:700;margin-bottom:0.5rem;line-height:1.2;">Path of Titans — gameplay &amp; UI</h2>
+        <p class="reveal" style="font-size:0.78rem;color:var(--color-text-secondary);margin-bottom:0.85rem;">Screens from <code style="background:rgba(255,255,255,0.08);padding:0.1rem 0.4rem;border-radius:6px;font-size:0.74rem;">pages/paleo-presentation/game/</code> — click a tile to open full size.</p>
+        <div class="reveal mods-gallery-wrap">
+            <div class="mods-row mods-row-3 mods-row-game">
+                <figure><a href="paleo-presentation/game/abilities_page.png" target="_blank" rel="noopener noreferrer"><img src="paleo-presentation/game/abilities_page.png" alt="" loading="lazy" decoding="async" /></a></figure>
+                <figure><a href="paleo-presentation/game/gameplay1.png" target="_blank" rel="noopener noreferrer"><img src="paleo-presentation/game/gameplay1.png" alt="" loading="lazy" decoding="async" /></a></figure>
+                <figure><a href="paleo-presentation/game/gameplay2.png" target="_blank" rel="noopener noreferrer"><img src="paleo-presentation/game/gameplay2.png" alt="" loading="lazy" decoding="async" /></a></figure>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 7: METHOD OVERVIEW — RESNET + PRIMAL MIND -->
+<div class="slide slide-7" data-slide="7">
     <div class="gradient-mesh">
         <div class="blob" style="width:360px;height:360px;bottom:-90px;right:-70px;background:#6366f1;opacity:0.08;"></div>
         <div class="blob" style="width:260px;height:260px;top:-60px;left:-50px;background:var(--color-accent-1);opacity:0.06;"></div>
@@ -322,8 +439,8 @@
     </div>
 </div>
 
-<!-- SLIDE 6: EXPERIMENTAL SETUP -->
-<div class="slide slide-6" data-slide="6">
+<!-- SLIDE 8: EXPERIMENTAL SETUP -->
+<div class="slide slide-8" data-slide="8">
     <div class="gradient-mesh">
         <div class="blob" style="width:380px;height:380px;top:-90px;left:-70px;background:#0ea5e9;opacity:0.07;"></div>
         <div class="blob" style="width:260px;height:260px;bottom:-60px;right:-50px;background:var(--color-accent-1);opacity:0.06;"></div>
@@ -389,8 +506,8 @@
     </div>
 </div>
 
-<!-- SLIDE 7: MAJOR RESULTS -->
-<div class="slide slide-7" data-slide="7">
+<!-- SLIDE 9: MAJOR RESULTS -->
+<div class="slide slide-9" data-slide="9">
     <div class="gradient-mesh">
         <div class="blob" style="width:400px;height:400px;top:-100px;right:-80px;background:var(--color-accent-1);opacity:0.10;"></div>
         <div class="blob" style="width:280px;height:280px;bottom:-70px;left:-50px;background:#f59e0b;opacity:0.07;"></div>
@@ -488,7 +605,7 @@
         <div class="reveal" style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:0.65rem 1rem;font-size:0.79rem;color:#86efac;">
             <strong>Model-selection result:</strong> the Serengeti sweep used a 6,529 train / 2,142 validation split. On that stable validation set, <code>1e-4 + augmentation + 15 epochs</code> was the strongest run, so we used it as the best real-image checkpoint before adapting to Path of Titans.
         </div>
-        <aside class="speaker-notes" style="display:none;" aria-label="Speaker notes for Slide 7">
+        <aside class="speaker-notes" style="display:none;" aria-label="Speaker notes for Slide 9">
             <p>The convergence curves explain why our top run is not just a lucky endpoint. We compare the same ResNet-18 architecture across different learning rates and epoch counts.</p>
             <p>At 10 epochs, both <code>1e-3</code> and <code>1e-4</code> reached strong validation scores quickly, but the curves were less settled than the longer training runs.</p>
             <p>At 15 epochs, <code>1e-4</code> with augmentation gave the best final balance: highest validation accuracy (<code>0.9118</code>) with strong predator recall and F1, while avoiding the noisier behavior seen in more aggressive rates.</p>
@@ -498,8 +615,8 @@
     </div>
 </div>
 
-<!-- SLIDE 8: ABLATION STUDIES -->
-<div class="slide slide-8" data-slide="8">
+<!-- SLIDE 10: ABLATION STUDIES -->
+<div class="slide slide-10" data-slide="10">
     <div class="gradient-mesh">
         <div class="blob" style="width:360px;height:360px;top:-80px;left:-70px;background:#8b5cf6;opacity:0.08;"></div>
         <div class="blob" style="width:270px;height:270px;bottom:-60px;right:-50px;background:#0ea5e9;opacity:0.07;"></div>
@@ -536,8 +653,8 @@
     </div>
 </div>
 
-<!-- SLIDE 9: DOMAIN SHIFT + SAFETY TUNING -->
-<div class="slide slide-9" data-slide="9">
+<!-- SLIDE 11: DOMAIN SHIFT + SAFETY TUNING -->
+<div class="slide slide-11" data-slide="11">
     <div class="gradient-mesh">
         <div class="blob" style="width:380px;height:380px;top:-90px;right:-70px;background:#ef4444;opacity:0.07;"></div>
         <div class="blob" style="width:260px;height:260px;bottom:-60px;left:-50px;background:#f59e0b;opacity:0.06;"></div>
@@ -587,8 +704,8 @@
     </div>
 </div>
 
-<!-- SLIDE 10: CONCLUSION + FUTURE WORK -->
-<div class="slide slide-10" data-slide="10">
+<!-- SLIDE 12: CONCLUSION + FUTURE WORK -->
+<div class="slide slide-12" data-slide="12">
     <div class="gradient-mesh">
         <div class="blob" style="width:500px;height:500px;top:-110px;right:-100px;background:var(--color-accent-1);opacity:0.12;"></div>
         <div class="blob" style="width:320px;height:320px;bottom:-80px;left:-60px;background:#6366f1;opacity:0.10;"></div>
@@ -655,13 +772,32 @@
     </div>
 </div>
 
+<!-- SLIDE 13: DEMO VIDEO -->
+<div class="slide slide-13" data-slide="13">
+    <div class="gradient-mesh">
+        <div class="blob" style="width:440px;height:440px;top:-100px;right:-80px;background:var(--color-accent-1);opacity:0.09;"></div>
+        <div class="blob" style="width:300px;height:300px;bottom:-70px;left:-55px;background:#6366f1;opacity:0.07;"></div>
+    </div>
+    <div class="content" style="max-height:100%;overflow-y:auto;">
+        <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:var(--color-accent-1);font-weight:700;margin-bottom:0.5rem;">Demo</div>
+        <h2 class="font-display reveal" style="font-size:clamp(1.55rem,3.2vw,2.35rem);font-weight:700;margin-bottom:0.5rem;line-height:1.2;">PALEO in action</h2>
+        <p class="reveal" style="font-size:0.78rem;color:var(--color-text-secondary);margin-bottom:1rem;">Screen recording from <code style="background:rgba(255,255,255,0.08);padding:0.1rem 0.4rem;border-radius:6px;font-size:0.74rem;">pages/paleo-presentation/demo/</code>. Use the player controls to play or scrub.</p>
+        <div class="reveal slide-demo-video-wrap">
+            <video controls playsinline preload="metadata" title="PALEO demo recording">
+                <source src="paleo-presentation/demo/2026-05-05%2014-56-27.mp4" type="video/mp4" />
+                <a href="paleo-presentation/demo/2026-05-05%2014-56-27.mp4" target="_blank" rel="noopener noreferrer">Download MP4</a>
+            </video>
+        </div>
+    </div>
+</div>
+
 </div><!-- end .deck -->
 
 <div class="nav-controls">
     <button class="nav-btn" onclick="changeSlide(-1)">&#8249;</button>
     <div class="slide-dots" id="dots"></div>
     <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
-    <span class="slide-counter" id="counter">1 / 10</span>
+    <span class="slide-counter" id="counter">1 / 13</span>
 </div>
 
 <script>
