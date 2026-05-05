@@ -17,7 +17,7 @@ PALEO (with Primal Mind)
 
 ## 4. AI Functions to Be Developed
 
-- **Machine learning:** Train a small **predator vs non-predator** image model on **Snapshot Serengeti** (manifest + local JPEGs). The repo has `scripts/prepare_data.py`, `scripts/download_serengeti_images.py`, `scripts/train_serengeti_images.py`, `scripts/evaluate_serengeti_images.py`, and `scripts/run_experiments.py` (including a no-training baseline and several training configs). `scripts/run_pipeline.py` also runs a **tiny end-to-end demo** that includes a short ResNet training step on a synthetic batch (for wiring, not full-scale training).
+- **Machine learning:** Train a **predator vs non-predator** ResNet-18 on a nearly 10k-image balanced **Snapshot Serengeti** set, then **fine-tune on 300 labeled Path of Titans screenshots** to adapt to game-domain visuals (domain shift reduction). `1e-4` was the best accuracy-oriented choice on Serengeti and stayed strong on the 300-image PoT validation split, but the agent version shifted toward predator recall because missed predators are more harmful in-game than false alarms.
 - **Computer vision:** **Live screenshots** from the monitor (`mss`), simple frame stats for the **Instinct Agent**, plus HUD/overlay paths so you can **see** what the loop is doing. Game frames are the long-term target; wildlife images are the current training stand-in.
 - **Search:** **RAG-style** lookup over game/wiki text via `src/wiki_rag.py` so decisions can be grounded in mechanics later.
 
@@ -35,6 +35,10 @@ PALEO (with Primal Mind)
 ## 6. Dataset(s)
 
 - Dataset name: **Snapshot Serengeti** (via **Dryad CSV** workflow in `README.md`); optional **Kaggle** packs later (`docs/deferred_large_datasets.md`).
+- Serengeti split: **6,529 training images** and **2,142 validation images** from the existing manifest split.
+- Domain adaptation dataset: **300 manually labeled Path of Titans screenshots** (`predator` / `non_predator`).
+- Path of Titans split: **240 training screenshots** and **60 validation screenshots** from the 300-image set.
+- Verification set: **10 Path of Titans test images** (manual + filename-based labels).
 - Source: LILA page `https://lila.science/datasets/snapshot-serengeti`; Dryad link in `docs/project_brief.md`; Kaggle links there for secondary data.
 - Data modality: **Images** + **CSV metadata** now; **text** for wiki/RAG; gameplay frames later.
 - Approximate size: Full Serengeti is huge; the repo is built around **small, reproducible subsets** (`--max-records`, `--max-images`).
@@ -48,7 +52,7 @@ If you are collecting your own data, also include:
 
 ## 7. Evaluation Plan
 
-- What metrics will you use? For images: **accuracy**, **F1** (especially **predator class** if labels are imbalanced), confusion matrix from `evaluate_serengeti_images.py`. For the agent: **does the loop run**, **thought text matches behavior**, **latency**, and **safe control** (kill switch works).
+- What metrics will you use? For images: **accuracy**, **F1**, **confusion matrix**, plus **predator recall/precision** at multiple inference thresholds (safety-first target is high predator recall). For the agent: **does the loop run**, **thought text matches behavior**, **latency**, and **safe control** (kill switch works).
 - What baseline methods or comparison methods will you use? **Rule/heuristic** screen signals and OpenCV-style baselines in code; **no-training** majority baseline from `run_experiments.py`; **trained** ResNet runs vs those.
 - How will you determine whether the project is successful? **Reproducible scripts**, honest metrics, a **working live capture + keyboard path**, and—once Letta is in—**clear multi-step behavior** that feels like a creature, not a single if-statement.
 
@@ -60,6 +64,8 @@ Examples may include accuracy, F1 score, mAP,  success rate, latency, user satis
 - **Keyboard output:** **Working in prototype**—`run_paleo_control_loop.py` can run **advice-only** or **control** with **`--enable-control`** and an **F12** emergency stop (`README.md`). This is the path for “hold W to walk” style tests once the game window is focused.
 - **Agent loop in code:** **Instinct Agent** decisions, **Primal Mind** state, thought formatting, and PoT-style key mapping exist in `src/agent.py`, `src/pot.py`, with **`simulate_dino.py`** to sample scenarios and **`run_pipeline.py`** for a one-shot integrated demo.
 - **Training / data path (wildlife):** Manifest pipeline (`prepare_data`), image download, **ResNet fine-tune** (`train_serengeti_images`), **eval** (`evaluate_serengeti_images`), and **experiment sweep + JSON outputs** (`run_experiments.py`) are in the repo; results appear under `results/experiments/` **after you run them locally** (not committed).
+- **Latest model update:** Fine-tuned checkpoint from 300 PoT screenshots (`epoch=15`) with LR sweep. The accuracy pick is `lr=1e-4` (`0.767` validation accuracy on the 60-image split). The agent safety pick is `lr=3e-5` with predator class weight `3.0` and threshold `0.20`, which improves 10-image predator recall from `0.571` to `0.714` while keeping holdout accuracy at `0.70`.
+- **False-negative mitigation now supported:** configurable predator threshold in inference and threshold-sweep eval output to select a recall-prioritized operating point.
 - **Main gap:** **Letta** is still **stub / schema** level (`letta_tools.py`, `show_letta_tools.py`)—not the live “brain in the middle” yet.
 - **Not done yet:** I have **not** fully tested **PALEO while actually playing Path of Titans** (focused game window, real in-game screen, simple movement like **holding W**). That is the next practical check.
 
