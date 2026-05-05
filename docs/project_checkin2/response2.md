@@ -17,7 +17,7 @@ PALEO (with Primal Mind)
 
 ## 4. AI Functions to Be Developed
 
-- **Machine learning:** Train a **predator vs non-predator** ResNet-18 on a nearly 10k-image balanced **Snapshot Serengeti** set, then **fine-tune on 300 labeled Path of Titans screenshots** to adapt to game-domain visuals (domain shift reduction). `1e-4` was the best accuracy-oriented choice on Serengeti and stayed strong on the 300-image PoT validation split, but the agent version shifted toward predator recall because missed predators are more harmful in-game than false alarms.
+- **Machine learning:** Train a **predator vs non-predator** ResNet-18 on a nearly 10k-image balanced **Snapshot Serengeti** set, then **fine-tune on 300 labeled Path of Titans screenshots** to adapt to game-domain visuals (domain shift reduction). The latest 15-epoch Serengeti run with `lr=1e-4 + augmentation` reached **0.9118 validation accuracy** and **0.9206 predator recall** on the 2,142-image validation split. `1e-4` stayed strong on the 300-image PoT validation split, but the agent version shifted toward predator recall because missed predators are more harmful in-game than false alarms.
 - **Computer vision:** **Live screenshots** from the monitor (`mss`), simple frame stats for the **Instinct Agent**, plus HUD/overlay paths so you can **see** what the loop is doing. Game frames are the long-term target; wildlife images are the current training stand-in.
 - **Search:** **RAG-style** lookup over game/wiki text via `src/wiki_rag.py` so decisions can be grounded in mechanics later.
 
