@@ -36,6 +36,7 @@ Use **[x]** for done, **[ ]** for not done. Do not delete completed lines; mark 
 - [ ] **PALEO.exe** (browser Companion HUD) vs **PALEOOverlay.exe** (transparent tk HUD): keep first-run docs and in-HUD copy aligned so the two launchers are not conflated.
 - [ ] **Cross-check** the plan vs reality: what the overlay/HUD *should* show vs what is **actually** wired and visible (debug fields, live frame, control preview, API endpoints).
 - [ ] Keep **companion HUD** (`serve_companion` / `companion-hud.html`) aligned with the same behaviors where it makes sense.
+- [ ] **Agent Visual tab** (`pages/agent-visual.html`): offline brain HUD/card does not appear — fix data feed, selectors, or render path so the offline brain summary is visible and updates like the rest of the panel.
 - [ ] Document (or optionally unify) running **overlay** alongside **advice vs control**: default overlay is advice-only; real OS input stays on `run_paleo_control_loop.py --enable-control` until a single entrypoint exists.
 - [ ] Overlay command-only settings audit pass: expose remaining useful CLI-only options in overlay UI (or explicitly document why they stay CLI-only), including advanced runtime toggles.
 - [ ] Overlay -> Companion HUD live sync channel: wire shared runtime state/events so overlay and browser Companion HUD update the same agent-state stream in real time.

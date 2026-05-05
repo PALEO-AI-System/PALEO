@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PALEO | Agent demo conversation</title>
+  <meta name="description" content="Verbatim sample Instinct Agent demo conversation: perceive, think, decide, act." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    :root {
+      --bg: #f4f9f2;
+      --panel: rgba(255, 255, 255, 0.86);
+      --ink: #1f3b31;
+      --ink-soft: #35584b;
+      --line: #c7decd;
+      --accent: #4e9d92;
+      --accent-2: #56a984;
+      --shadow: rgba(30, 62, 50, 0.16);
+      --focus-ring: #1d7f67;
+    }
+    body.dark {
+      --bg: #0f1e1a;
+      --panel: rgba(23, 38, 32, 0.82);
+      --ink: #e5f5eb;
+      --ink-soft: #c6e2d5;
+      --line: #2b4e43;
+      --accent: #6bb9c3;
+      --accent-2: #75cb9f;
+      --shadow: rgba(5, 10, 8, 0.35);
+      --focus-ring: #9eead3;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Urbanist", "Segoe UI", sans-serif;
+      color: var(--ink);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 7% 3%, rgba(86, 169, 132, 0.18), transparent 33%),
+        radial-gradient(circle at 90% 5%, rgba(78, 157, 146, 0.16), transparent 31%),
+        repeating-radial-gradient(circle at 20% 20%, rgba(86, 169, 132, 0.04) 0 6px, transparent 6px 22px),
+        var(--bg);
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+    .skip-link { position: absolute; top: -44px; left: 10px; z-index: 120; padding: 9px 12px; border-radius: 10px; background: #fff; color: #134c3c; border: 2px solid var(--focus-ring); text-decoration: none; font-weight: 700; }
+    .skip-link:focus { top: 8px; }
+    .nav { position: sticky; top: 0; z-index: 90; backdrop-filter: blur(9px); background: rgba(244, 249, 242, 0.75); border-bottom: 1px solid var(--line); }
+    body.dark .nav { background: rgba(15, 30, 26, 0.75); }
+    .nav-inner { max-width: 1120px; margin: 0 auto; padding: 12px 18px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+    .brand { font-family: "Fraunces", serif; font-size: 1.3rem; font-weight: 700; }
+    .nav-links { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .btn { text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; font-weight: 600; background: rgba(255, 255, 255, 0.45); transition: transform 0.15s ease, border-color 0.15s ease; }
+    .btn:hover { transform: translateY(-1px); border-color: var(--accent-2); }
+    .btn.active { background: rgba(86, 169, 132, 0.2); border-color: #86c6a3; }
+    .repo-btn { color: #fff; border: 0; background: linear-gradient(120deg, #63b884, #4e9d92, #8bcf9f, #66b5c4); background-size: 300% 300%; box-shadow: 0 8px 18px rgba(79, 157, 146, 0.42); animation: repoFlow 6s ease infinite; }
+    @keyframes repoFlow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+    .mode-toggle { border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--ink); padding: 8px 12px; font-weight: 700; cursor: pointer; }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 22px 18px 56px; }
+    .card { background: linear-gradient(125deg, var(--panel), rgba(249, 242, 226, 0.72)); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 8px 22px var(--shadow); padding: 22px 20px; margin-bottom: 14px; }
+    body.dark .card { background: linear-gradient(125deg, var(--panel), rgba(47, 42, 33, 0.5)); }
+    h1 { margin: 0 0 8px; font-family: "Fraunces", serif; font-size: clamp(1.9rem, 4vw, 2.6rem); letter-spacing: 0.1px; }
+    .muted { color: var(--ink-soft); margin: 0 0 16px; max-width: 70ch; line-height: 1.6; font-size: 0.95rem; }
+    .muted code {
+      font-size: 0.88em;
+      padding: 2px 7px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: rgba(86, 169, 132, 0.1);
+      color: var(--ink);
+    }
+    body.dark .muted code { background: rgba(0, 0, 0, 0.25); }
+    .demo-transcript {
+      font-size: 0.97rem;
+      line-height: 1.65;
+      color: var(--ink);
+    }
+    .demo-md {
+      max-width: 72ch;
+      padding: 18px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.45);
+    }
+    body.dark .demo-md { background: rgba(0, 0, 0, 0.18); }
+    .demo-md > *:first-child { margin-top: 0; }
+    .demo-md > *:last-child { margin-bottom: 0; }
+    .demo-md p { margin: 0 0 1rem; }
+    .demo-md-h2 {
+      font-family: "Fraunces", serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 1.65rem 0 0.65rem;
+      letter-spacing: 0.06em;
+      line-height: 1.3;
+    }
+    .demo-md-h2:first-child { margin-top: 0; }
+    .demo-md-rule {
+      border: 0;
+      height: 1px;
+      margin: 1.15rem 0;
+      background: linear-gradient(90deg, transparent, var(--accent-2), transparent);
+      opacity: 0.65;
+    }
+    .demo-md-list,
+    .demo-md-list-num {
+      margin: 0 0 1.1rem;
+      padding-left: 1.35rem;
+    }
+    .demo-md-list li,
+    .demo-md-list-num li { margin-bottom: 0.5rem; }
+    .demo-md-list li strong,
+    .demo-md-list-num li strong { color: var(--accent-2); font-weight: 700; }
+    .demo-md-list-num { list-style-type: decimal; }
+    .demo-md-list-num li::marker {
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .demo-md-quote {
+      margin: 0 0 1.1rem;
+      padding: 1rem 1.2rem;
+      border-left: 4px solid var(--accent);
+      background: rgba(86, 169, 132, 0.1);
+      border-radius: 0 14px 14px 0;
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+    body.dark .demo-md-quote { background: rgba(107, 185, 163, 0.12); }
+    .demo-md-action {
+      margin: 1.15rem 0;
+      padding: 0.75rem 1.1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(78, 157, 146, 0.4);
+      background: linear-gradient(125deg, rgba(78, 157, 146, 0.14), rgba(86, 169, 132, 0.08));
+      font-weight: 700;
+      font-size: 1.02rem;
+      letter-spacing: 0.02em;
+    }
+    .demo-md-pre {
+      margin: 0.5rem 0 1.1rem;
+      padding: 1rem 1.15rem;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(31, 59, 49, 0.06);
+      overflow-x: auto;
+      font-family: ui-monospace, "Cascadia Code", "Segoe UI Mono", Consolas, monospace;
+      font-size: 0.84rem;
+      line-height: 1.5;
+      tab-size: 2;
+    }
+    body.dark .demo-md-pre { background: rgba(0, 0, 0, 0.28); }
+    .demo-md-pre code { font-family: inherit; color: var(--ink); }
+    .demo-md-hr {
+      border: 0;
+      border-top: 1px solid var(--line);
+      margin: 1.5rem 0;
+    }
+    .demo-md .inline-label { color: var(--accent); font-weight: 700; }
+    .demo-shot-wrap {
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.35);
+      text-align: center;
+    }
+    body.dark .demo-shot-wrap { background: rgba(0, 0, 0, 0.15); }
+    .demo-shot-wrap img {
+      max-width: 100%;
+      height: auto;
+      vertical-align: middle;
+      border-radius: 8px;
+    }
+    .demo-shot-wrap .demo-shot-link {
+      display: block;
+      margin-top: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
+  <nav class="nav" aria-label="Site navigation">
+    <div class="nav-inner">
+      <div class="brand">PALEO</div>
+      <div class="nav-links">
+        <a class="btn" href="index.html">Home</a>
+        <a class="btn" href="profiles/index.html">Profiles</a>
+        <a class="btn" href="technical.html">Technical</a>
+        <a class="btn" href="agent-visual.html">Agent Visual</a>
+        <a class="btn" href="agent-architecture.html">Agent Architecture</a>
+        <a class="btn" href="paleo-presentation.html">Presentation</a>
+        <a class="btn" href="gallery.html">Gallery</a>
+        <a class="btn active" href="agent-demo.html" aria-current="page">Agent demo</a>
+        <a class="btn" href="companion-hud.html" title="Requires python scripts/serve_companion.py for live API">Companion HUD</a>
+        <a class="btn" href="chroma-strata.html" title="Browser-only 2D skin layer stack + randomize (no PALEO API)">Chroma Strata</a>
+        <a class="btn" href="project-checkin-1.html">Check-in 1</a>
+        <a class="btn" href="project-checkin-2.html">Check-in 2</a>
+        <a class="btn repo-btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode" aria-pressed="false">Dark Mode</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="wrap" id="mainContent">
+    <section class="card">
+      <h1><i class="fa-solid fa-comments" aria-hidden="true"></i> Agent demo conversation</h1>
+      <p class="muted">Same transcript as the original demo, rendered with markdown-style typography. Put your mock screenshot at <code>pages/agent-demo/screenshot.png</code> (same folder name as this page) so it loads here; an optional Google Drive link is below.</p>
+      <div class="demo-transcript">
+        <div class="demo-md">
+          <hr class="demo-md-rule" aria-hidden="true" />
+          <p>Got it. I'm in live mode.</p>
+          <p>When you send the screenshot, I'll:</p>
+          <ol class="demo-md-list-num">
+            <li><strong>Perceive</strong> — read the game world AND the HUD (health, stamina, hunger, thirst, abilities, buffs)</li>
+            <li><strong>Think</strong> — inner monologue as the allosaurus, filtered through my personality</li>
+            <li><strong>Decide</strong> — pick an action based on survival priorities + personality traits</li>
+            <li><strong>Act</strong> — output the action, intended keypresses, and a structured thought log</li>
+          </ol>
+          <p>Send the mock screenshot whenever you're ready.</p>
+          <hr class="demo-md-rule" aria-hidden="true" />
+        </div>
+        <figure class="demo-shot-wrap">
+          <a href="agent-demo/screenshot.png" target="_blank" rel="noopener noreferrer">
+            <img src="agent-demo/screenshot.png" alt="Path of Titans gameplay screenshot: add pages/agent-demo/screenshot.png to the repo" loading="lazy" decoding="async" />
+          </a>
+          <a class="demo-shot-link" href="https://drive.google.com/file/d/14orWsfhQWOd4uwzHS65jxDVVh_v11Zym/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Same image on Google Drive (optional)</a>
+        </figure>
+        <div class="demo-md">
+          <hr class="demo-md-rule" aria-hidden="true" />
+          <h2 class="demo-md-h2">PERCEIVE</h2>
+          <p>Reading the world and HUD:</p>
+          <ul class="demo-md-list">
+            <li><strong>Environment</strong>: Forest edge near water (Mudflats region). Trees provide cover. Open ground ahead leads toward distant water.</li>
+            <li><strong>My dinosaur</strong>: Allosaurus, adult. Green-yellow patterning. Healthy posture.</li>
+            <li><strong>Health (red bar)</strong>: ~95% — nearly full, no danger</li>
+            <li><strong>Stamina (white bar)</strong>: ~60% — visible but not critical, can move but not sprint endlessly</li>
+            <li><strong>Hunger (green icon)</strong>: Moderate — not starving, no urgency</li>
+            <li><strong>Thirst (blue icon)</strong>: Moderate — not dehydrated</li>
+            <li><strong>Abilities</strong>: 4 slots visible — bite, bleed, tail/defensive, alternate bite</li>
+            <li><strong>Quests</strong>: Hunt Critter active (0/3), Dried Kelp (0/15)</li>
+            <li><strong>Threats</strong>: None visible. No predators. No prey in immediate view.</li>
+          </ul>
+          <h2 class="demo-md-h2">THINK</h2>
+          <p>Inner monologue as Allosaurus:</p>
+          <blockquote class="demo-md-quote">
+            Forest air. Sun through canopy. No scent of danger. Water not far — I can smell it. Body is strong, but stamina could be fuller. Not hungry enough to hunt urgently. Not thirsty enough to rush to water. Curiosity tugs — what lies beyond the trees? The forest feels safe. Cover is good. I should move, explore, learn this territory while I have strength and no threats press me.
+          </blockquote>
+          <h2 class="demo-md-h2">DECIDE</h2>
+          <p>Survival priority check:</p>
+          <ol class="demo-md-list-num">
+            <li>Predation? No — 0 threat</li>
+            <li>Thirst? Moderate — not &gt;0.7</li>
+            <li>Hunger? Moderate — not &gt;0.6</li>
+            <li>Rest? Stamina adequate for movement</li>
+          </ol>
+          <p>Personality filter:</p>
+          <ul class="demo-md-list">
+            <li>Aggressiveness 0.5: Not hunting without need</li>
+            <li>Curiosity 0.6: <strong>Explore when safe</strong></li>
+            <li>Bravery 0.5: Comfortable moving without threat</li>
+          </ul>
+          <p class="demo-md-action">ACTION: EXPLORE</p>
+          <p><strong class="inline-label">Rationale</strong>: Safe conditions, adequate stamina, curiosity-driven. Survey territory, locate water/food sources, understand the landscape while no threats present.</p>
+          <p><strong class="inline-label">Confidence</strong>: 0.78</p>
+          <p><strong class="inline-label">INTENDED KEYPRESS:</strong></p>
+          <pre class="demo-md-pre"><code>ACTION: EXPLORE → KEYS: W (forward) + Mouse (look around) + Shift (brief sprint bursts, conserve stamina)</code></pre>
+          <hr class="demo-md-hr" />
+          <p>Want me to update my Primal Mind memory with this observation and decision?</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var modeToggle = document.getElementById("modeToggle");
+      var key = "paleo-mode";
+      var saved = localStorage.getItem(key);
+      function setMode(dark) {
+        document.body.classList.toggle("dark", dark);
+        modeToggle.textContent = dark ? "Light Mode" : "Dark Mode";
+        modeToggle.setAttribute("aria-pressed", dark ? "true" : "false");
+        localStorage.setItem(key, dark ? "dark" : "light");
+      }
+      setMode(saved === "dark");
+      modeToggle.addEventListener("click", function () { setMode(!document.body.classList.contains("dark")); });
+    })();
+  </script>
+</body>
+</html>

@@ -213,3 +213,7 @@
 
 ## 2026-05-05
 - Added `pages/gallery.html` (Google Drive photo folder) and a **Gallery** item in the main site nav on `index.html`, `technical.html`, `project-checkin-1.html`, `agent-visual.html`, `agent-architecture.html`, `project-checkin-2.html`, and `companion-hud.html`.
+- Added `pages/agent-demo.html` (verbatim Instinct Agent demo transcript) and **Agent demo** nav links next to **Gallery** on the same pages plus `gallery.html`.
+- Embedded the mock demo screenshot in `agent-demo.html` from Google Drive (`image_2026-05-05_144208558.png`) with a fallback link to the file view URL.
+- Reworked `agent-demo.html` body copy into semantic HTML with markdown-like styling (headings, lists, blockquote, code block, rules) instead of a single preformatted block.
+- Added `pages/agent-demo/` (with `.gitkeep`) for the demo screenshot; `agent-demo.html` now loads `agent-demo/screenshot.png` with Drive as an optional link.
