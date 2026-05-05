@@ -321,6 +321,14 @@
       padding: 10px;
       font-weight: 600;
     }
+    .img-slot {
+      width: 100%;
+      min-height: 220px;
+      border: 2px dashed #9ec5ae;
+      border-radius: 12px;
+      object-fit: cover;
+      background: rgba(245, 251, 247, 0.65);
+    }
 
     .section-divider {
       margin: 14px 8px 10px;
@@ -415,6 +423,7 @@
         <a class="btn active" href="technical.html" aria-current="page">Technical</a>
         <a class="btn" href="agent-visual.html">Agent Visual</a>
         <a class="btn" href="agent-architecture.html">Agent Architecture</a>
+        <a class="btn" href="paleo-presentation.html">Presentation</a>
         <a class="btn" href="companion-hud.html" title="Requires python scripts/serve_companion.py for live API">Companion HUD</a>
         <a class="btn" href="chroma-strata.html" title="Browser-only 2D skin layer stack + randomize">Chroma Strata</a>
         <a class="btn" href="project-checkin-1.html">Check-in 1</a>
@@ -491,23 +500,23 @@
       <div class="dash-links">
         <a class="dash-link" href="project-checkin-1.html">
           <div class="link-title">Project Check-in 1</div>
-          <div>Current write-up and placeholders for experiment outputs.</div>
+          <div>Current write-up with active experiment outputs and visuals.</div>
         </a>
         <a class="dash-link" href="project-checkin-2.html">
           <div class="link-title">Project Check-in 2</div>
           <div>Current progress update with live pipeline status and next steps.</div>
         </a>
         <div class="dash-link dash-link-disabled" aria-disabled="true">
-          <div class="link-title">Model Results Dashboard (Placeholder)</div>
-          <div>Planned: loss/accuracy curves, confusion matrix, and baseline table.</div>
+          <div class="link-title">Model Results Dashboard</div>
+          <div>Current curves and comparison charts; next update adds expanded metric tables.</div>
         </div>
         <div class="dash-link dash-link-disabled" aria-disabled="true">
-          <div class="link-title">Agent Demo Gallery (Placeholder)</div>
-          <div>Planned: clips with thought logs and behavior snapshots.</div>
+          <div class="link-title">Agent Demo Gallery</div>
+          <div>Next planned: clips with thought logs and behavior snapshots.</div>
         </div>
         <div class="dash-link dash-link-disabled" aria-disabled="true">
-          <div class="link-title">Architecture Viewer (Placeholder)</div>
-          <div>Planned: perceive - decide - act - remember flow.</div>
+          <div class="link-title">Architecture Viewer</div>
+          <div>Next planned: perceive - decide - act - remember flow.</div>
         </div>
       </div>
     </section>
@@ -611,11 +620,18 @@
     </section>
 
     <section class="card reveal">
-      <div class="icon-line"><i class="fa-solid fa-image" aria-hidden="true"></i> Technical Visual Placeholders</div>
+      <div class="icon-line"><i class="fa-solid fa-image" aria-hidden="true"></i> Technical Visuals</div>
       <div class="image-row">
-        <div class="img-placeholder">Placeholder: architecture diagram (perceive -> decide -> act -> remember)</div>
-        <div class="img-placeholder">Placeholder: confusion matrix and baseline table</div>
-        <div class="img-placeholder">Placeholder: dinosaur thought/action timeline</div>
+        <div class="img-placeholder">
+          Placeholder: architecture diagram (perceive -> decide -> act -> remember)
+        </div>
+        <div class="img-placeholder">
+          Placeholder: dinosaur thought/action timeline
+        </div>
+      </div>
+      <div class="image-row">
+        <img class="img-slot" src="../output/figures/final_comparison.png" alt="Bar chart of final validation accuracy by experiment">
+        <img class="img-slot" src="../output/figures/confusion_matrices/resnet18_lrie4_aug_e15_confusion_matrix.png" alt="Confusion matrix for best selected ResNet-18 model: lr=1e-4 with augmentation at 15 epochs">
       </div>
     </section>
 

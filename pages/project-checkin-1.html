@@ -294,6 +294,52 @@
       padding: 10px;
       font-weight: 600;
     }
+    .img-slot {
+      width: 100%;
+      min-height: 220px;
+      border: 2px dashed #9ec5ae;
+      border-radius: 12px;
+      object-fit: cover;
+      background: rgba(245, 251, 247, 0.65);
+    }
+    .artifact-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      margin-top: 12px;
+    }
+    .artifact-panel {
+      border: 1px solid #d4e7d7;
+      border-radius: 12px;
+      background: rgba(252, 255, 251, 0.76);
+      padding: 10px;
+    }
+    .artifact-panel h3 {
+      margin: 0 0 8px;
+      color: #245946;
+      font-size: 1rem;
+    }
+    .img-caption {
+      margin: 8px 2px 0;
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+    }
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 0.9rem;
+    }
+    .mini-table th,
+    .mini-table td {
+      border: 1px solid #d4e7d7;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    .mini-table th {
+      background: #eff8f0;
+      color: #245946;
+    }
 
     code {
       background: #f0f7f0;
@@ -385,6 +431,7 @@
         <a class="btn" href="technical.html">Technical</a>
         <a class="btn" href="agent-visual.html">Agent Visual</a>
         <a class="btn" href="agent-architecture.html">Agent Architecture</a>
+        <a class="btn" href="paleo-presentation.html">Presentation</a>
         <a class="btn" href="companion-hud.html" title="Requires python scripts/serve_companion.py for live API">Companion HUD</a>
         <a class="btn active" href="project-checkin-1.html" aria-current="page">Check-in 1</a>
         <a class="btn" href="project-checkin-2.html">Check-in 2</a>
@@ -398,7 +445,7 @@
     <section class="hero reveal">
       <h1>PALEO Project Check-in 1</h1>
       <p class="muted">
-        Complete web version of the check-in response, with placeholders for planned
+        Complete web version of the check-in response, with current experiment artifacts
         experiment artifacts and upcoming technical deliverables.
       </p>
       <p>
@@ -541,20 +588,20 @@
     </div>
 
     <section class="card reveal">
-      <h2>Planned Artifact Placeholders</h2>
-      <p class="muted">These correspond to items already described in your check-in and previous notes.</p>
+      <h2>Current Artifact Snapshot</h2>
+      <p class="muted">These cards summarize the current outputs and next artifact upgrades.</p>
       <div class="placeholder-board">
         <article class="placeholder">
           <h3>Training Curves Panel</h3>
-          <p>Placeholder for loss/accuracy over epochs and convergence snapshots.</p>
+          <p>Now populated by convergence curves from the latest ResNet-18 sweep.</p>
         </article>
         <article class="placeholder">
           <h3>Sensitivity Analysis Table</h3>
-          <p>Placeholder for learning-rate, augmentation, and backbone variation outcomes.</p>
+          <p>Now represented with learning-rate sensitivity across augmented runs.</p>
         </article>
         <article class="placeholder">
           <h3>Baseline Comparison</h3>
-          <p>Placeholder for OpenCV rule baseline vs ResNet-18 model variants.</p>
+          <p>Now represented with final comparison across baseline and model variants.</p>
         </article>
         <article class="placeholder">
           <h3>Qualitative Case Gallery</h3>
@@ -569,10 +616,40 @@
           <p>Placeholder for in-engine clips showing perceive-decide-act behavior loop.</p>
         </article>
       </div>
-      <div class="image-row">
-        <div class="img-placeholder">Image Placeholder: training curve screenshot</div>
-        <div class="img-placeholder">Image Placeholder: confusion matrix visual</div>
-        <div class="img-placeholder">Image Placeholder: dinosaur thought/action timeline</div>
+      <div class="artifact-grid">
+        <article class="artifact-panel">
+          <h3>Training Curves Panel</h3>
+          <img class="img-slot" src="../output/figures/convergence_curves.png" alt="Training and validation loss curves for experiment runs">
+          <p class="img-caption">Best selected run: ResNet-18, lr=1e-4, augmentation on, 15 epochs.</p>
+        </article>
+        <article class="artifact-panel">
+          <h3>Sensitivity Analysis Table</h3>
+          <img class="img-slot" src="../output/figures/lr_sensitivity.png" alt="Validation accuracy sensitivity across learning-rate choices">
+          <table class="mini-table" aria-label="Learning-rate comparison with augmentation on">
+            <thead>
+              <tr>
+                <th>Run</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>LR=1e-3 (aug)</td>
+                <td>Stronger early gains, less stable at later epochs.</td>
+              </tr>
+              <tr>
+                <td>LR=1e-4 (aug)</td>
+                <td>More stable convergence and selected as best configuration.</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="artifact-panel">
+          <h3>Baseline Comparison</h3>
+          <img class="img-slot" src="../output/figures/final_comparison.png" alt="Final validation accuracy comparison across baseline and ResNet variants">
+          <p class="img-caption">Baseline versus model variants from the latest sweep.</p>
+          <img class="img-slot" src="../output/figures/confusion_matrices/resnet18_lrie4_aug_e15_confusion_matrix.png" alt="Confusion matrix for best selected ResNet-18 model: lr=1e-4 with augmentation at 15 epochs">
+        </article>
       </div>
     </section>
 

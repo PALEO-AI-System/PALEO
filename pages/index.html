@@ -277,6 +277,14 @@
       background: rgba(242, 251, 246, 0.88);
       transform: translateY(-1px);
     }
+    .placeholder-image {
+      width: 100%;
+      min-height: 290px;
+      border: 2px dashed #9ec5ae;
+      border-radius: 14px;
+      object-fit: cover;
+      background: rgba(245, 251, 247, 0.65);
+    }
 
     .section { margin-top: 16px; }
     .grid {
@@ -776,15 +784,35 @@
 
     <section class="section reveal">
       <div class="card">
-        <div class="icon-line"><i class="fa-solid fa-image" aria-hidden="true"></i> Visual Placeholders</div>
-        <h2>Image Gallery Placeholders</h2>
+        <div class="icon-line"><i class="fa-solid fa-image" aria-hidden="true"></i> Visual Highlights</div>
+        <h2>Image Gallery</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>Placeholder: fern-themed map scene</h3>
+            <p>Ambient map concept art with dense canopy layers, trails, and traversal chokepoints.</p>
+          </article>
+          <article class="card">
+            <h3>Placeholder: fossil/footprint overlay concept</h3>
+            <p>UI overlay concept showing interpreted tracks, age of trail, and direction confidence.</p>
+          </article>
+          <article class="card">
+            <h3>Placeholder: agent thought log interface</h3>
+            <p>Panel concept for perception summary, risk score, memory recall, and selected action.</p>
+          </article>
+          <article class="card">
+            <h3>Placeholder: predator/prey behavior heatmap</h3>
+            <p>Spatial intensity map of predator sightings, prey density, and safe route zones.</p>
+          </article>
+          <article class="card">
+            <h3>Placeholder: dinosaur memory state cards</h3>
+            <p>Card set for hunger, thirst, stamina, threat memory, and recent decisions.</p>
+          </article>
+        </div>
         <div class="image-row">
-          <div class="placeholder">Placeholder: fern-themed map scene</div>
-          <div class="placeholder">Placeholder: fossil/footprint overlay concept</div>
-          <div class="placeholder">Placeholder: agent thought log interface</div>
-          <div class="placeholder">Placeholder: predator/prey behavior heatmap</div>
-          <div class="placeholder">Placeholder: dinosaur memory state cards</div>
-          <div class="placeholder">Placeholder: checkpoint metrics dashboard preview</div>
+          <img class="placeholder-image" src="../output/figures/convergence_curves.png" alt="Training and validation loss convergence curves across epochs">
+          <img class="placeholder-image" src="../output/figures/lr_sensitivity.png" alt="Validation accuracy versus learning-rate settings">
+          <img class="placeholder-image" src="../output/figures/final_comparison.png" alt="Final validation accuracy comparison across experiment runs">
+          <img class="placeholder-image" src="../output/figures/confusion_matrices/resnet18_lrie4_aug_e15_confusion_matrix.png" alt="Confusion matrix for the best-accuracy ResNet-18 model (lr=1e-4, augmentation, 15 epochs)">
         </div>
       </div>
     </section>
