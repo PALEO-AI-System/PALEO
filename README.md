@@ -89,6 +89,7 @@ python scripts/show_letta_tools.py
 python scripts/build_wiki_rag_index.py
 python scripts/ingest_pot_wiki.py --rebuild-index
 python scripts/ingest_pot_wiki.py --url-list docs/pot_rag_urls.txt --rebuild-index
+python scripts/calibrate_pot_hud.py --images-dir data/processed/pot_hud_calibration/images
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
@@ -189,6 +190,19 @@ py -3 scripts/run_paleo_overlay.py --brain letta-api --letta-agent-id YOUR_AGENT
 ```
 
 Close overlay with `Esc` or **Close**; drag the **gradient title bar**; **Workflow** explains PALEO.exe vs overlay vs control loop; **A−/A+** and **Detail** mirror `+/−` and `Tab`.
+
+### HUD calibration from screenshots
+
+Use your own in-game screenshots to calibrate hunger/thirst/health/stamina parsing:
+
+```bash
+python scripts/calibrate_pot_hud.py --images-dir data/processed/pot_hud_calibration/images
+```
+
+Artifacts:
+- `results/hud_calibration/overlays/` (ROI rectangles and parsed values drawn onto each screenshot)
+- `results/hud_calibration/hud_values.csv` (per-image parsed values)
+- `results/hud_calibration/summary.json` (aggregate confidence and suggested parser confidence floor)
 
 ### Build PALEO.exe (Windows)
 

@@ -217,6 +217,7 @@
       <h2><i class="fa-solid fa-gauge-high" aria-hidden="true"></i> Live HUD</h2>
       <div class="hud-grid" id="hudGrid"></div>
       <div class="decision-card" id="decisionCard"></div>
+      <div class="decision-card" id="offlineBrainCard"></div>
     </section>
 
   </main>
@@ -345,6 +346,43 @@
       });
       var decisionCard = document.getElementById("decisionCard");
       decisionCard.innerHTML = "<h3>Decision bias</h3><p>Low threat, moderate hunger, good stamina: hold position or explore before committing to forage or hunt.</p>";
+      var offlineBrainCard = document.getElementById("offlineBrainCard");
+
+      function offlineBrainSummary(sp, s) {
+        var action = "HOLD_POSITION";
+        var why = "No strong trigger.";
+        if (s.predator_probability >= 0.75 && s.health < 0.45) {
+          action = "FLEE";
+          why = "Threat high and health low.";
+        } else if (s.thirst >= 0.82) {
+          action = "SEEK_WATER";
+          why = "Thirst critical.";
+        } else if (s.hunger >= 0.75 && s.prey_density >= 0.5) {
+          action = "HUNT";
+          why = "Hunger high and prey available.";
+        } else if (s.stamina < 0.2) {
+          action = "HOLD_POSITION";
+          why = "Low stamina safety hold.";
+        } else if (s.predator_probability >= 0.6) {
+          action = "EXPLORE";
+          why = "Cautious reposition under moderate threat.";
+        }
+        return {
+          species: sp.label,
+          action: action,
+          rationale: why,
+        };
+      }
+
+      function renderOfflineBrainCard(sp) {
+        var o = offlineBrainSummary(sp, state);
+        offlineBrainCard.innerHTML =
+          "<h3>Offline brain preview (non-Letta)</h3>" +
+          "<p><strong>Action:</strong> " + o.action + " | <strong>Species:</strong> " + o.species + "</p>" +
+          "<p><strong>Rationale:</strong> " + o.rationale + "</p>" +
+          "<p class='muted'>This card surfaces local rule-brain behavior for testing when Letta is not active. Live HUD above remains unchanged.</p>";
+      }
+      renderOfflineBrainCard(species[0]);
 
       /* Species switcher click */
       grid.addEventListener("click", function (e) {
@@ -356,6 +394,7 @@
         h3.textContent = picked.label.toUpperCase() + " \u00B7 adult";
         goalP.textContent = "Goal: " + picked.role;
         decisionCard.querySelector("p").textContent = picked.label + " perspective: " + picked.note;
+        renderOfflineBrainCard(picked);
         /* Update avatar silhouette */
         var avatarVis = document.getElementById("avatarVisual");
         var sil = silhouettes[picked.id];

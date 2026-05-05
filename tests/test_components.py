@@ -5,12 +5,13 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
+import numpy as np
 
 from src.agent import default_agent_state, decide_action, format_thought_log
 from src.config import DataConfig
 from src.data import create_synthetic_manifest, sample_training_batch
 from src.letta_tools import get_letta_tool_specs
-from src.pot import describe_pot_integration_assumptions
+from src.pot import describe_pot_integration_assumptions, parse_pot_hud
 
 
 class TestComponents(unittest.TestCase):
@@ -65,6 +66,28 @@ class TestComponents(unittest.TestCase):
             "set_personality_traits",
         }
         self.assertTrue(required.issubset(names))
+
+    def test_parse_pot_hud_basics(self) -> None:
+        # Synthetic frame with red health lane + white stamina lane + colored side icons.
+        h, w = 720, 1280
+        frame = np.zeros((h, w, 3), dtype=np.uint8)
+        # Health red lane.
+        frame[int(0.80 * h) : int(0.84 * h), int(0.17 * w) : int(0.84 * w), 2] = 220
+        # Stamina white lane.
+        frame[int(0.845 * h) : int(0.89 * h), int(0.18 * w) : int(0.40 * w), :] = 210
+        # Hunger (green icon zone), thirst (blue icon zone).
+        frame[int(0.76 * h) : int(0.93 * h), int(0.06 * w) : int(0.15 * w), 1] = 180
+        frame[int(0.76 * h) : int(0.93 * h), int(0.85 * w) : int(0.94 * w), 0] = 190
+        # Ability + buff dark lanes.
+        frame[int(0.69 * h) : int(0.79 * h), int(0.36 * w) : int(0.66 * w), :] = 30
+        frame[int(0.61 * h) : int(0.69 * h), int(0.33 * w) : int(0.69 * w), :] = 30
+
+        hud = parse_pot_hud(frame)
+        self.assertIsNotNone(hud)
+        assert hud is not None
+        self.assertGreater(hud.health, 0.2)
+        self.assertGreater(hud.stamina, 0.2)
+        self.assertGreater(hud.confidence, 0.4)
 
 
 if __name__ == "__main__":

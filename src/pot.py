@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+import ctypes
 from pathlib import Path
 from time import sleep
 from time import time
@@ -32,6 +33,71 @@ except Exception:  # pragma: no cover - optional dependency
     mouse = None
 
 from .config import PotConfig, default_pot_config
+MOUSEEVENTF_MOVE = 0x0001
+MOUSEEVENTF_LEFTDOWN = 0x0002
+MOUSEEVENTF_LEFTUP = 0x0004
+MOUSEEVENTF_RIGHTDOWN = 0x0008
+MOUSEEVENTF_RIGHTUP = 0x0010
+MOUSEEVENTF_MIDDLEDOWN = 0x0020
+MOUSEEVENTF_MIDDLEUP = 0x0040
+MOUSEEVENTF_XDOWN = 0x0080
+MOUSEEVENTF_XUP = 0x0100
+XBUTTON1 = 0x0001
+XBUTTON2 = 0x0002
+
+
+def _mouse_event(flags: int, dx: int = 0, dy: int = 0, data: int = 0) -> None:
+    ctypes.windll.user32.mouse_event(int(flags), int(dx), int(dy), int(data), 0)
+
+
+def _fallback_mouse_move(dx: int, dy: int) -> None:
+    _mouse_event(MOUSEEVENTF_MOVE, dx=dx, dy=dy)
+
+
+def _fallback_mouse_click(button: str) -> bool:
+    b = (button or "").lower()
+    if b == "left":
+        _mouse_event(MOUSEEVENTF_LEFTDOWN)
+        sleep(0.02)
+        _mouse_event(MOUSEEVENTF_LEFTUP)
+        return True
+    if b == "right":
+        _mouse_event(MOUSEEVENTF_RIGHTDOWN)
+        sleep(0.02)
+        _mouse_event(MOUSEEVENTF_RIGHTUP)
+        return True
+    if b == "middle":
+        _mouse_event(MOUSEEVENTF_MIDDLEDOWN)
+        sleep(0.02)
+        _mouse_event(MOUSEEVENTF_MIDDLEUP)
+        return True
+    if b in {"x", "x1"}:
+        _mouse_event(MOUSEEVENTF_XDOWN, data=XBUTTON1)
+        sleep(0.02)
+        _mouse_event(MOUSEEVENTF_XUP, data=XBUTTON1)
+        return True
+    if b in {"x2"}:
+        _mouse_event(MOUSEEVENTF_XDOWN, data=XBUTTON2)
+        sleep(0.02)
+        _mouse_event(MOUSEEVENTF_XUP, data=XBUTTON2)
+        return True
+    return False
+
+
+
+
+@dataclass
+class HudReadout:
+    """Parsed HUD signals from a frame."""
+
+    health: float
+    stamina: float
+    hunger: float
+    thirst: float
+    stamina_hidden_full: bool
+    abilities_lane_visible: bool
+    buffs_lane_visible: bool
+    confidence: float
 
 
 def primary_monitor_region() -> Tuple[int, int, int, int] | None:
@@ -143,6 +209,110 @@ class ScreenCaptureWorker:
         return frame
 
 
+def _norm_roi(frame_bgr: object, x0: float, y0: float, x1: float, y1: float):
+    if np is None:
+        return None
+    arr = np.asarray(frame_bgr)
+    h, w = arr.shape[:2]
+    ix0 = max(0, min(w - 1, int(x0 * w)))
+    iy0 = max(0, min(h - 1, int(y0 * h)))
+    ix1 = max(ix0 + 1, min(w, int(x1 * w)))
+    iy1 = max(iy0 + 1, min(h, int(y1 * h)))
+    return arr[iy0:iy1, ix0:ix1]
+
+
+def parse_pot_hud(frame_bgr: object) -> HudReadout | None:
+    """Parse core PoT HUD bars/icons from a frame.
+
+    Layout assumptions are documented in docs/pot_hud_reference.md and use
+    normalized bottom-center ROIs so this works across common resolutions.
+    """
+    if np is None or frame_bgr is None:
+        return None
+    arr = np.asarray(frame_bgr)
+    if arr.ndim != 3 or arr.shape[2] < 3:
+        return None
+
+    # Health bar (red center bar).
+    health_roi = _norm_roi(arr, 0.17, 0.79, 0.84, 0.84)
+    # Stamina bar (white lane below health on left side only).
+    stamina_roi = _norm_roi(arr, 0.18, 0.845, 0.44, 0.89)
+    # Hunger/thirst icon ROIs.
+    hunger_roi = _norm_roi(arr, 0.06, 0.76, 0.15, 0.93)
+    thirst_roi = _norm_roi(arr, 0.85, 0.76, 0.94, 0.93)
+    # Ability + buff lanes above health.
+    abilities_roi = _norm_roi(arr, 0.36, 0.69, 0.66, 0.79)
+    buffs_roi = _norm_roi(arr, 0.33, 0.61, 0.69, 0.69)
+
+    if any(r is None for r in (health_roi, stamina_roi, hunger_roi, thirst_roi, abilities_roi, buffs_roi)):
+        return None
+
+    # BGR channels
+    hb, hg, hr = health_roi[:, :, 0], health_roi[:, :, 1], health_roi[:, :, 2]
+    sb, sg, sr = stamina_roi[:, :, 0], stamina_roi[:, :, 1], stamina_roi[:, :, 2]
+    gb, gg, gr = hunger_roi[:, :, 0], hunger_roi[:, :, 1], hunger_roi[:, :, 2]
+    tb, tg, tr = thirst_roi[:, :, 0], thirst_roi[:, :, 1], thirst_roi[:, :, 2]
+
+    # Health: red dominance and brightness in bar lane.
+    red_mask = (hr > 85) & (hr > hg * 1.25) & (hr > hb * 1.25)
+    health = float(np.clip(red_mask.mean() * 1.18, 0.0, 1.0))
+
+    # Stamina: white-ish dominance in lower-left lane.
+    white_mask = (sr > 125) & (sg > 125) & (sb > 125) & (np.abs(sr - sg) < 35) & (np.abs(sg - sb) < 35)
+    white_ratio = float(white_mask.mean())
+    stamina_hidden_full = white_ratio < 0.03
+    stamina = 1.0 if stamina_hidden_full else float(np.clip(white_ratio * 4.2, 0.0, 1.0))
+
+    # Hunger icon (green), thirst icon (blue): require both mean dominance and
+    # a minimum "active" pixel ratio so menu backgrounds are less likely to
+    # masquerade as icon state.
+    green_dom = gg.astype(np.float32) - (gr + gb) * 0.5
+    blue_dom = tb.astype(np.float32) - (tr + tg) * 0.5
+    green_active_ratio = float((green_dom > 18).mean())
+    blue_active_ratio = float((blue_dom > 18).mean())
+    green_strength = float(
+        np.clip((((green_dom.mean() + 34.0) / 118.0) * (0.45 + 0.55 * green_active_ratio)), 0.0, 1.0)
+    )
+    blue_strength = float(
+        np.clip((((blue_dom.mean() + 34.0) / 118.0) * (0.45 + 0.55 * blue_active_ratio)), 0.0, 1.0)
+    )
+    # Convert icon activity into need levels conservatively.
+    hunger = float(np.clip(green_strength, 0.0, 1.0))
+    thirst = float(np.clip(blue_strength, 0.0, 1.0))
+
+    # Ability/buff lanes visibility confidence aids.
+    abilities_gray = abilities_roi.mean(axis=2)
+    buffs_gray = buffs_roi.mean(axis=2)
+    abilities_lane_visible = bool(abilities_gray.mean() < 118 and abilities_gray.std() > 22)
+    buffs_lane_visible = bool(buffs_gray.mean() < 122 and buffs_gray.std() > 18)
+
+    # HUD anchor signal: at least some combination of expected HUD cues.
+    icon_pair_present = green_active_ratio > 0.05 and blue_active_ratio > 0.05
+    health_or_stamina_present = health > 0.07 or stamina_hidden_full or stamina > 0.12
+
+    # Confidence increases when multiple lane signals agree.
+    confidence_parts = [
+        min(1.0, health / 0.8) if health > 0.02 else 0.18,
+        0.85 if stamina_hidden_full or stamina > 0.05 else 0.22,
+        0.85 if abilities_lane_visible else 0.25,
+        0.8 if buffs_lane_visible else 0.25,
+        0.95 if icon_pair_present else 0.20,
+        0.9 if health_or_stamina_present else 0.22,
+    ]
+    confidence = float(np.clip(sum(confidence_parts) / len(confidence_parts), 0.0, 1.0))
+
+    return HudReadout(
+        health=round(float(health), 4),
+        stamina=round(float(stamina), 4),
+        hunger=round(float(hunger), 4),
+        thirst=round(float(thirst), 4),
+        stamina_hidden_full=stamina_hidden_full,
+        abilities_lane_visible=abilities_lane_visible,
+        buffs_lane_visible=buffs_lane_visible,
+        confidence=round(confidence, 4),
+    )
+
+
 def frame_to_observation(
     frame: CaptureFrame,
     classifier_model=None,
@@ -166,15 +336,27 @@ def frame_to_observation(
         threat = heuristic_threat
 
     prey_density = max(0.0, min(1.0, 1.0 - abs(frame.mean_brightness - 0.5) * 2.0))
+    # Fallback vitals from scene-only heuristics.
+    health = 0.85
     stamina = max(0.2, min(1.0, 1.0 - threat * 0.6))
+    hunger = 0.45
+    thirst = 0.35
+    hud = parse_pot_hud(frame.frame_bgr) if frame.frame_bgr is not None else None
+    if hud is not None and hud.confidence >= 0.55:
+        # Blend parsed HUD values with conservative defaults.
+        mix = min(0.75, max(0.35, hud.confidence))
+        health = (1.0 - mix) * health + mix * hud.health
+        stamina = (1.0 - mix) * stamina + mix * hud.stamina
+        hunger = (1.0 - mix) * hunger + mix * hud.hunger
+        thirst = (1.0 - mix) * thirst + mix * hud.thirst
 
     return {
         "predator_probability": round(threat, 4),
         "prey_density": round(prey_density, 4),
-        "health": 0.85,
+        "health": round(float(health), 4),
         "stamina": round(stamina, 4),
-        "hunger": 0.45,
-        "thirst": 0.35,
+        "hunger": round(float(hunger), 4),
+        "thirst": round(float(thirst), 4),
     }
 
 def classify_frame_predator_probability(frame_bgr, model, device):
@@ -277,12 +459,30 @@ class SafeInputController:
             sleep(self.key_hold_sec)
             for k in reversed(keys):
                 keyboard.release(k)
-            if mouse is not None and mouse_delta != (0, 0):
-                mouse.move(mouse_delta[0], mouse_delta[1], absolute=False, duration=0)
-            if mouse is not None and mouse_clicks:
+            if mouse_delta != (0, 0):
+                moved = False
+                if mouse is not None:
+                    try:
+                        mouse.move(mouse_delta[0], mouse_delta[1], absolute=False, duration=0)
+                        moved = True
+                    except Exception:
+                        moved = False
+                if not moved:
+                    _fallback_mouse_move(mouse_delta[0], mouse_delta[1])
+
+            if mouse_clicks:
                 for button in mouse_clicks:
-                    if button in {"left", "right", "middle", "x", "x2"}:
-                        mouse.click(button=button)
+                    if button not in {"left", "right", "middle", "x", "x1", "x2"}:
+                        continue
+                    clicked = False
+                    if mouse is not None:
+                        try:
+                            mouse.click(button=button)
+                            clicked = True
+                        except Exception:
+                            clicked = False
+                    if not clicked:
+                        _fallback_mouse_click(button)
             self._last_action_at = now
             return ControlResult(True, "executed", action, keys, mouse_delta, mouse_clicks)
         except Exception as exc:

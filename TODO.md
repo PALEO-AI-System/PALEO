@@ -37,12 +37,19 @@ Use **[x]** for done, **[ ]** for not done. Do not delete completed lines; mark 
 - [ ] **Cross-check** the plan vs reality: what the overlay/HUD *should* show vs what is **actually** wired and visible (debug fields, live frame, control preview, API endpoints).
 - [ ] Keep **companion HUD** (`serve_companion` / `companion-hud.html`) aligned with the same behaviors where it makes sense.
 - [ ] Document (or optionally unify) running **overlay** alongside **advice vs control**: default overlay is advice-only; real OS input stays on `run_paleo_control_loop.py --enable-control` until a single entrypoint exists.
+- [ ] Overlay command-only settings audit pass: expose remaining useful CLI-only options in overlay UI (or explicitly document why they stay CLI-only), including advanced runtime toggles.
+- [ ] Overlay -> Companion HUD live sync channel: wire shared runtime state/events so overlay and browser Companion HUD update the same agent-state stream in real time.
 
 ## Core pipeline / agent
 
 - [ ] Replace or augment pixel **heuristics** with a trained **vision** step (even a small classifier on cropped UI).
+- [x] Add explicit PoT HUD parser pass using confirmed mapping in `docs/pot_hud_reference.md` (health red bar, stamina white bar hidden-at-full edge case, hunger/thirst icons, ability and buff/debuff lanes).
+- [ ] HUD ROI calibration pass v2: tune normalized ROI boxes per resolution/UI scale using `scripts/calibrate_pot_hud.py` overlays, then lock per-profile presets.
+- [ ] HUD value calibration set expansion: collect more gameplay-only screenshots (exclude menu/skin/abilities pages) and retune confidence thresholds for hunger/thirst/health/stamina.
+- [ ] Full supervised HUD-value model training: build labeled HUD dataset (health/stamina/hunger/thirst targets) and train/evaluate a dedicated model to replace or augment rule-based parsing in `parse_pot_hud`.
 - [ ] **Path of Titans** hardening: focus, key timing, fewer accidental inputs.
 - [ ] **Letta** integration (next big step): real agent session, tools, memory — beyond local stubs (`src/letta_tools.py`).
+- [ ] Letta image upload guardrail: enforce <=5MB per image (resize/compress to JPEG/WebP and chunk/fallback policy before upload).
 - [ ] **Letta Code MemFS setup:** configure a MemFS-backed Letta Code instance for PALEO so the Instinct Agent/Primal Mind can use fast ephemeral memory during local runs (with a clear switch path to persistent storage later).
 - [ ] **Agent output → keys/mouse**: same structured actions **Letta** (or any middle tier) emits must map through **`ActionMapper` / `SafeInputController`** with tests and guardrails (schema parity with `simulate_instinct_decision` today).
 - [ ] **Audio events from sound:** capture short audio windows, extract lightweight features, classify a few event types (e.g., roar/combat/quiet), then feed flags into the agent observation.
