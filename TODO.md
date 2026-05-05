@@ -43,7 +43,10 @@ Use **[x]** for done, **[ ]** for not done. Do not delete completed lines; mark 
 - [ ] Replace or augment pixel **heuristics** with a trained **vision** step (even a small classifier on cropped UI).
 - [ ] **Path of Titans** hardening: focus, key timing, fewer accidental inputs.
 - [ ] **Letta** integration (next big step): real agent session, tools, memory — beyond local stubs (`src/letta_tools.py`).
+- [ ] **Letta Code MemFS setup:** configure a MemFS-backed Letta Code instance for PALEO so the Instinct Agent/Primal Mind can use fast ephemeral memory during local runs (with a clear switch path to persistent storage later).
 - [ ] **Agent output → keys/mouse**: same structured actions **Letta** (or any middle tier) emits must map through **`ActionMapper` / `SafeInputController`** with tests and guardrails (schema parity with `simulate_instinct_decision` today).
+- [ ] **Audio events from sound:** capture short audio windows, extract lightweight features, classify a few event types (e.g., roar/combat/quiet), then feed flags into the agent observation.
+- [ ] **Voice commands (later):** mic capture + speech-to-text (text output), then map spoken commands into a safe subset of actions (pause, switch mode/species, hold/flee) through the same `ActionMapper` path.
 - [ ] Richer **game context** for the agent (wiki / mechanics — see `src/wiki_rag.py`, `docs/paleo_brainstorming.md`).
 
 ## Course / evaluation (from `docs/context_dump.md`)

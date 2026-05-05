@@ -15,7 +15,7 @@ from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Iterable, List, Set
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, quote, urlparse
 
 import requests
 
@@ -89,6 +89,24 @@ def discover_urls(input_files: Iterable[Path]) -> List[str]:
     return out
 
 
+def _load_curated_urls(path: Path) -> List[str]:
+    if not path.exists():
+        return []
+    out: List[str] = []
+    seen: Set[str] = set()
+    for raw in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if not line.startswith("http"):
+            continue
+        if line in seen:
+            continue
+        seen.add(line)
+        out.append(line)
+    return out
+
+
 def fetch_page(session: requests.Session, url: str, timeout_sec: float) -> dict:
     try:
         r = session.get(url, timeout=timeout_sec)
@@ -108,12 +126,73 @@ def fetch_page(session: requests.Session, url: str, timeout_sec: float) -> dict:
             "fetched_at": int(time.time()),
         }
     except Exception as e:  # broad on purpose: keep ingestion robust across sites
+        fallback = _fetch_fandom_via_api(session, url, timeout_sec=timeout_sec)
+        if fallback is not None:
+            return fallback
         return {
             "url": url,
             "title": url,
             "text": "",
             "status": "error",
             "error": str(e),
+            "fetched_at": int(time.time()),
+        }
+
+
+def _fandom_page_name(url: str) -> str:
+    parsed = urlparse(url)
+    path = parsed.path.strip("/")
+    if path.startswith("wiki/"):
+        return path[len("wiki/") :]
+    qs = parse_qs(parsed.query)
+    if "title" in qs and qs["title"]:
+        return qs["title"][0]
+    return ""
+
+
+def _fetch_fandom_via_api(session: requests.Session, url: str, timeout_sec: float) -> dict | None:
+    host = urlparse(url).netloc.lower()
+    if "fandom.com" not in host:
+        return None
+    page = _fandom_page_name(url)
+    if not page:
+        return None
+    api_url = f"https://{host}/api.php?action=parse&page={quote(page)}&prop=text&format=json&formatversion=2"
+    try:
+        r = session.get(api_url, timeout=timeout_sec)
+        r.raise_for_status()
+        payload = r.json()
+        parsed = payload.get("parse") or {}
+        title = str(parsed.get("title") or page).strip()
+        html = str(parsed.get("text") or "").strip()
+        if not html:
+            return {
+                "url": url,
+                "title": title,
+                "text": "",
+                "status": "error",
+                "error": "fandom api returned empty text",
+                "fetched_at": int(time.time()),
+            }
+        parser = _VisibleTextParser()
+        parser.feed(html)
+        text = parser.text()
+        return {
+            "url": url,
+            "title": title[:220],
+            "text": text[:20000],
+            "status": "ok",
+            "http_status": r.status_code,
+            "source_mode": "fandom_api_fallback",
+            "fetched_at": int(time.time()),
+        }
+    except Exception as e:
+        return {
+            "url": url,
+            "title": url,
+            "text": "",
+            "status": "error",
+            "error": f"fandom api fallback failed: {e}",
             "fetched_at": int(time.time()),
         }
 
@@ -135,12 +214,22 @@ def main() -> None:
         default="data/processed/wiki_pages.jsonl",
         help="Output JSONL corpus path.",
     )
+    p.add_argument(
+        "--url-list",
+        default="",
+        help="Optional newline-delimited URL file; when set, only these URLs are ingested.",
+    )
     p.add_argument("--timeout-sec", type=float, default=12.0)
     p.add_argument("--rebuild-index", action="store_true", help="Rebuild wiki_rag index after ingestion.")
     args = p.parse_args()
 
-    files = [PROJECT_ROOT / f for f in args.input_files]
-    urls = discover_urls(files)
+    urls: List[str]
+    if args.url_list:
+        urls = _load_curated_urls(PROJECT_ROOT / args.url_list)
+        print(f"Using curated URL list: {args.url_list} ({len(urls)} URLs)")
+    else:
+        files = [PROJECT_ROOT / f for f in args.input_files]
+        urls = discover_urls(files)
     if not urls:
         raise SystemExit("No PoT wiki URLs found in input files.")
 

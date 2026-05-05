@@ -88,6 +88,7 @@ python scripts/run_pipeline.py
 python scripts/show_letta_tools.py
 python scripts/build_wiki_rag_index.py
 python scripts/ingest_pot_wiki.py --rebuild-index
+python scripts/ingest_pot_wiki.py --url-list docs/pot_rag_urls.txt --rebuild-index
 python -m unittest discover -s tests -p "test_*.py"
 ```
 

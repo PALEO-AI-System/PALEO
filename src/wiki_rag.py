@@ -40,6 +40,10 @@ class WikiRagIndex:
 _INDEX_CACHE: WikiRagIndex | None = None
 
 
+def _log(msg: str) -> None:
+    print(f"[wiki_rag] {msg}")
+
+
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
 
@@ -59,6 +63,7 @@ def _pages_corpus_path() -> Path:
 def _load_snippets() -> List[WikiSnippet]:
     path = _snippets_path()
     if not path.exists():
+        _log(f"snippets file not found: {path.as_posix()}")
         return []
     raw = path.read_text(encoding="utf-8").splitlines()
     snippets: List[WikiSnippet] = []
@@ -75,6 +80,7 @@ def _load_snippets() -> List[WikiSnippet]:
             current_lines.append(line)
     if current_title:
         snippets.append(WikiSnippet(title=current_title, lines=current_lines))
+    _log(f"loaded snippets: {len(snippets)} sections")
     return snippets
 
 
@@ -93,6 +99,7 @@ def _clean_lines(lines: Sequence[str]) -> List[str]:
 def _load_web_docs() -> List[WikiChunk]:
     path = _pages_corpus_path()
     if not path.exists():
+        _log(f"web corpus not found: {path.as_posix()}")
         return []
     out: List[WikiChunk] = []
     for idx, raw in enumerate(path.read_text(encoding="utf-8").splitlines()):
@@ -116,6 +123,7 @@ def _load_web_docs() -> List[WikiChunk]:
                 source=source,
             )
         )
+    _log(f"loaded web docs: {len(out)} records")
     return out
 
 
@@ -144,8 +152,10 @@ def _chunk_text(text: str, max_chars: int = 480, overlap_chars: int = 100) -> Li
 
 
 def build_rag_chunks(max_chunk_chars: int = 480, overlap_chars: int = 100) -> List[WikiChunk]:
+    _log(f"chunk build start (max_chars={max_chunk_chars}, overlap={overlap_chars})")
     snippets = _load_snippets()
     chunks: List[WikiChunk] = []
+    snippet_chunks = 0
     for sn_idx, snippet in enumerate(snippets):
         body_lines = _clean_lines(snippet.lines)
         if not body_lines:
@@ -161,7 +171,10 @@ def build_rag_chunks(max_chunk_chars: int = 480, overlap_chars: int = 100) -> Li
                     source="docs/wiki_snippets.md",
                 )
             )
-    for doc_idx, web_doc in enumerate(_load_web_docs()):
+            snippet_chunks += 1
+    web_docs = _load_web_docs()
+    web_chunks = 0
+    for doc_idx, web_doc in enumerate(web_docs):
         parts = _chunk_text(web_doc.text, max_chars=max_chunk_chars, overlap_chars=overlap_chars)
         for part_idx, part in enumerate(parts):
             chunks.append(
@@ -172,6 +185,11 @@ def build_rag_chunks(max_chunk_chars: int = 480, overlap_chars: int = 100) -> Li
                     source=web_doc.source,
                 )
             )
+            web_chunks += 1
+    _log(
+        "chunk build complete: "
+        f"{len(chunks)} total ({snippet_chunks} from snippets, {web_chunks} from web docs)"
+    )
     return chunks
 
 
@@ -181,28 +199,36 @@ def build_rag_index(
     max_chunk_chars: int = 480,
     overlap_chars: int = 100,
 ) -> WikiRagIndex:
+    _log("index build: start")
     chunks = build_rag_chunks(max_chunk_chars=max_chunk_chars, overlap_chars=overlap_chars)
+    _log(f"index build: vectorizing {len(chunks)} chunks")
     docs = [f"{c.title}\n{c.text}" for c in chunks] or ["placeholder"]
     vectorizer = TfidfVectorizer(ngram_range=(1, 2), lowercase=True, min_df=1)
     matrix = vectorizer.fit_transform(docs)
+    _log(f"index build: matrix shape={matrix.shape}")
     idx = WikiRagIndex(chunks=chunks, vectorizer=vectorizer, matrix=matrix)
     if save:
         out = _index_path()
         out.parent.mkdir(parents=True, exist_ok=True)
         with out.open("wb") as f:
             pickle.dump(idx, f)
+        _log(f"index build: saved {out.as_posix()}")
+    _log("index build: complete")
     return idx
 
 
 def load_rag_index() -> WikiRagIndex:
     global _INDEX_CACHE
     if _INDEX_CACHE is not None:
+        _log("index load: using in-memory cache")
         return _INDEX_CACHE
     p = _index_path()
     if p.exists():
         with p.open("rb") as f:
             _INDEX_CACHE = pickle.load(f)
+            _log(f"index load: loaded from disk {p.as_posix()}")
             return _INDEX_CACHE
+    _log("index load: no disk index, building on demand")
     _INDEX_CACHE = build_rag_index(save=False)
     return _INDEX_CACHE
 

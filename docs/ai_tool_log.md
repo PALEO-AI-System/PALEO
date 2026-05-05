@@ -165,6 +165,13 @@
 - Updated `README.md` project layout + run commands with wiki RAG components.
 - Added `scripts/ingest_pot_wiki.py`: discovers PoT-related URLs from docs, fetches and cleans page text into `data/processed/wiki_pages.jsonl`, with optional `--rebuild-index` handoff.
 - Updated `src/wiki_rag.py` to ingest both curated snippets and fetched JSONL corpus when building/querying the local index.
+
+## 2026-05-05
+- Patched `src/wiki_rag.py` with explicit stage logs (`[wiki_rag] ...`) for snippet load, web-doc load, chunk counts, vectorization matrix shape, index save/load path.
+- Re-ran `scripts/build_wiki_rag_index.py` successfully after logging patch; current build reported 118 chunks total (22 snippet + 96 web-corpus chunks).
+- Updated `scripts/ingest_pot_wiki.py` with Fandom API fallback when direct page fetch fails, plus `--url-list` support for strict curated ingestion.
+- Added curated URL allowlist file `docs/pot_rag_urls.txt` and executed `ingest_pot_wiki.py --url-list docs/pot_rag_urls.txt --rebuild-index` (10/12 successful fetches, index rebuilt to 184 chunks).
+- Verified `tests/test_wiki_rag.py` passes after curated ingest + rebuild.
 - Chroma Strata: increased mobile-only gender icon lift again (`mini-gender` `-7px`, large-panel `gender-choice` `-6px`) and explicitly pinned desktop icon lift to `0` so split-screen desktop keeps baseline alignment.
 - Chroma Strata: updated `SeismicWiehen` female palettes for Color 1-5 (removed leading gray and added provided female-only options), made custom hex storage gender-scoped (`skinPath -> gender -> slot`) so male/female custom colors stay separate, added desktop-only icon bolding for gender symbols, and increased mobile-only icon lift (`mini -8px`, large-button icon -7px).
 - Chroma Strata: reordered `SeismicWiehen` female palettes (ROYGBIV-style with dark/light and saturation grouping), set female defaults to `#251d18/#61271a/#e49847/#e13d14/#110b04`, added Seismic Color 6 using `../Wiehen_Color6.png` with neutral gray for both genders, switched hex detail rows to reflect currently selected slot hex values, bumped desktop-only gender icon weight to `900`, and gated mobile icon lift behind a true-mobile device class so split-screen Windows laptops do not get mobile lift.

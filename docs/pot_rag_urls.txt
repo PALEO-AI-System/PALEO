@@ -1,0 +1,17 @@
+# Curated URLs for PALEO PoT RAG ingest.
+# One URL per line. Lines starting with # are ignored.
+
+https://pathoftitans.wiki
+https://pathoftitans.wiki/dinosaurs/carnivores/allosaurus
+https://pathoftitans.wiki/dinosaurs/herbivores/styracosaurus
+https://pathoftitans.wiki/dinosaurs/carnivores/achillobator
+https://pathoftitans.wiki/dinosaurs/carnivores/tylosaurus
+
+# Fandom mechanics pages (uses API fallback if direct page fetch is blocked).
+https://pathoftitans.fandom.com/wiki/Status_Effects
+https://pathoftitans.fandom.com/wiki/Bone_Break
+https://pathoftitans.fandom.com/wiki/Venom
+https://pathoftitans.fandom.com/wiki/Buffs_and_Debuffs
+https://pathoftitans.fandom.com/wiki/Marks
+https://pathoftitans.fandom.com/wiki/Waystones
+https://pathoftitans.fandom.com/wiki/Home_Caves
