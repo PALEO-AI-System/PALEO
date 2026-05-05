@@ -216,4 +216,4 @@
 - Added `pages/agent-demo.html` (verbatim Instinct Agent demo transcript) and **Agent demo** nav links next to **Gallery** on the same pages plus `gallery.html`.
 - Embedded the mock demo screenshot in `agent-demo.html` from Google Drive (`image_2026-05-05_144208558.png`) with a fallback link to the file view URL.
 - Reworked `agent-demo.html` body copy into semantic HTML with markdown-like styling (headings, lists, blockquote, code block, rules) instead of a single preformatted block.
-- Added `pages/agent-demo/` (with `.gitkeep`) for the demo screenshot; `agent-demo.html` now loads `agent-demo/screenshot.png` with Drive as an optional link.
+- Added `pages/agent-demo/` for the demo screenshot; `agent-demo.html` loads `agent-demo/image.png` from the repo with Drive as an optional link.
