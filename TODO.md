@@ -9,7 +9,7 @@ Use **[x]** for done, **[ ]** for not done. Do not delete completed lines; mark 
 - [x] Implement data loading and preprocessing module in `src/` (`src/data.py`, manifests, splits).
 - [x] Implement first baseline training/inference pipeline (`src/training.py`, `scripts/run_pipeline.py`, image scripts).
 - [ ] Add experiment tracking (metrics, configs, artifacts) — basic metrics exist; tighten tracking.
-- [ ] Produce required experiments and figures for report.
+- [x] Produce required experiments and figures for report. (Completed via recent metrics/figure commits and presentation updates.)
 
 ## Test in Path of Titans (short)
 
@@ -51,7 +51,7 @@ Use **[x]** for done, **[ ]** for not done. Do not delete completed lines; mark 
 
 ## Course / evaluation (from `docs/context_dump.md`)
 
-- [ ] Clear **metrics** and experiments (curves, baselines, qualitative examples) as your class expects.
+- [x] Clear **metrics** and experiments (curves, baselines, qualitative examples) as your class expects. (Recent check-in/presentation commits include corrected metrics, ablation coverage, and confusion matrices.)
 - [ ] **Report** artifacts when due.
 
 ## Older backlog (still useful)
