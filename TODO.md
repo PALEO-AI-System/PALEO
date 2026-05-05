@@ -40,6 +40,13 @@ Use **[x]** for done, **[ ]** for not done. Do not delete completed lines; mark 
 - [ ] Overlay command-only settings audit pass: expose remaining useful CLI-only options in overlay UI (or explicitly document why they stay CLI-only), including advanced runtime toggles.
 - [ ] Overlay -> Companion HUD live sync channel: wire shared runtime state/events so overlay and browser Companion HUD update the same agent-state stream in real time.
 
+### Overlay demos — polish / bugs (post-recording build)
+
+- [ ] **Water demo:** character stays put; no movement; overlay debug metrics stay at 0 — trace capture path, `frame_to_observation` / HUD confidence, brain branch gating, and `hold_keys` / control-enabled path in the water worker.
+- [ ] **Mock demo — mouse:** only side button x1 registers; fix x2, right-click, and middle-click (Win32 `mouse_event` paths, dwell/hold timing, game focus).
+- [ ] **Mock demo — timing:** lengthen pauses after sit/stand chain (after hold-h, after tap-h, after post-chain `w`) so movement/clicks are not swallowed while the dino is still standing up.
+- [ ] **Mock demo — camera while moving:** adjust macro so mouse deltas occur **while** forward movement is held (turn while running), not only when stationary, if the game requires simultaneous W + relative look.
+
 ## Core pipeline / agent
 
 - [ ] Replace or augment pixel **heuristics** with a trained **vision** step (even a small classifier on cropped UI).
