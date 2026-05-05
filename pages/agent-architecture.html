@@ -104,6 +104,16 @@
     .mem-row strong { display: block; font-size: 0.88rem; margin-bottom: 2px; }
     .mem-row .mem-meta { font-size: 0.76rem; color: var(--ink-soft); font-family: var(--mono); margin-bottom: 4px; }
     .mem-row p { margin: 0; font-size: 0.86rem; color: var(--ink-soft); }
+    .mem-raw { font-family: var(--mono); font-size: 0.76rem; line-height: 1.55; white-space: pre-wrap; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.04); color: var(--ink-soft); max-height: 300px; overflow-y: auto; display: none; margin-top: 8px; }
+    body.dark .mem-raw { background: rgba(0,0,0,0.2); }
+    .mem-raw.visible { display: block; }
+    .toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .toggle-switch { position: relative; width: 40px; height: 22px; border-radius: 999px; background: rgba(0,0,0,0.12); border: 1px solid var(--line); cursor: pointer; transition: background 0.2s ease; }
+    body.dark .toggle-switch { background: rgba(0,0,0,0.3); }
+    .toggle-switch.on { background: rgba(86,169,132,0.3); border-color: var(--accent); }
+    .toggle-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--ink-soft); transition: transform 0.2s ease, background 0.2s ease; }
+    .toggle-switch.on::after { transform: translateX(18px); background: var(--accent); }
+    .toggle-label { font-size: 0.78rem; color: var(--ink-soft); font-weight: 600; }
 
     /* Prompt block (default) */
     .prompt-block { font-family: var(--mono); font-size: 0.82rem; line-height: 1.55; white-space: pre-wrap; padding: 14px; border-radius: 12px; border: 1px solid var(--line); background: rgba(0,0,0,0.04); color: var(--ink-soft); margin-top: 10px; }
@@ -116,6 +126,50 @@
     /* Section panels */
     .section-panel { display: none; }
     .section-panel.visible { display: block; }
+
+    /* Letta platform banner (default view) */
+    .letta-banner-default {
+      background: linear-gradient(135deg, rgba(86,169,132,0.08), rgba(249,242,226,0.5));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+    }
+    body.dark .letta-banner-default { background: linear-gradient(135deg, rgba(107,185,163,0.1), rgba(47,42,33,0.5)); }
+    .letta-grid-default { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 12px; }
+    .letta-item-default { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); }
+    .letta-item-default h4 { margin: 0 0 4px; font-size: 0.76rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+    .letta-item-default p { margin: 0; font-size: 0.82rem; color: var(--ink-soft); }
+
+    /* Graph popup (ADE view) */
+    .graph-popup-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 10px;
+      border: 1px solid var(--card-border); background: var(--card-bg);
+      color: var(--accent); font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; transition: border-color 0.2s ease;
+      font-family: "Urbanist", "Segoe UI", sans-serif;
+      width: 100%;
+    }
+    .graph-popup-btn:hover { border-color: var(--accent); }
+    .graph-popup-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .graph-popup-overlay.open { display: flex; }
+    .graph-popup-card {
+      background: var(--bg); border: 1px solid var(--line); border-radius: 18px;
+      padding: 24px; max-width: 680px; width: 90%; max-height: 80vh; overflow: auto;
+    }
+    .graph-popup-card h3 { margin: 0 0 14px; font-size: 1.1rem; color: var(--accent); }
+    .graph-popup-close {
+      float: right; padding: 6px 12px; border-radius: 8px;
+      border: 1px solid var(--line); background: transparent;
+      color: var(--ink-soft); cursor: pointer; font-size: 0.82rem; font-weight: 700;
+    }
+    .graph-popup-close:hover { border-color: var(--accent); color: var(--accent); }
+    .graph-popup-canvas { width: 100%; height: 360px; border-radius: 12px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.15); position: relative; overflow: hidden; }
 
     /* ADE toggle button (in nav) */
     .ade-toggle-btn {
@@ -249,8 +303,8 @@
     .mem-card-body { display: none; padding: 0 14px 14px; }
     .mem-card-body.open { display: block; }
     .mem-summary { font-size: 0.86rem; color: var(--ink-soft); margin: 0 0 10px; }
-    .mem-raw { font-family: var(--mono); font-size: 0.76rem; line-height: 1.55; white-space: pre-wrap; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.25); color: var(--ink-soft); max-height: 300px; overflow-y: auto; display: none; }
     .mem-raw.visible { display: block; }
+    body.ade-mode .mem-raw { background: rgba(0,0,0,0.25); }
     .mem-bar-track { height: 6px; border-radius: 999px; background: rgba(0,0,0,0.3); margin-top: 6px; }
     .mem-bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width 0.3s ease; }
 
@@ -311,22 +365,7 @@
     .letta-item h4 { margin: 0 0 4px; font-size: 0.76rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
     .letta-item p { margin: 0; font-size: 0.82rem; color: var(--ink-soft); }
 
-    /* Toggle switch (ADE) */
-    .toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .toggle-switch {
-      position: relative; width: 40px; height: 22px;
-      border-radius: 999px; background: rgba(0,0,0,0.3);
-      border: 1px solid var(--line); cursor: pointer;
-      transition: background 0.2s ease;
-    }
-    .toggle-switch.on { background: rgba(107,185,163,0.3); border-color: var(--accent); }
-    .toggle-switch::after {
-      content: ""; position: absolute; top: 2px; left: 2px;
-      width: 16px; height: 16px; border-radius: 50%;
-      background: var(--ink-soft); transition: transform 0.2s ease, background 0.2s ease;
-    }
-    .toggle-switch.on::after { transform: translateX(18px); background: var(--accent); }
-    .toggle-label { font-size: 0.78rem; color: var(--ink-soft); font-weight: 600; }
+    /* Toggle switch (ADE) — shared with default via base styles above */
 
     /* Hide ADE elements in default mode */
     .ade-wrap, .ade-rail, .ade-center, .ade-meta { display: none; }
@@ -365,6 +404,18 @@
 
   <!-- ===== DEFAULT VIEW (commit 8741d90) ===== -->
   <main class="wrap default-layout" id="mainContent" aria-label="PALEO Agent Architecture content">
+    <!-- Letta platform banner -->
+    <section class="letta-banner-default">
+      <h2><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Letta Platform</h2>
+      <p class="muted">This agent runs on Letta &mdash; an open-source framework for building stateful LLM agents with persistent memory, tool use, and structured reasoning loops.</p>
+      <div class="letta-grid-default">
+        <div class="letta-item-default"><h4>Agent Engine</h4><p>Letta manages the agent lifecycle: system prompt, memory blocks, tool dispatch, and conversation history with automatic compaction.</p></div>
+        <div class="letta-item-default"><h4>Memory Architecture</h4><p>Core memory blocks (in-context) + archival memory (persistent). Blocks have character budgets and are always in the prompt window.</p></div>
+        <div class="letta-item-default"><h4>Tool Surfaces</h4><p>Agents invoke tools via structured calls. PALEO extends this with species-specific tools like simulate_instinct_decision and query_pot_wiki.</p></div>
+        <div class="letta-item-default"><h4>Recall & Compaction</h4><p>Old messages are evicted and replaced with recursive summaries. All messages persist and remain retrievable via conversation search.</p></div>
+      </div>
+    </section>
+
     <section class="card">
       <h1><i class="fa-solid fa-brain" aria-hidden="true"></i> PALEO Agent Architecture</h1>
       <p class="muted">Live view of the Letta-based Instinct Agent internals — identity, tools, system prompt, memory blocks, and archival memory. Click a section in the left rail to explore.</p>
@@ -382,6 +433,15 @@
     <aside class="ade-rail" id="adeRail"></aside>
     <main class="ade-center" id="adeCenter"></main>
     <aside class="ade-meta" id="adeMeta"></aside>
+  </div>
+
+  <!-- Graph popup overlay (ADE view) -->
+  <div class="graph-popup-overlay" id="graphPopupOverlay">
+    <div class="graph-popup-card">
+      <button class="graph-popup-close" id="graphPopupClose" type="button"><i class="fa-solid fa-xmark"></i> Close</button>
+      <h3><i class="fa-solid fa-diagram-project" aria-hidden="true"></i> Tools + Memory Graph</h3>
+      <div class="graph-popup-canvas" id="graphCanvas"></div>
+    </div>
   </div>
 
   <script>
@@ -435,12 +495,18 @@
           "Produce structured thought logs explaining every decision you make."
         ],
         memory_blocks: [
-          { name: "dinosaur", chars: 1847, limit: 5000, summary: "Species identity, traits, survival priorities, and class context." },
-          { name: "persona", chars: 862, limit: 5000, summary: "Behavioral instructions and survival style." },
-          { name: "primal_mind", chars: 1940, limit: 10000, summary: "Recent experiences, decisions, allies, rivals, and territory memory." },
-          { name: "species_knowledge", chars: 3314, limit: 10000, summary: "Species roles, mechanics, calls, and survival heuristics." },
-          { name: "paleo_behavior_spec_merged", chars: 5139, limit: 100000, summary: "Merged exhaustive behavior reference." },
-          { name: "paleo_context_strategy", chars: 572, limit: 100000, summary: "Hybrid memory + retrieval guidance." }
+          { name: "dinosaur", chars: 1847, limit: 5000, summary: "Species identity, traits, survival priorities, and class context.",
+            raw: "Species: allosaurus\nLife Stage: adult\nCurrent Goal: survive_and_explore\n\nPersonality Traits:\n- Aggressiveness: 0.5 (balanced \u2014 hunts when hungry but not reckless)\n- Friendliness: 0.5 (neutral \u2014 joins groups if beneficial)\n- Curiosity: 0.6 (slightly curious \u2014 explores when safe)\n- Bravery: 0.5 (moderate \u2014 holds ground against medium threats)\n- Morality: 0.5 (neutral \u2014 preys on weaker targets if needed)\n\nSurvival Priority: avoid predation \u2192 stay hydrated \u2192 find food \u2192 rest/recover\n\nSpecies Role: Generalist carnivore. Balanced speed/damage/health. Favors flanking and hit-and-run tactics. Avoids straight-up trades with tankiest opponents. Access to bleed abilities (Hatchet Bite) and generalist defensive options. Good land speed for kiting and repositioning.\n\nHuman Context: Laura is building PALEO for her Intro to AI class. She needs the agent to: 1) demonstrate the perceive-decide-act loop, 2) generate experiment data for her IEEE report, 3) show explainable behavior through thought logs, 4) be configurable for different species and personality configurations." },
+          { name: "persona", chars: 862, limit: 5000, summary: "Behavioral instructions and survival style.",
+            raw: "I am the PALEO Instinct Agent \u2014 an instinct-driven dinosaur AI for Path of Titans.\n\nSpecies: allosaurus\nLife Stage: adult\nCurrent Goal: survive_and_explore\n\nPersonality Traits:\n- Aggressiveness: 0.5 (balanced \u2014 will hunt when hungry but not reckless)\n- Friendliness: 0.5 (neutral \u2014 will join groups if beneficial)\n- Curiosity: 0.6 (slightly curious \u2014 will explore when safe)\n- Bravery: 0.5 (moderate \u2014 holds ground against medium threats)\n- Morality: 0.5 (neutral \u2014 will prey on weaker targets if needed)\n\nI think in survival priorities: avoid predation \u2192 stay hydrated \u2192 find food \u2192 rest/recover. My species policy thresholds determine when I flee vs fight vs forage. I produce structured thought logs explaining every decision I make.\n\nI'm part of Laura's Intro to AI class project demonstrating the perceive-decide-act loop with persistent Primal Mind memory." },
+          { name: "primal_mind", chars: 1940, limit: 10000, summary: "Recent experiences, decisions, allies, rivals, and territory memory.",
+            raw: "# Primal Mind \u2014 Recent Experiences & State\n\n## Current Observations\n- predator_probability: 0.3\n- prey_density: 0.5\n- health: 0.8\n- stamina: 0.7\n- hunger: 0.4\n- thirst: 0.3\n\n## Last Decision\n- action: HOLD_POSITION\n- rationale: No dominant survival need. Moderate predator presence warrants caution.\n- confidence: 0.72\n\n## Recent Events\n1. T=0: Spawned in safe area\n2. T=1: Explored nearby terrain\n3. T=3: Detected distant prey\n4. T=5: Held position\n\n## Known Rivals & Allies\n- Rivals: (none encountered yet)\n- Allies: (none encountered yet)\n\n## Territorial Memory\n- Current region: (unknown \u2014 newly spawned)\n- Known water sources: (none yet)\n- Known food sources: (none yet)\n- Known dangers: (none yet)\n\n## Action Vocabulary\n- FLEE, HOLD_POSITION, FORAGE, SEEK_WATER, HUNT, EXPLORE, CALL_DANGER, CALL_FRIENDLY" },
+          { name: "species_knowledge", chars: 3314, limit: 10000, summary: "Species roles, mechanics, calls, and survival heuristics.",
+            raw: "# Species Knowledge & Game Mechanics\n\n## Species Quick Reference\n| Species | Diet | Size | Role | Environment |\n|---------|------|------|------|-------------|\n| allosaurus | carnivore | large | generalist_carnivore | terrestrial |\n| styracosaurus | herbivore | medium_large | aggressive_frontliner | terrestrial |\n| achillobator | carnivore | medium | pack_raptor | terrestrial |\n| tylosaurus | carnivore | apex | apex_aquatic | aquatic |\n| kto_pachyrhinosaurus | herbivore | large | tank_support | terrestrial |\n| kto_yangchuanosaurus | carnivore | large | bruiser_carnivore | terrestrial |\n\n## Key Game Mechanics\n- Survival Priorities: avoid predation > stay hydrated > find food > rest/recover\n- Status Effects: Bleed, Fracture, Venom\n- Growth Stages: Hatchling to Juvenile to Sub-adult to Adult\n- Calls: Broadcast, Friendly, Threaten, Help/Distress" },
+          { name: "paleo_behavior_spec_merged", chars: 5139, limit: 100000, summary: "Merged exhaustive behavior reference.",
+            raw: "Exhaustive behavior reference target:\n- Use paleo_brainstorming and context_dump as the main sources of truth.\n- Include calls and emotes, not just movement or combat.\n- Include personality statistics on a 0-1 scale for each trait.\n- The agent should remain survival-focused and realistic like a living animal.\n- The agent should behave like a dinosaur that is actually on screen.\n- The agent should perceive screenshots as its immediate world.\n- The agent should form inner thoughts about what is seen and what it means.\n- The agent should decide what to do next.\n- The agent should output intended actions and intended keypresses.\n- Behavior should feel realistic, like a living animal.\n\nPersonality traits: aggressiveness, friendliness, curiosity, bravery, morality\n\nBehavior should vary based on these values.\n- more aggressive = more likely to hunt, threaten, or engage\n- more friendly = more likely to group, follow, or call friendly\n- more curious = more likely to explore when safe\n- more brave = less likely to flee from danger\n- more moral = less likely to attack weak or non-threatening targets" },
+          { name: "paleo_context_strategy", chars: 572, limit: 100000, summary: "Hybrid memory + retrieval guidance.",
+            raw: "PALEO should use a hybrid knowledge strategy.\n\nMemory blocks should store only small, persistent state:\n- dinosaur identity\n- personality traits\n- current goal\n- recent observations and decisions\n- territory, allies, rivals, water, food, and danger memory\n- immediate survival priorities\n\nLarge factual knowledge should come from retrieval or curated snippets:\n- species pages\n- mechanics pages\n- status effects\n- ability lists\n- loadout inference details\n\nDo not store long wiki text or full assignment docs inside memory blocks when retrieval or source files are better." }
         ],
         archival_memory: [
           "No dedicated archival block is currently engaged.",
@@ -495,10 +561,13 @@
 
       var memPanel = document.createElement("div");
       memPanel.className = "section-panel";
-      var memHtml = '<h2><i class="fa-solid fa-database" aria-hidden="true"></i> Memory blocks</h2><p class="muted">Persistent state carried across conversations. Each block has a character budget and a specific role.</p><div class="mem-list">';
-      arch.memory_blocks.forEach(function (m) {
+      var memHtml = '<h2><i class="fa-solid fa-database" aria-hidden="true"></i> Memory blocks</h2>' +
+        '<div class="toggle-row"><div class="toggle-switch" id="defaultRawToggle"></div><span class="toggle-label">Show raw memory text</span></div>' +
+        '<p class="muted">Persistent state carried across conversations. Each block has a character budget and a specific role. Toggle raw view to see full contents.</p><div class="mem-list">';
+      arch.memory_blocks.forEach(function (m, i) {
         var pct = Math.round((m.chars / m.limit) * 100);
-        memHtml += '<div class="mem-row"><strong>' + m.name + '</strong><div class="mem-meta">' + m.chars + ' / ' + m.limit + ' chars (' + pct + '% used)</div><p>' + m.summary + '</p></div>';
+        memHtml += '<div class="mem-row"><strong>' + m.name + '</strong><div class="mem-meta">' + m.chars + ' / ' + m.limit + ' chars (' + pct + '% used)</div><p>' + m.summary + '</p>' +
+          '<div class="mem-raw" id="defaultMemRaw' + i + '">' + m.raw.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div></div>';
       });
       memHtml += '</div>';
       memPanel.innerHTML = memHtml;
@@ -528,6 +597,18 @@
       }
       rail.addEventListener("click", function (e) { var item = e.target.closest(".arch-rail-item"); if (!item) return; showSection(item.dataset.section); });
       showSection("identity");
+
+      /* Default view raw memory toggle */
+      center.addEventListener("click", function (e) {
+        var toggle = e.target.closest("#defaultRawToggle");
+        if (!toggle) return;
+        toggle.classList.toggle("on");
+        var showRaw = toggle.classList.contains("on");
+        arch.memory_blocks.forEach(function (m, i) {
+          var raw = document.getElementById("defaultMemRaw" + i);
+          if (raw) raw.classList.toggle("visible", showRaw);
+        });
+      });
 
       /* ===== ADE VIEW (commit f487239 exact) ===== */
       function buildAdeView() {
@@ -710,11 +791,31 @@
           '<div class="meta-card"><h4>Tools</h4><p>' + adeArch.tools.length + ' surfaces</p></div>' +
           '<div class="meta-card"><h4>Recall messages</h4><p>269 previous messages</p></div>' +
           '<div class="meta-card"><h4>Tools + Memory graph</h4>' +
-            '<div class="graph-canvas" id="graphCanvas"></div>' +
+            '<button class="graph-popup-btn" id="graphPopupBtn" type="button"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i> View graph</button>' +
           '</div>';
 
+        /* Graph popup open/close */
+        var graphPopupBtn = document.getElementById("graphPopupBtn");
+        var graphPopupOverlay = document.getElementById("graphPopupOverlay");
+        var graphPopupClose = document.getElementById("graphPopupClose");
+        var graphDrawn = false;
+        if (graphPopupBtn) {
+          graphPopupBtn.addEventListener("click", function () {
+            graphPopupOverlay.classList.add("open");
+            if (!graphDrawn) { drawGraph(); graphDrawn = true; }
+          });
+        }
+        if (graphPopupClose) {
+          graphPopupClose.addEventListener("click", function () { graphPopupOverlay.classList.remove("open"); });
+        }
+        if (graphPopupOverlay) {
+          graphPopupOverlay.addEventListener("click", function (e) {
+            if (e.target === graphPopupOverlay) graphPopupOverlay.classList.remove("open");
+          });
+        }
+
         /* Draw tools + memory graph */
-        setTimeout(function () {
+        function drawGraph() {
           var gc = document.getElementById("graphCanvas");
           if (!gc) return;
           var w = gc.offsetWidth, h = gc.offsetHeight;
@@ -724,29 +825,29 @@
           core.style.left = (w / 2 - 22) + "px";
           core.style.top = (h / 2 - 10) + "px";
           gc.appendChild(core);
-          var toolNames = adeArch.tools.slice(0, 4);
+          var toolNames = adeArch.tools;
           toolNames.forEach(function (t, i) {
             var n = document.createElement("div");
             n.className = "graph-node tool-node";
-            n.textContent = t.replace(/_/g, " ").substring(0, 14);
+            n.textContent = t.replace(/_/g, " ").substring(0, 18);
             var angle = (Math.PI * 2 * i / toolNames.length) - Math.PI / 2;
-            var r = Math.min(w, h) * 0.35;
-            n.style.left = (w / 2 + Math.cos(angle) * r - 30) + "px";
+            var r = Math.min(w, h) * 0.38;
+            n.style.left = (w / 2 + Math.cos(angle) * r - 40) + "px";
             n.style.top = (h / 2 + Math.sin(angle) * r - 10) + "px";
             gc.appendChild(n);
           });
-          var memNames = adeArch.memory_blocks.slice(0, 3).map(function (m) { return m.name; });
+          var memNames = adeArch.memory_blocks.map(function (m) { return m.name; });
           memNames.forEach(function (m, i) {
             var n = document.createElement("div");
             n.className = "graph-node mem-node";
-            n.textContent = m.substring(0, 12);
+            n.textContent = m.substring(0, 16);
             var angle = (Math.PI * 2 * i / memNames.length) + Math.PI / 4;
-            var r = Math.min(w, h) * 0.35;
-            n.style.left = (w / 2 + Math.cos(angle) * r - 30) + "px";
+            var r = Math.min(w, h) * 0.38;
+            n.style.left = (w / 2 + Math.cos(angle) * r - 40) + "px";
             n.style.top = (h / 2 + Math.sin(angle) * r - 10) + "px";
             gc.appendChild(n);
           });
-        }, 100);
+        }
 
         /* ADE rail click handler */
         function adeShowSection(id) {
