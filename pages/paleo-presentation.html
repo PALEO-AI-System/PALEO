@@ -352,6 +352,10 @@
     <div class="content">
         <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:var(--color-accent-1);font-weight:700;margin-bottom:0.5rem;">Proposed Solution</div>
         <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;margin-bottom:1.2rem;">System Pipeline Overview</h2>
+        <div class="reveal" style="margin-bottom:0.9rem;text-align:center;font-size:0.78rem;color:var(--color-text-secondary);line-height:1.55;">
+            <span style="color:#86efac;font-weight:700;">Perceive</span> → <span style="color:#a5b4fc;font-weight:700;">Think</span> → <span style="color:#fcd34d;font-weight:700;">Decide</span> → <span style="color:#4ade80;font-weight:700;">Act</span>
+            <span style="display:block;font-size:0.72rem;margin-top:0.35rem;">Grab the frame and HUD cues → refresh Primal Mind → choose an action → send keys/mouse safely.</span>
+        </div>
         <div class="reveal pipeline" style="margin-bottom:1.2rem;">
             <div class="pipe-box">📸 mss<br>Screen Capture</div>
             <div class="pipe-arrow">→</div>
@@ -364,6 +368,11 @@
             <div class="pipe-box">🗺️ Action<br>Mapper</div>
             <div class="pipe-arrow">→</div>
             <div class="pipe-box">⌨️ Safe Input<br>Controller</div>
+        </div>
+        <div class="reveal" style="margin-bottom:1rem;padding:0.65rem 1rem;background:rgba(99,102,241,0.07);border-radius:10px;border:1px solid rgba(99,102,241,0.22);font-size:0.74rem;color:var(--color-text-secondary);line-height:1.55;text-align:center;">
+            <strong style="color:#c4b5fd;">PALEOOverlay.exe</strong> — tiny on-game HUD: debug readout, live frame preview, demos, start/stop loop.<br>
+            <span style="display:block;margin-top:0.4rem;"><strong style="color:#93c5fd;">Letta</strong> is the <strong>goal</strong> — that’s where the agent gets <strong>real power</strong> (memory, tools, deeper decisions). <strong style="color:#86efac;">Right now</strong> we run a <strong>simple offline</strong> brain in the loop — good for demos and iteration, but still <strong>faulty</strong>.</span>
+            <span style="display:block;margin-top:0.4rem;">HUD bars/icons are parsed in code; wiki <strong style="color:#fcd34d;">RAG</strong> lives locally for mechanics lookup.</span>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
             <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:1rem;">
