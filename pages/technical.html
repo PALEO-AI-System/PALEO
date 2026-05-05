@@ -441,7 +441,7 @@
       <p class="muted">
         Model, data, and integration details for development-focused readers.
       </p>
-      <p><span class="status in-progress">IN PROGRESS</span>Foundation complete; experiments and integration are next.</p>
+      <p><span class="status in-progress">IN PROGRESS</span>Training, fine-tuning, safety thresholding, and live runtime paths are working; Letta-in-the-loop remains the main integration gap.</p>
     </section>
 
     <div class="section-divider fern reveal" aria-hidden="true">
@@ -465,8 +465,8 @@
       </article>
       <article class="card">
         <h3>Repository State</h3>
-        <p class="metric">Scaffold Ready</p>
-        <p class="muted"><code>src/</code>, <code>scripts/</code>, <code>tests/</code>, <code>docs/</code> plus Pages site deployed.</p>
+        <p class="metric">Models + Pages</p>
+        <p class="muted"><code>src/</code>, <code>scripts/</code>, <code>tests/</code>, <code>docs/</code>, saved checkpoints, metrics, and Pages site deployed.</p>
       </article>
       <article class="card">
         <h3>Planned Agent Scale</h3>
@@ -541,10 +541,10 @@
           <li>Main model: ResNet-18 transfer learning for predator vs non-predator prediction.</li>
           <li>Accuracy pick: <code>lr=1e-4</code> stayed strongest after the 300-image PoT fine-tune, with validation accuracy <code>0.767</code> on the 60-image split.</li>
           <li>Safety pick: <code>lr=3e-5</code> + predator class weight <code>3.0</code> + threshold <code>0.20</code>.</li>
-          <li>Why we shifted: gameplay should prefer false positives over missed predators, so predator recall became more important than raw accuracy.</li>
-          <li>Holdout result (10 PoT images): accuracy stayed <code>0.70</code>, while predator recall improved from <code>0.571</code> to <code>0.714</code>.</li>
+          <li>Why we shifted: class weighting alone did not fix the false-negative problem at the default threshold, and gameplay should prefer false positives over missed predators.</li>
+          <li>Holdout result (10 PoT images): the safety operating point moved predator recall from <code>0.571</code> to <code>0.714</code>, with accuracy <code>0.70</code>.</li>
           <li>Agent orchestration: one Letta agent per dinosaur.</li>
-          <li>Planned outputs: convergence curves, sensitivity sweeps, qualitative cases.</li>
+          <li>Delivered outputs: convergence curves, sensitivity sweeps, confusion matrices, threshold sweeps, and qualitative failure cases.</li>
         </ul>
       </article>
       <article class="card">
@@ -606,10 +606,12 @@
       <div id="featureList">
         <article class="feature" data-status="done"><span class="status done">DONE</span>GitHub Pages deployment from <code>pages/</code> via GitHub Actions.</article>
         <article class="feature" data-status="done"><span class="status done">DONE</span>Public homepage + technical + check-in tab structure.</article>
-        <article class="feature" data-status="in-progress"><span class="status in-progress">IN PROGRESS</span>Documentation refinement and technical page upgrades.</article>
-        <article class="feature" data-status="planned"><span class="status planned">PLANNED</span>Dataset ingestion pipeline for selected training subsets.</article>
-        <article class="feature" data-status="planned"><span class="status planned">PLANNED</span>Classifier training with sensitivity experiments and baseline comparison.</article>
-        <article class="feature" data-status="planned"><span class="status planned">PLANNED</span>Integrated agent loop with confidence thresholds and fallback actions.</article>
+        <article class="feature" data-status="done"><span class="status done">DONE</span>Documentation refinement and technical page upgrades.</article>
+        <article class="feature" data-status="done"><span class="status done">DONE</span>Dataset ingestion pipeline for selected Serengeti and Path of Titans training subsets.</article>
+        <article class="feature" data-status="done"><span class="status done">DONE</span>Classifier training with sensitivity experiments, baseline comparison, and confusion matrices.</article>
+        <article class="feature" data-status="done"><span class="status done">DONE</span>Safety threshold sweep for predator recall on the 10-image Path of Titans holdout.</article>
+        <article class="feature" data-status="in-progress"><span class="status in-progress">IN PROGRESS</span>Integrated agent loop with confidence thresholds and fallback actions.</article>
+        <article class="feature" data-status="planned"><span class="status planned">PLANNED</span>Full in-game Path of Titans smoke test with focused game window and simple movement.</article>
       </div>
     </section>
 

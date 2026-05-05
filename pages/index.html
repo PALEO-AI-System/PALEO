@@ -747,14 +747,14 @@
         <div class="grid feature-list">
           <article class="card">
             <h3>Behavior Intelligence Engine</h3>
-            <p>Translates visual cues into actionable behavior-state signals.</p>
+            <p>Translates visual cues into predator/non-predator threat signals and safety-first action cues.</p>
             <span class="pill">Computer Vision</span>
-            <span class="pill">ResNet-18 plan</span>
+            <span class="pill">ResNet-18 trained</span>
             <span class="pill">OpenCV baseline</span>
           </article>
           <article class="card">
             <h3>Per-Dinosaur Agent Memory</h3>
-            <p>Each dinosaur tracks identity, needs, recent events, and threat memory.</p>
+            <p>Each dinosaur tracks identity, needs, recent events, threat memory, and explainable action intent.</p>
             <span class="pill">Letta architecture</span>
             <span class="pill">State tracking</span>
             <span class="pill">Explainable logs</span>
@@ -775,9 +775,9 @@
         <div class="icon-line"><i class="fa-solid fa-seedling" aria-hidden="true"></i> Roadmap</div>
         <h2>Roadmap</h2>
         <div class="grid">
-          <article class="card"><h3>Now</h3><p>Scaffold, deployment, and check-in deliverables complete.</p></article>
-          <article class="card"><h3>Next</h3><p>Dataset setup, preprocessing, and baseline model training.</p></article>
-          <article class="card"><h3>Then</h3><p>Agent-loop integration, evaluation dashboards, and demos.</p></article>
+          <article class="card"><h3>Now</h3><p>Serengeti training, PoT fine-tuning, safety thresholding, deployment, and check-in deliverables complete.</p></article>
+          <article class="card"><h3>Next</h3><p>Wire Letta as the real decision/memory layer in the live loop.</p></article>
+          <article class="card"><h3>Then</h3><p>Run full in-game PoT smoke tests, add more holdout images, and collect demo clips.</p></article>
         </div>
       </div>
     </section>
@@ -809,10 +809,10 @@
           </article>
         </div>
         <div class="image-row">
-          <img class="placeholder-image" src="../output/figures/convergence_curves.png" alt="Training and validation loss convergence curves across epochs">
-          <img class="placeholder-image" src="../output/figures/lr_sensitivity.png" alt="Validation accuracy versus learning-rate settings">
-          <img class="placeholder-image" src="../output/figures/final_comparison.png" alt="Final validation accuracy comparison across experiment runs">
-          <img class="placeholder-image" src="../output/figures/confusion_matrices/resnet18_lrie4_aug_e15_confusion_matrix.png" alt="Confusion matrix for the best-accuracy ResNet-18 model (lr=1e-4, augmentation, 15 epochs)">
+          <img class="placeholder-image" src="figures/convergence_curves.png" alt="Training and validation loss convergence curves across epochs">
+          <img class="placeholder-image" src="figures/lr_sensitivity.png" alt="Validation accuracy versus learning-rate settings">
+          <img class="placeholder-image" src="figures/final_comparison.png" alt="Final validation accuracy comparison across experiment runs">
+          <img class="placeholder-image" src="figures/confusion_matrices/resnet18_lrie4_aug_e15_confusion_matrix.png" alt="Confusion matrix for the best-accuracy ResNet-18 model (lr=1e-4, augmentation, 15 epochs)">
         </div>
       </div>
     </section>
@@ -834,12 +834,12 @@
           </article>
           <article class="update-card">
             <div class="update-date">Mar 2026</div>
-            Locked in model direction and per-dinosaur memory architecture.
-            <div class="update-tag">Architecture</div>
+            Trained Serengeti ResNet-18, fine-tuned on 300 Path of Titans screenshots, and added safety threshold analysis.
+            <div class="update-tag">Training</div>
           </article>
           <article class="update-card">
             <div class="update-date">Next Milestone</div>
-            Start dataset ingestion and first benchmark training runs.
+            Wire Letta into the live loop and run the first focused in-game Path of Titans smoke test.
             <div class="update-tag">Coming Next</div>
           </article>
         </div>
@@ -856,15 +856,16 @@
             <ul>
               <li>Public PALEO site with Home, Technical, and Check-in tabs.</li>
               <li>Project scaffold with reproducible run/test commands.</li>
-              <li>Documented data, model, and agent architecture plan.</li>
+              <li>Documented data, model, safety threshold, and agent architecture path.</li>
+              <li>Saved Serengeti and Path of Titans model metrics with confusion matrices.</li>
             </ul>
           </article>
           <article class="card">
             <h3>Coming Next</h3>
             <ul>
-              <li>Dataset download and preprocessing scripts.</li>
-              <li>First baseline runs with measurable metrics.</li>
-              <li>Behavior demos and richer technical charts.</li>
+              <li>Letta session integration in the live loop.</li>
+              <li>Focused Path of Titans smoke test with simple movement.</li>
+              <li>More labeled game screenshots, especially predator cases.</li>
             </ul>
           </article>
         </div>

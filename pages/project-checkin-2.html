@@ -255,7 +255,7 @@
             <li><strong>Training path:</strong> Serengeti -> PoT fine-tune pipeline is running end-to-end with saved checkpoints and metrics.</li>
             <li><strong>Latest Serengeti result:</strong> best 15-epoch real-image run is <code>ResNet-18 lr=1e-4 + augmentation</code> with <code>0.9118</code> validation accuracy and <code>0.9206</code> predator recall on the 2,142-image validation split.</li>
             <li><strong>300-image PoT result:</strong> <code>lr=1e-4</code> is the accuracy pick on the 60-image validation split (<code>0.767</code> accuracy, <code>0.742</code> predator recall).</li>
-            <li><strong>Agent safety result:</strong> safety-tuned 15-epoch variant (<code>lr=3e-5</code>, predator class weight <code>3.0</code>) improves predator recall on the 10-image holdout from <code>0.571</code> to <code>0.714</code> using threshold <code>0.20</code>.</li>
+            <li><strong>Agent safety result:</strong> class weighting alone did not fix default-threshold false negatives, so the live-agent operating point switched to <code>lr=3e-5</code>, predator class weight <code>3.0</code>, and threshold <code>0.20</code>, moving predator recall on the 10-image holdout from <code>0.571</code> to <code>0.714</code>.</li>
             <li><strong>Safety controls added:</strong> inference now supports predator threshold tuning and threshold-sweep metrics for recall/precision tradeoffs.</li>
             <li><strong>Main gap:</strong> real Letta session integration in the middle of the live loop.</li>
             <li><strong>Still pending:</strong> full Path of Titans in-game smoke test (focused game window + simple walk control).</li>
