@@ -492,29 +492,36 @@
     </div>
     <div class="content">
         <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:#a78bfa;font-weight:700;margin-bottom:0.5rem;">Ablation Studies</div>
-        <h2 class="font-display reveal" style="font-size:clamp(1.5rem,3.2vw,2.3rem);font-weight:700;margin-bottom:1rem;">All Serengeti experiments compared on the same validation split</h2>
-        <div class="reveal" style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:1rem;align-items:start;margin-bottom:0.8rem;">
+        <h2 class="font-display reveal" style="font-size:clamp(1.45rem,3.1vw,2.2rem);font-weight:700;margin-bottom:0.8rem;">All Serengeti experiments compared on the same validation split</h2>
+        <div class="reveal" style="display:grid;grid-template-columns:1.08fr 0.92fr;gap:0.85rem;align-items:start;margin-bottom:0.7rem;">
             <div class="figure-card">
                 <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.55rem;">Confusion matrices for every evaluated Serengeti run</div>
                 <img class="figure-img compact" src="figures/serengeti_latest_confusion_matrix_grid.png" alt="Confusion matrices across all latest Serengeti experiments">
             </div>
-            <div style="display:grid;gap:0.65rem;">
-                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;">
-                    <div style="font-weight:800;color:#a5b4fc;margin-bottom:0.45rem;">Why <code>1e-4</code> won here</div>
-                    <div style="font-size:0.82rem;color:var(--color-text-secondary);line-height:1.55;">The 15-epoch <code>1e-4</code> run moved steadily without over-jumping the pretrained ResNet features. It also benefited from augmentation, so the model learned predator cues that held up on unseen Serengeti images.</div>
+            <div style="display:grid;gap:0.5rem;">
+                <div style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.16);border-radius:12px;padding:0.78rem;">
+                    <div style="font-weight:800;color:#4ade80;margin-bottom:0.35rem;">Winner: <code>1e-4 + aug + 15 epochs</code></div>
+                    <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.48;">Best accuracy was <code>0.9118</code> on 2,142 validation images. It also had the strongest predator recall among top runs: <code>0.9206</code>, with predator F1 <code>0.9086</code>.</div>
                 </div>
-                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;">
-                    <div style="font-weight:800;color:#4ade80;margin-bottom:0.45rem;">Why this did not automatically settle PoT</div>
-                    <div style="font-size:0.82rem;color:var(--color-text-secondary);line-height:1.55;">Serengeti photos and Path of Titans screenshots have different lighting, camera angles, UI artifacts, species shapes, and texture style. The best real-image model became the starting point, not the final game detector.</div>
+                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.78rem;">
+                    <div style="font-weight:800;color:#a5b4fc;margin-bottom:0.35rem;">Learning-rate pattern</div>
+                    <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.48;"><code>1e-3</code> learned fast and stayed competitive, but tended to produce more false positives or less stable tradeoffs. <code>5e-5</code> was safer but underfit predator recall at 15 epochs.</div>
                 </div>
-                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;">
-                    <div style="font-weight:800;color:#fcd34d;margin-bottom:0.45rem;">What changed next</div>
-                    <div style="font-size:0.82rem;color:var(--color-text-secondary);line-height:1.55;">We fine-tuned on 300 labeled Path of Titans screenshots, validated on 60 held-out game images, then tuned the safety operating point on 10 newest manually labeled game screenshots to reduce false negatives.</div>
+                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.78rem;">
+                    <div style="font-weight:800;color:#fcd34d;margin-bottom:0.35rem;">What the confusion matrices reveal</div>
+                    <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.48;">The chosen run missed <code>81</code> predators and raised <code>108</code> false alarms. For the game agent, that false-negative count is the key risk because a missed predator can produce unsafe behavior.</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.78rem;">
+                    <div style="font-weight:800;color:#38bdf8;margin-bottom:0.35rem;">Why this became a starting point</div>
+                    <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.48;">Serengeti photos and PoT screenshots differ in lighting, camera angle, UI artifacts, and rendered anatomy. So the best Serengeti model was used as a transfer checkpoint, then adapted with PoT screenshots.</div>
                 </div>
             </div>
         </div>
-        <div class="reveal" style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.16);border-radius:8px;padding:0.65rem 1rem;font-size:0.79rem;color:#ddd6fe;">
-            <strong>Experiment record:</strong> <code>results/experiments/failure_analysis_comparison.json</code> maps every Serengeti experiment to the same validation split and confusion counts.
+        <div class="reveal" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;">
+            <div style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.14);border-radius:8px;padding:0.55rem;text-align:center;"><div style="font-weight:900;color:#4ade80;">12</div><div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;">runs compared</div></div>
+            <div style="background:rgba(56,189,248,0.07);border:1px solid rgba(56,189,248,0.14);border-radius:8px;padding:0.55rem;text-align:center;"><div style="font-weight:900;color:#38bdf8;">2,142</div><div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;">validation images</div></div>
+            <div style="background:rgba(252,211,77,0.07);border:1px solid rgba(252,211,77,0.14);border-radius:8px;padding:0.55rem;text-align:center;"><div style="font-weight:900;color:#fcd34d;">81</div><div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;">predators missed</div></div>
+            <div style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.16);border-radius:8px;padding:0.55rem;text-align:center;"><div style="font-weight:900;color:#ddd6fe;">108</div><div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;">false alarms</div></div>
         </div>
     </div>
 </div>
@@ -625,8 +632,11 @@
                     </div>
                 </div>
                 <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:0.85rem;text-align:center;">
-                    <div style="font-size:0.82rem;font-style:italic;color:var(--color-text-secondary);line-height:1.5;">
-                        "A dinosaur that <em>knows</em> it's in danger, even when no one tells it."
+                    <div style="display:flex;align-items:center;justify-content:center;gap:0.65rem;">
+                        <div style="font-size:1.9rem;line-height:1;" aria-hidden="true">🦕</div>
+                        <div style="font-size:0.82rem;font-style:italic;color:var(--color-text-secondary);line-height:1.5;text-align:left;">
+                            "A dinosaur that <em>knows</em> it's in danger, even when no one tells it."
+                        </div>
                     </div>
                     <div style="margin-top:0.5rem;font-size:0.7rem;color:var(--color-text-muted);">github.com/PALEO-AI-System/PALEO</div>
                 </div>
