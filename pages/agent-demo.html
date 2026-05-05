@@ -64,7 +64,7 @@
     .card { background: linear-gradient(125deg, var(--panel), rgba(249, 242, 226, 0.72)); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 8px 22px var(--shadow); padding: 22px 20px; margin-bottom: 14px; }
     body.dark .card { background: linear-gradient(125deg, var(--panel), rgba(47, 42, 33, 0.5)); }
     h1 { margin: 0 0 8px; font-family: "Fraunces", serif; font-size: clamp(1.9rem, 4vw, 2.6rem); letter-spacing: 0.1px; }
-    .muted { color: var(--ink-soft); margin: 0 0 16px; max-width: 70ch; line-height: 1.6; font-size: 0.95rem; }
+    .muted { color: var(--ink-soft); margin: 0 0 16px; line-height: 1.6; font-size: 0.95rem; }
     .muted code {
       font-size: 0.88em;
       padding: 2px 7px;
@@ -80,7 +80,7 @@
       color: var(--ink);
     }
     .demo-md {
-      max-width: 72ch;
+      width: 100%;
       padding: 18px 20px;
       border-radius: 12px;
       border: 1px solid var(--line);
@@ -162,18 +162,28 @@
     }
     .demo-md .inline-label { color: var(--accent); font-weight: 700; }
     .demo-shot-wrap {
+      width: 100%;
       margin: 12px 0;
-      padding: 12px;
+      padding: 12px 20px;
       border-radius: 12px;
       border: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.35);
       text-align: center;
+      box-sizing: border-box;
     }
     body.dark .demo-shot-wrap { background: rgba(0, 0, 0, 0.15); }
+    .demo-shot-wrap > a:first-of-type {
+      display: block;
+      max-width: 100%;
+      overflow: hidden;
+      border-radius: 8px;
+      line-height: 0;
+    }
     .demo-shot-wrap img {
+      display: block;
+      width: 100%;
       max-width: 100%;
       height: auto;
-      vertical-align: middle;
       border-radius: 8px;
     }
     .demo-shot-wrap .demo-shot-link {
