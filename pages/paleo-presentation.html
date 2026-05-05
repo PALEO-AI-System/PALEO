@@ -479,7 +479,7 @@
             </table>
         </div>
         <div class="reveal" style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:0.65rem 1rem;font-size:0.79rem;color:#86efac;">
-            <strong>Corrected takeaway:</strong> the Serengeti sweep used a 6,529 train / 2,142 validation split. On that stable validation set, <code>1e-4 + augmentation + 15 epochs</code> was the strongest latest run, so we used it as the best real-image checkpoint before adapting to Path of Titans.
+            <strong>Model-selection result:</strong> the Serengeti sweep used a 6,529 train / 2,142 validation split. On that stable validation set, <code>1e-4 + augmentation + 15 epochs</code> was the strongest run, so we used it as the best real-image checkpoint before adapting to Path of Titans.
         </div>
     </div>
 </div>
@@ -514,7 +514,7 @@
             </div>
         </div>
         <div class="reveal" style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.16);border-radius:8px;padding:0.65rem 1rem;font-size:0.79rem;color:#ddd6fe;">
-            <strong>Correction note:</strong> these figures come from <code>results/experiments/failure_analysis_comparison.json</code>, not the older final-comparison asset. That file maps every latest Serengeti experiment to the same validation split and confusion counts.
+            <strong>Experiment record:</strong> <code>results/experiments/failure_analysis_comparison.json</code> maps every Serengeti experiment to the same validation split and confusion counts.
         </div>
     </div>
 </div>
@@ -579,56 +579,54 @@
     </div>
     <canvas class="particle-canvas" style="position:absolute;inset:0;z-index:1;"></canvas>
     <div class="content">
-        <div style="display:grid;grid-template-columns:1.1fr 0.9fr;gap:2rem;align-items:start;">
+        <div style="display:grid;grid-template-columns:1.05fr 0.95fr;gap:1.25rem;align-items:start;">
             <div>
                 <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:var(--color-accent-1);font-weight:700;margin-bottom:0.5rem;">Conclusion &amp; Future Work</div>
-                <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:700;margin-bottom:1.2rem;line-height:1.2;">What we showed — and what's next</h2>
-                <div class="reveal" style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.18);border-radius:10px;padding:0.9rem 1rem;margin-bottom:1rem;">
-                    <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-md" style="color:#4ade80;">task_alt</span> Contributions</div>
-                    <ul style="font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7;padding-left:1rem;margin:0;">
-                        <li>End-to-end screen-capture → classify → act pipeline (no game API)</li>
-                        <li>ResNet-18 transfer baseline on balanced Serengeti images; the latest 15-epoch 1e-4 + augmentation run was strongest on validation accuracy and predator recall</li>
-                        <li>Fine-tuned the Serengeti model on 300 labeled Path of Titans screenshots for domain adaptation</li>
-                        <li>Shifted deployment choice from highest accuracy to higher predator recall for agent safety</li>
-                        <li>Documented why Kaggle was deferred: accelerometer CSV or unlabeled videos, not labeled image data</li>
-                        <li>Instinct Agent with Primal Mind species-consistent memory</li>
-                        <li>Safe keyboard control: rate-limit + F12 emergency stop</li>
+                <h2 class="font-display reveal" style="font-size:clamp(1.55rem,3.4vw,2.45rem);font-weight:700;margin-bottom:1rem;line-height:1.2;">Final model choices across real images, game screenshots, and safety holdout</h2>
+                <div class="reveal" style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.18);border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.85rem;">
+                    <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.45rem;"><span class="material-symbols-outlined icon-md" style="color:#4ade80;">task_alt</span> Contributions</div>
+                    <ul style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.62;padding-left:1rem;margin:0;">
+                        <li>Built an end-to-end screen-capture, classify, think, and act pipeline with no game API.</li>
+                        <li>Trained and compared 12 Serengeti ResNet-18 experiments on the same 2,142-image validation split.</li>
+                        <li>Selected the best real-image checkpoint: <code>1e-4 + aug + 15 epochs</code>, <code>0.9118</code> validation accuracy and <code>0.9206</code> predator recall.</li>
+                        <li>Fine-tuned that checkpoint on 300 labeled Path of Titans screenshots; <code>1e-4</code> remained the best 60-image validation accuracy model at <code>0.7667</code>.</li>
+                        <li>Chose a separate live-agent safety operating point for the 10-image holdout: <code>lr=3e-5</code>, predator weight <code>3.0</code>, threshold <code>0.20</code>.</li>
+                        <li>Moved holdout predator recall from <code>0.571</code> to <code>0.714</code> by prioritizing fewer missed predators over raw accuracy.</li>
+                        <li>Added Primal Mind state, explainable thoughts, guarded keyboard control, rate limits, and F12 emergency stop.</li>
                     </ul>
                 </div>
-                <div class="reveal" style="background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.18);border-radius:10px;padding:0.9rem 1rem;">
-                    <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.5rem;">🚀 Future Work</div>
-                    <ul style="font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7;padding-left:1rem;margin:0;">
-                        <li>Add more labeled Path of Titans holdout images, especially predator cases</li>
-                        <li>MobileNetV3 or distilled model for &lt;50ms GPU inference</li>
-                        <li>Use Kaggle time-series/video data only after adding matching behavior labels</li>
-                        <li>Live Letta RAG for episodic long-term memory</li>
-                        <li>Keep tuning threshold and class weights around predator recall, not just accuracy</li>
+                <div class="reveal" style="background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.18);border-radius:10px;padding:0.85rem 1rem;">
+                    <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.45rem;">Future Work</div>
+                    <ul style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.62;padding-left:1rem;margin:0;">
+                        <li>Add more labeled Path of Titans holdout images, especially predator cases.</li>
+                        <li>Run the full focused in-game smoke test with capture, advice mode, and simple movement.</li>
+                        <li>Wire live Letta memory/RAG into the middle of the decision loop.</li>
+                        <li>Try MobileNetV3 or distillation for faster inference.</li>
+                        <li>Keep optimizing around predator recall, then report accuracy as the secondary metric.</li>
                     </ul>
                 </div>
             </div>
             <div>
-                <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
-                    <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
-                        <div style="font-size:2rem;font-weight:900;color:#4ade80;margin-bottom:0.2rem;" class="stat-glow glow-pulse">0.9118</div>
-                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">Best Val Acc</div>
+                <div class="reveal" style="display:grid;gap:0.7rem;margin-bottom:1rem;">
+                    <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.18);border-radius:10px;padding:0.85rem;">
+                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);margin-bottom:0.25rem;">Best real-image checkpoint</div>
+                        <div style="display:flex;align-items:baseline;gap:0.6rem;flex-wrap:wrap;"><span style="font-size:1.75rem;font-weight:900;color:#4ade80;" class="stat-glow glow-pulse">0.9118</span><span style="font-size:0.76rem;color:var(--color-text-secondary);">Serengeti val accuracy</span></div>
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.45;">ResNet-18 <code>1e-4 + aug + 15 epochs</code>; predator recall <code>0.9206</code>, predator F1 <code>0.9086</code>.</div>
                     </div>
-                    <div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
-                        <div style="font-size:2rem;font-weight:900;color:#f87171;margin-bottom:0.2rem;" class="stat-glow">0.5238</div>
-                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">Baseline Acc</div>
+                    <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.18);border-radius:10px;padding:0.85rem;">
+                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);margin-bottom:0.25rem;">Best 300-screenshot PoT model</div>
+                        <div style="display:flex;align-items:baseline;gap:0.6rem;flex-wrap:wrap;"><span style="font-size:1.75rem;font-weight:900;color:#a5b4fc;">0.7667</span><span style="font-size:0.76rem;color:var(--color-text-secondary);">60-image val accuracy</span></div>
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.45;">Fine-tuned from Serengeti checkpoint with <code>lr=1e-4</code>, 15 epochs; split was 240 train / 60 validation.</div>
                     </div>
-                    <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
-                        <div style="font-size:2rem;font-weight:900;color:#a5b4fc;margin-bottom:0.2rem;">300</div>
-                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">PoT Labels</div>
-                    </div>
-                    <div style="background:rgba(212,160,23,0.08);border:1px solid rgba(212,160,23,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
-                        <div style="font-size:2rem;font-weight:900;color:#fcd34d;margin-bottom:0.2rem;">4–10</div>
-                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">FPS Live Loop</div>
+                    <div style="background:rgba(252,211,77,0.08);border:1px solid rgba(252,211,77,0.18);border-radius:10px;padding:0.85rem;">
+                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);margin-bottom:0.25rem;">Best 10-image safety operating point</div>
+                        <div style="display:flex;align-items:baseline;gap:0.6rem;flex-wrap:wrap;"><span style="font-size:1.75rem;font-weight:900;color:#fcd34d;">0.714</span><span style="font-size:0.76rem;color:var(--color-text-secondary);">predator recall</span></div>
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.45;"><code>lr=3e-5</code>, predator weight <code>3.0</code>, threshold <code>0.20</code>; accuracy <code>0.70</code>, precision <code>0.833</code>.</div>
                     </div>
                 </div>
-                <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:0.9rem;text-align:center;">
-                    <div style="font-size:1.8rem;margin-bottom:0.4rem;">🦕</div>
+                <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:0.85rem;text-align:center;">
                     <div style="font-size:0.82rem;font-style:italic;color:var(--color-text-secondary);line-height:1.5;">
-                        "A dinosaur that <em>knows</em> it's in danger — even when no one tells it."
+                        "A dinosaur that <em>knows</em> it's in danger, even when no one tells it."
                     </div>
                     <div style="margin-top:0.5rem;font-size:0.7rem;color:var(--color-text-muted);">github.com/PALEO-AI-System/PALEO</div>
                 </div>
