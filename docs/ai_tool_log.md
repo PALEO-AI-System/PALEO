@@ -218,6 +218,8 @@
 - Reworked `agent-demo.html` body copy into semantic HTML with markdown-like styling (headings, lists, blockquote, code block, rules) instead of a single preformatted block.
 - Added `pages/agent-demo/` for the demo screenshot; `agent-demo.html` loads `agent-demo/image.png` from the repo with Drive as an optional link.
 - Added **Slide 2 — Visuals** (image grid) after the title slide in `pages/paleo-presentation.html`; renumbered following slides and set the deck to 11 slides.
-- Slide 2 **mods gallery**: three fixed rows (per team layout), no filenames, transparent tiles (no white mat), `image(5)` not on slide; `image(3)` repeated on row 2.
+- Slide 2 **mods gallery**: rows (1)(2)(3) / (4)(5) / `image.png` (6) `torvo.jpg`; all eight `mods/` assets, no duplicate tiles.
 - New **slide 6 — in-game gallery** after system pipeline (`paleo-presentation.html`): three images from `pages/paleo-presentation/game/` (abilities + two gameplay shots), same tile styling as mods; following slides renumbered.
-- **Slide 13** at end of deck: embedded MP4 from `pages/paleo-presentation/demo/` (`2026-05-05 14-56-27.mp4`); deck is 13 slides.
+- **Slide 14**: demo MP4 in `pages/paleo-presentation/demo/` (`2026-05-05 14-56-27.mp4`).
+- **Slide 8** (after model architecture deck slide): links to **Agent Architecture** + **Agent demo** on the site.
+- **Slide 15** (final): only **Profiles**, **Companion HUD**, **Chroma Strata**; deck is 15 slides.
