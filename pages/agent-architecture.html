@@ -722,10 +722,10 @@
         adeIdPanel.innerHTML = '<h2><i class="fa-solid fa-fingerprint" aria-hidden="true"></i> Agent Identity</h2>' +
           '<div class="ade-card"><p style="font-size:1.1rem;font-weight:700;margin-bottom:4px;color:var(--ink);">' + adeArch.agent_name + '</p>' +
           '<p class="muted">' + adeArch.description + '</p></div>' +
-          '<div class="ade-card"><h4>Agent Description</h4><p class="muted" style="margin-bottom:8px;">The full behavioral instructions that define the agent\'s identity and decision-making loop.</p>' +
-          '<div class="prompt-block">' + adeIdDescText + '</div></div>' +
           '<div class="ade-card"><h4>Agent ID</h4><p><code>' + adeArch.agent_id + '</code></p></div>' +
-          '<div class="ade-card"><h4>Conversation ID</h4><p><code>' + adeArch.conversation_id + '</code></p></div>';
+          '<div class="ade-card"><h4>Conversation ID</h4><p><code>' + adeArch.conversation_id + '</code></p></div>' +
+          '<div class="ade-card"><h4>Agent Description</h4><p class="muted" style="margin-bottom:8px;">The full behavioral instructions that define the agent\'s identity and decision-making loop.</p>' +
+          '<div class="prompt-block">' + adeIdDescText + '</div></div>';
         adePanels.identity = adeIdPanel;
 
         /* Tools panel */
