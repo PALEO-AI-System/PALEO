@@ -172,6 +172,17 @@
 - Updated `scripts/ingest_pot_wiki.py` with Fandom API fallback when direct page fetch fails, plus `--url-list` support for strict curated ingestion.
 - Added curated URL allowlist file `docs/pot_rag_urls.txt` and executed `ingest_pot_wiki.py --url-list docs/pot_rag_urls.txt --rebuild-index` (10/12 successful fetches, index rebuilt to 184 chunks).
 - Verified `tests/test_wiki_rag.py` passes after curated ingest + rebuild.
+- Added dual offline agent-brain wiring for the PoT loop: `local-rules` and `local-model` via `decide_with_brain(...)` in `src/letta_tools.py`, including explicit perceive/think/remember/decide/act payload in thought logs.
+- Updated `scripts/run_paleo_control_loop.py` with `--brain`, `--classifier-checkpoint`, and `--letta-api-key-env` options; loop now tracks short runtime memory events and emits them per tick.
+- Added README run-command examples for new brain modes and key-env note for `letta-api` mode.
+- Hardened offline decision path in `decide_with_brain(...)` with pressure fusion and safety overrides; kept Letta path separate and optional.
+- Added minimal Letta HTTP client (`src/letta_api.py`) and wired `letta-api` brain mode to call Letta when base URL/key/agent id are present, with safe fallback behavior.
+- Added mouse click action support end-to-end: `PotConfig.mouse_clickmap`, `ActionMapper.map_mouse_clicks`, `SafeInputController.execute_action(..., mouse_clicks=...)`, and control-loop/overlay/companion previews now surface click actions.
+- Wired brain routing into EXE launch paths by updating `run_paleo_live.py`, `serve_companion.py`, and `run_paleo_overlay.py` to accept `--brain` and Letta agent parameters.
+- Added Letta action safety guard: `decide_with_brain(...)` now validates Letta-returned actions against configured key/mouse-click action maps and falls back to `HOLD_POSITION` on unknown actions.
+- `run_paleo_overlay.py`: added loop `Start Loop` / `Stop Loop` controls (loop no longer auto-runs on startup), `Live Feed Shot` manual snapshot button (saves to Downloads + opens file), and `Mock Demo` manual control macro for testing inputs with loop paused.
+- Persisted user-requested env vars via `setx`: `LETTA_BASE_URL`, `LETTA_API_KEY`, `GITHUB_TOKEN`, `DISCORD_WEBHOOK_URL`.
+- Rebuilt both Windows executables with PyInstaller (`scripts/build_paleo_exe.py --target both`) to include latest control-loop/overlay/brain updates.
 - Chroma Strata: increased mobile-only gender icon lift again (`mini-gender` `-7px`, large-panel `gender-choice` `-6px`) and explicitly pinned desktop icon lift to `0` so split-screen desktop keeps baseline alignment.
 - Chroma Strata: updated `SeismicWiehen` female palettes for Color 1-5 (removed leading gray and added provided female-only options), made custom hex storage gender-scoped (`skinPath -> gender -> slot`) so male/female custom colors stay separate, added desktop-only icon bolding for gender symbols, and increased mobile-only icon lift (`mini -8px`, large-button icon -7px).
 - Chroma Strata: reordered `SeismicWiehen` female palettes (ROYGBIV-style with dark/light and saturation grouping), set female defaults to `#251d18/#61271a/#e49847/#e13d14/#110b04`, added Seismic Color 6 using `../Wiehen_Color6.png` with neutral gray for both genders, switched hex detail rows to reflect currently selected slot hex values, bumped desktop-only gender icon weight to `900`, and gated mobile icon lift behind a true-mobile device class so split-screen Windows laptops do not get mobile lift.

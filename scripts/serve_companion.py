@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from http.server import HTTPServer, SimpleHTTPRequestHandler
@@ -23,7 +24,7 @@ _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from src.letta_tools import get_species_fast_facts, simulate_instinct_decision  # noqa: E402
+from src.letta_tools import decide_with_brain, get_species_fast_facts  # noqa: E402
 from src.config import default_pot_config  # noqa: E402
 from src.image_training import load_classifier, torch  # noqa: E402
 from src.pot import ActionMapper  # noqa: E402
@@ -62,6 +63,10 @@ def make_handler(
     live_capture: bool = False,
     full_screen: bool = False,
     classifier_checkpoint: str = "",
+    brain: str = "local-rules",
+    letta_agent_id: str = "",
+    letta_api_key_env: str = "LETTA_API_KEY",
+    letta_base_url_env: str = "LETTA_BASE_URL",
 ):
     capture_worker = None
     mapper = ActionMapper()
@@ -69,6 +74,9 @@ def make_handler(
     classifier_model = None
     classifier_device = None
     classifier_error = ""
+    recent_events: list[str] = []
+    letta_key = os.getenv(letta_api_key_env, "")
+    letta_base_url = os.getenv(letta_base_url_env, "")
     if live_capture:
         cfg = default_pot_config()
         if full_screen:
@@ -158,7 +166,8 @@ def make_handler(
                 hunger = max(0.0, min(1.0, _float(qs, "hunger", 0.45)))
                 thirst = max(0.0, min(1.0, _float(qs, "thirst", 0.35)))
 
-            result = simulate_instinct_decision(
+            result = decide_with_brain(
+                brain=brain,
                 species=species,
                 predator_probability=predator_probability,
                 prey_density=prey_density,
@@ -166,7 +175,14 @@ def make_handler(
                 stamina=stamina,
                 hunger=hunger,
                 thirst=thirst,
+                recent_events=recent_events,
+                letta_api_key=letta_key,
+                letta_base_url=letta_base_url,
+                letta_agent_id=letta_agent_id,
             )
+            recent_events.append(f"t={int(time.time())}:action={result.get('action','')}")
+            if len(recent_events) > 24:
+                recent_events[:] = recent_events[-24:]
             try:
                 thought_obj = json.loads(result["thought_log"])
             except json.JSONDecodeError:
@@ -190,11 +206,13 @@ def make_handler(
                 "control_preview": {
                     "keys": list(mapper.map_action(result["action"])),
                     "mouse_delta": list(mapper.map_mouse(result["action"])),
+                    "mouse_clicks": list(mapper.map_mouse_clicks(result["action"])),
                     "mode": "preview_only",
                 },
                 "letta_trace": {
-                    "source": "local_tool_stub",
-                    "tool": "simulate_instinct_decision",
+                    "source": "decision_brain",
+                    "tool": "decide_with_brain",
+                    "brain": brain,
                     "species": species,
                     "ts_ms": int(time.time() * 1000),
                 },
@@ -257,6 +275,15 @@ def main() -> None:
         default="",
         help="Optional path to a trained classifier checkpoint (.pt) for live threat estimation.",
     )
+    parser.add_argument(
+        "--brain",
+        choices=["simulate", "local-rules", "local-model", "letta-api"],
+        default="local-rules",
+        help="Decision brain used by /api/hud.",
+    )
+    parser.add_argument("--letta-agent-id", default="", help="Optional Letta agent id.")
+    parser.add_argument("--letta-api-key-env", default="LETTA_API_KEY")
+    parser.add_argument("--letta-base-url-env", default="LETTA_BASE_URL")
     args = parser.parse_args()
 
     pages_dir = _ROOT / "pages"
@@ -269,6 +296,10 @@ def main() -> None:
         live_capture=args.live_capture,
         full_screen=args.full_screen,
         classifier_checkpoint=args.classifier_checkpoint,
+        brain=args.brain,
+        letta_agent_id=args.letta_agent_id,
+        letta_api_key_env=args.letta_api_key_env,
+        letta_base_url_env=args.letta_base_url_env,
     )
     httpd = HTTPServer((args.host, args.port), handler)
     print(f"Serving {pages_dir} at http://{args.host}:{args.port}/")
@@ -279,6 +310,7 @@ def main() -> None:
         print("Capture region set to primary monitor bounds.")
     if args.classifier_checkpoint:
         print(f"Classifier checkpoint requested: {args.classifier_checkpoint}")
+    print(f"Decision brain: {args.brain}")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

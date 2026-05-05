@@ -36,6 +36,13 @@ def main() -> None:
         default="",
         help="Optional path to classifier checkpoint passed to serve_companion.py.",
     )
+    p.add_argument(
+        "--brain",
+        choices=["simulate", "local-rules", "local-model", "letta-api"],
+        default="local-rules",
+        help="Decision brain passed to serve_companion.py.",
+    )
+    p.add_argument("--letta-agent-id", default="", help="Optional Letta agent id for letta-api brain.")
     args = p.parse_args()
 
     cmd = [
@@ -52,6 +59,9 @@ def main() -> None:
             cmd.append("--full-screen")
     if args.classifier_checkpoint:
         cmd.extend(["--classifier-checkpoint", args.classifier_checkpoint])
+    cmd.extend(["--brain", args.brain])
+    if args.letta_agent_id:
+        cmd.extend(["--letta-agent-id", args.letta_agent_id])
 
     url = f"http://{args.host}:{args.port}/companion-hud.html"
     print(f"Starting PALEO HUD server: {' '.join(cmd)}")

@@ -210,6 +210,7 @@ class ControlResult:
     action: str
     keys: Tuple[str, ...]
     mouse_delta: Tuple[int, int] = (0, 0)
+    mouse_clicks: Tuple[str, ...] = ()
     detail: str = ""
 
 
@@ -255,20 +256,21 @@ class SafeInputController:
         action: str,
         keys: Tuple[str, ...],
         mouse_delta: Tuple[int, int] = (0, 0),
+        mouse_clicks: Tuple[str, ...] = (),
     ) -> ControlResult:
         now = time()
         if self.poll_emergency_stop():
-            return ControlResult(False, "blocked", action, keys, mouse_delta, "emergency_stop_active")
+            return ControlResult(False, "blocked", action, keys, mouse_delta, mouse_clicks, "emergency_stop_active")
         if self.mode != "control":
-            return ControlResult(True, "advice_only", action, keys, mouse_delta)
+            return ControlResult(True, "advice_only", action, keys, mouse_delta, mouse_clicks)
         if not self.enable_control:
-            return ControlResult(True, "dry_run", action, keys, mouse_delta, "enable_control_false")
+            return ControlResult(True, "dry_run", action, keys, mouse_delta, mouse_clicks, "enable_control_false")
         if keyboard is None:
-            return ControlResult(False, "blocked", action, keys, mouse_delta, "keyboard_module_missing")
+            return ControlResult(False, "blocked", action, keys, mouse_delta, mouse_clicks, "keyboard_module_missing")
         if now - self._last_action_at < self.min_action_interval_sec:
-            return ControlResult(False, "rate_limited", action, keys, mouse_delta)
-        if not keys and mouse_delta == (0, 0):
-            return ControlResult(True, "noop", action, keys, mouse_delta)
+            return ControlResult(False, "rate_limited", action, keys, mouse_delta, mouse_clicks)
+        if not keys and mouse_delta == (0, 0) and not mouse_clicks:
+            return ControlResult(True, "noop", action, keys, mouse_delta, mouse_clicks)
         try:
             for k in keys:
                 keyboard.press(k)
@@ -277,10 +279,14 @@ class SafeInputController:
                 keyboard.release(k)
             if mouse is not None and mouse_delta != (0, 0):
                 mouse.move(mouse_delta[0], mouse_delta[1], absolute=False, duration=0)
+            if mouse is not None and mouse_clicks:
+                for button in mouse_clicks:
+                    if button in {"left", "right", "middle", "x", "x2"}:
+                        mouse.click(button=button)
             self._last_action_at = now
-            return ControlResult(True, "executed", action, keys, mouse_delta)
+            return ControlResult(True, "executed", action, keys, mouse_delta, mouse_clicks)
         except Exception as exc:
-            return ControlResult(False, "error", action, keys, mouse_delta, str(exc))
+            return ControlResult(False, "error", action, keys, mouse_delta, mouse_clicks, str(exc))
 
 
 class ActionMapper:
@@ -294,6 +300,9 @@ class ActionMapper:
 
     def map_mouse(self, action: str) -> Tuple[int, int]:
         return self.config.mousemap.get(action, (0, 0))
+
+    def map_mouse_clicks(self, action: str) -> Tuple[str, ...]:
+        return self.config.mouse_clickmap.get(action, ())
 
 
 def describe_pot_integration_assumptions(config: PotConfig | None = None) -> Dict[str, object]:

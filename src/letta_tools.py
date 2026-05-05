@@ -2,16 +2,27 @@
 
 from __future__ import annotations
 
+import json
+import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Dict, List
 
-from .agent import PersonalityTraits, AgentState, decide_action, format_thought_log
-from .config import LettaConfig, default_letta_config
+from .agent import (
+    PersonalityTraits,
+    AgentState,
+    AgentDecision,
+    decide_action,
+    decide_instinct_action,
+    format_thought_log,
+    policy_for_species,
+)
+from .config import LettaConfig, default_letta_config, default_pot_config
 from .data import DatasetRecord
 from .fast_facts import get_fast_facts
 from .wiki_rag import query_snippets
 from .kaggle_ingest import KAGGLE_PIPELINE_ROW_COUNT_MAX_FILE_BYTES, summarize_all_kaggle
+from .letta_api import request_letta_decision
 
 
 @dataclass
@@ -221,6 +232,155 @@ def simulate_instinct_decision(
     action = decide_action(state)
     thought = format_thought_log(state, action)
     return {"action": action, "thought_log": thought}
+
+
+def decide_with_brain(
+    *,
+    brain: str,
+    species: str,
+    predator_probability: float,
+    prey_density: float,
+    health: float,
+    stamina: float,
+    hunger: float,
+    thirst: float,
+    recent_events: List[str] | None = None,
+    model_predator_probability: float | None = None,
+    letta_api_key: str | None = None,
+    letta_base_url: str | None = None,
+    letta_agent_id: str | None = None,
+) -> Dict[str, str]:
+    allowed_actions = set(default_pot_config().keymap.keys()) | set(default_pot_config().mouse_clickmap.keys())
+    def _safe_action(raw: str) -> str:
+        a = (raw or "").strip().upper()
+        return a if a in allowed_actions else "HOLD_POSITION"
+
+    """Perceive-think-remember-decide-act compatible decision helper.
+
+    Supported brains:
+    - ``simulate``: existing offline simulator path.
+    - ``local-rules``: local Instinct policy over scalar observations.
+    - ``local-model``: local Instinct policy using model-updated threat when provided.
+    - ``letta-api``: placeholder integration mode; falls back to local-rules if no key.
+    """
+    brain = (brain or "simulate").strip().lower()
+    if brain == "simulate":
+        return simulate_instinct_decision(
+            species=species,
+            predator_probability=predator_probability,
+            prey_density=prey_density,
+            health=health,
+            stamina=stamina,
+            hunger=hunger,
+            thirst=thirst,
+        )
+
+    recent = list(recent_events or [])
+    obs_pred = float(predator_probability)
+    if brain == "local-model" and model_predator_probability is not None:
+        obs_pred = max(0.0, min(1.0, float(model_predator_probability)))
+
+    # Robust offline perception fusion: prioritize worst-case signals and stabilize.
+    pressure = max(
+        obs_pred,
+        min(1.0, hunger * 0.85 + thirst * 0.6),
+        1.0 - max(0.0, min(1.0, health)),
+    )
+
+    from .agent import PrimalMind, Observation  # local import to avoid cycles
+
+    state = AgentState(
+        primal_mind=PrimalMind(
+            identity="local-dino",
+            species=species,
+            life_stage="adult",
+            current_goal="survive_and_progress",
+            recent_events=recent[-8:],
+        ),
+        observation=Observation(
+            predator_probability=max(obs_pred, pressure * 0.75),
+            prey_density=prey_density,
+            health=health,
+            stamina=stamina,
+            hunger=hunger,
+            thirst=thirst,
+            recent_event=recent[-1] if recent else "none",
+        ),
+    )
+    policy = policy_for_species(species)
+    decision: AgentDecision = decide_instinct_action(state, policy=policy)
+
+    if pressure > 0.85 and health < 0.55:
+        decision = AgentDecision(
+            action="FLEE",
+            rationale="Safety override: extreme pressure with vulnerable health.",
+            confidence=0.9,
+        )
+    elif stamina < 0.2 and decision.action in {"HUNT", "EXPLORE"}:
+        decision = AgentDecision(
+            action="HOLD_POSITION",
+            rationale="Low stamina override: hold to avoid forced overcommit.",
+            confidence=max(0.6, decision.confidence),
+        )
+
+    key_present = bool(letta_api_key or os.getenv("LETTA_API_KEY"))
+    letta_mode = "none"
+    if brain == "letta-api":
+        base_url = (letta_base_url or os.getenv("LETTA_BASE_URL") or "").strip()
+        agent_id = (letta_agent_id or os.getenv("LETTA_AGENT_ID") or "").strip()
+        if key_present and base_url and agent_id:
+            try:
+                letta_resp = request_letta_decision(
+                    base_url=base_url,
+                    api_key=letta_api_key or os.getenv("LETTA_API_KEY", ""),
+                    agent_id=agent_id,
+                    payload={
+                        "species": species,
+                        "observation": asdict(state.observation),
+                        "recent_events": recent[-8:],
+                        "suggested_local_decision": asdict(decision),
+                    },
+                )
+                decision = AgentDecision(
+                    action=_safe_action(str(letta_resp.get("action") or decision.action)),
+                    rationale="Decision from Letta agent API.",
+                    confidence=0.7,
+                )
+                letta_mode = f"api_ok:{letta_resp.get('endpoint','')}"
+            except Exception as exc:
+                letta_mode = f"api_error_fallback_local_rules:{exc}"
+        else:
+            letta_mode = "missing_key_or_base_or_agent_fallback_local_rules"
+            brain = "local-rules"
+
+    thought_payload = {
+        "loop": {
+            "perceive": {
+                "species": species,
+                "obs": asdict(state.observation),
+                "model_predator_probability": model_predator_probability,
+            },
+            "think": {
+                "brain": brain,
+                "policy_id": policy.policy_id if policy else "",
+                "letta_mode": letta_mode,
+                "pressure": round(pressure, 4),
+            },
+            "remember": {
+                "recent_events": recent[-8:],
+                "memory_backend": "local_runtime",
+            },
+            "decide": asdict(decision),
+            "act": {
+                "action": decision.action,
+                "integration_note": "Action maps via ActionMapper/SafeInputController in PoT loop.",
+            },
+        },
+    }
+    return {
+        "action": _safe_action(decision.action),
+        "thought_log": json.dumps(thought_payload, separators=(",", ":"), sort_keys=True),
+    }
 
 
 def letta_config_summary(config: LettaConfig | None = None) -> Dict[str, object]:

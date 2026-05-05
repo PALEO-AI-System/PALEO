@@ -1,3 +1,7 @@
+# Build/artifact outputs (keep out of git to avoid large-file push failures)
+dist/
+results/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -10,7 +14,6 @@ __pycache__/
 .Python
 build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/
@@ -192,5 +195,4 @@ data/raw/kaggle/animal-behavior-prediction/*
 !data/raw/kaggle/animal-behaviour/
 data/raw/kaggle/animal-behaviour/*
 !data/raw/kaggle/animal-behaviour/README.txt
-results/
 models/

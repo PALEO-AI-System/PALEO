@@ -47,6 +47,7 @@ Use **[x]** for done, **[ ]** for not done. Do not delete completed lines; mark 
 - [ ] **Agent output → keys/mouse**: same structured actions **Letta** (or any middle tier) emits must map through **`ActionMapper` / `SafeInputController`** with tests and guardrails (schema parity with `simulate_instinct_decision` today).
 - [ ] **Audio events from sound:** capture short audio windows, extract lightweight features, classify a few event types (e.g., roar/combat/quiet), then feed flags into the agent observation.
 - [ ] **Voice commands (later):** mic capture + speech-to-text (text output), then map spoken commands into a safe subset of actions (pause, switch mode/species, hold/flee) through the same `ActionMapper` path.
+- [ ] **Discord loop telemetry (optional):** post perceive/think/remember/decide/act tick summaries to a Discord channel via webhook for remote monitoring/debug.
 - [ ] Richer **game context** for the agent (wiki / mechanics — see `src/wiki_rag.py`, `docs/paleo_brainstorming.md`).
 
 ## Course / evaluation (from `docs/context_dump.md`)

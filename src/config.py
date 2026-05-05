@@ -68,6 +68,16 @@ class PotConfig:
             "FOLLOW_HERD": (8, 0),
         }
     )
+    mouse_clickmap: Dict[str, Tuple[str, ...]] = field(
+        default_factory=lambda: {
+            # Supported buttons: left, right, middle, x, x2
+            "MOUSE_LEFT_CLICK": ("left",),
+            "MOUSE_RIGHT_CLICK": ("right",),
+            "MOUSE_MIDDLE_CLICK": ("middle",),
+            "MOUSE_SIDE_BACK_CLICK": ("x",),
+            "MOUSE_SIDE_FORWARD_CLICK": ("x2",),
+        }
+    )
 
 
 @dataclass

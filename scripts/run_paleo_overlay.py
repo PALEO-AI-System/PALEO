@@ -6,8 +6,12 @@ Drag the **gradient title bar** to move. Toolbar buttons mirror common hotkeys.
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
+import os
 import sys
+import threading
+import time
 import tkinter as tk
 from pathlib import Path
 from tkinter import scrolledtext
@@ -18,12 +22,14 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from src.config import default_pot_config
 from src.image_training import load_classifier, torch
-from src.letta_tools import simulate_instinct_decision
+from src.letta_tools import decide_with_brain
 from src.pot import (
     ActionMapper,
     SafeInputController,
     ScreenCaptureWorker,
     frame_to_observation,
+    keyboard,
+    mouse,
     primary_monitor_region,
 )
 
@@ -84,6 +90,7 @@ def _style_btn(w: tk.Misc, bg: str, fg: str, active: str) -> None:
 def main() -> None:
     p = argparse.ArgumentParser(description="PALEO transparent overlay HUD.")
     p.add_argument("--species", default="allosaurus")
+    p.add_argument("--brain", choices=["simulate", "local-rules", "local-model", "letta-api"], default="local-rules")
     p.add_argument("--fps", type=float, default=4.0)
     p.add_argument("--mode", choices=["advice", "control"], default="advice")
     p.add_argument("--enable-control", action="store_true")
@@ -95,6 +102,9 @@ def main() -> None:
         default=None,
         help="Optional path to a trained classifier checkpoint (.pt).",
     )
+    p.add_argument("--letta-agent-id", default="", help="Optional Letta agent id override.")
+    p.add_argument("--letta-api-key-env", default="LETTA_API_KEY")
+    p.add_argument("--letta-base-url-env", default="LETTA_BASE_URL")
     p.add_argument(
         "--window-capture",
         action="store_true",
@@ -212,7 +222,14 @@ def main() -> None:
     toolbar.pack(fill="x", padx=6, pady=(0, 4))
 
     default_font = 7
-    state = {"verbose": not args.compact, "font": default_font, "help_open": False}
+    state = {
+        "verbose": not args.compact,
+        "font": default_font,
+        "help_open": False,
+        "loop_running": False,
+        "loop_job": None,
+        "demo_running": False,
+    }
 
     def set_font(sz: int) -> None:
         state["font"] = max(6, min(14, sz))
@@ -235,18 +252,26 @@ def main() -> None:
     btn_smaller = tk.Button(toolbar, text="A−", command=lambda: set_font(state["font"] - 1))
     btn_larger = tk.Button(toolbar, text="A+", command=lambda: set_font(state["font"] + 1))
     btn_detail = tk.Button(toolbar, text="Detail: on" if state["verbose"] else "Detail: off", command=toggle_verbose)
+    btn_start = tk.Button(toolbar, text="Start Loop")
+    btn_stop = tk.Button(toolbar, text="Stop Loop")
+    btn_snap = tk.Button(toolbar, text="Live Feed Shot")
+    btn_demo = tk.Button(toolbar, text="Mock Demo")
     btn_help = tk.Button(toolbar, text="Workflow", command=toggle_help)
     btn_close = tk.Button(toolbar, text="Close", command=root.destroy)
 
     accent = "#2a5a50"
     accent_hi = "#3d7a6c"
-    for b in (btn_smaller, btn_larger, btn_detail, btn_help):
+    for b in (btn_smaller, btn_larger, btn_detail, btn_start, btn_stop, btn_snap, btn_demo, btn_help):
         _style_btn(b, accent, "#dff8f0", accent_hi)
     _style_btn(btn_close, "#5a3030", "#ffd0d0", "#7a4040")
 
     btn_smaller.pack(side=tk.LEFT, padx=(0, 4))
     btn_larger.pack(side=tk.LEFT, padx=(0, 8))
     btn_detail.pack(side=tk.LEFT, padx=(0, 8))
+    btn_start.pack(side=tk.LEFT, padx=(0, 4))
+    btn_stop.pack(side=tk.LEFT, padx=(0, 8))
+    btn_snap.pack(side=tk.LEFT, padx=(0, 8))
+    btn_demo.pack(side=tk.LEFT, padx=(0, 8))
     btn_help.pack(side=tk.LEFT, padx=(0, 8))
     btn_close.pack(side=tk.RIGHT)
 
@@ -330,19 +355,132 @@ def main() -> None:
     redraw_title()
 
     dt_ms = int(1000.0 / max(args.fps, 0.5))
+    recent_events: list[str] = []
+    letta_key = os.getenv(args.letta_api_key_env, "")
+    letta_base_url = os.getenv(args.letta_base_url_env, "")
+
+    def _set_status(msg: str) -> None:
+        status_var.set(msg)
+
+    def _downloads_dir() -> Path:
+        home = Path.home()
+        dl = home / "Downloads"
+        if dl.exists():
+            return dl
+        return home
+
+    def save_live_snapshot() -> None:
+        ts = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
+        out = _downloads_dir() / f"paleo_overlay_live_{ts}.png"
+        frame = capture.capture_once(snapshot_path=out)
+        _set_status(f"snapshot saved: {out} | frame={frame.frame_id}")
+        try:
+            os.startfile(str(out))  # type: ignore[attr-defined]
+        except Exception:
+            pass
+
+    def run_mock_demo() -> None:
+        if state["demo_running"]:
+            _set_status("mock demo already running")
+            return
+        if args.mode != "control" or not args.enable_control:
+            _set_status("mock demo requires --mode control --enable-control")
+            return
+        if keyboard is None or mouse is None:
+            _set_status("mock demo unavailable: keyboard/mouse module missing")
+            return
+
+        def _demo_worker() -> None:
+            state["demo_running"] = True
+            _set_status("mock demo running...")
+            try:
+                # 0) Select slot/ability key first.
+                keyboard.press_and_release("1")
+                time.sleep(0.12)
+                # 1) Move camera while holding W for ~5s.
+                keyboard.press("w")
+                t_end = time.time() + 5.0
+                while time.time() < t_end:
+                    mouse.move(16, 0, absolute=False, duration=0)
+                    time.sleep(0.2)
+                keyboard.release("w")
+                # 2) Left click attack.
+                mouse.click("left")
+                # 3) Hold side button 2s while moving camera.
+                mouse.press("x")
+                t_end = time.time() + 2.0
+                while time.time() < t_end:
+                    mouse.move(12, 0, absolute=False, duration=0)
+                    time.sleep(0.2)
+                mouse.release("x")
+                # 4) Press R once, H twice.
+                keyboard.press_and_release("r")
+                keyboard.press_and_release("h")
+                time.sleep(0.12)
+                keyboard.press_and_release("h")
+                _set_status("mock demo complete")
+            except Exception as exc:
+                _set_status(f"mock demo error: {exc}")
+            finally:
+                state["demo_running"] = False
+
+        threading.Thread(target=_demo_worker, daemon=True).start()
+
+    def stop_loop() -> None:
+        state["loop_running"] = False
+        job = state.get("loop_job")
+        if job is not None:
+            try:
+                root.after_cancel(job)
+            except Exception:
+                pass
+        state["loop_job"] = None
+        _set_status("loop stopped; manual controls available")
+
+    def start_loop() -> None:
+        if state["loop_running"]:
+            _set_status("loop already running")
+            return
+        state["loop_running"] = True
+        _set_status("loop started")
+        tick()
+
+    btn_start.configure(command=start_loop)
+    btn_stop.configure(command=stop_loop)
+    btn_snap.configure(command=save_live_snapshot)
+    btn_demo.configure(command=run_mock_demo)
 
     def tick() -> None:
+        if not state["loop_running"]:
+            return
         frame = capture.capture_once()
         obs = frame_to_observation(
             frame,
             classifier_model=classifier_model,
             classifier_device=classifier_device,
         )
-        result = simulate_instinct_decision(species=args.species, **obs)
+        result = decide_with_brain(
+            brain=args.brain,
+            species=args.species,
+            recent_events=recent_events,
+            letta_api_key=letta_key,
+            letta_base_url=letta_base_url,
+            letta_agent_id=args.letta_agent_id,
+            **obs,
+        )
         action = result["action"]
         keys = mapper.map_action(action)
         mouse_delta = mapper.map_mouse(action)
-        ctrl = controller.execute_action(action, keys, mouse_delta=mouse_delta)
+        mouse_clicks = mapper.map_mouse_clicks(action)
+        ctrl = controller.execute_action(
+            action,
+            keys,
+            mouse_delta=mouse_delta,
+            mouse_clicks=mouse_clicks,
+        )
+        recent_events.append(f"frame={frame.frame_id}:action={action}:status={ctrl.status}")
+        if len(recent_events) > 24:
+            recent_events[:] = recent_events[-24:]
 
         thought_raw = result.get("thought_log") or ""
         thought_parsed: dict
@@ -354,6 +492,7 @@ def main() -> None:
         control_preview = {
             "keys": list(keys),
             "mouse_delta": list(mouse_delta),
+            "mouse_clicks": list(mouse_clicks),
             "executed_status": ctrl.status,
             "detail": ctrl.detail,
         }
@@ -373,12 +512,13 @@ def main() -> None:
             "motion": round(frame.motion_score, 4),
             "brightness": round(frame.mean_brightness, 4),
             "inputs_to_agent": obs,
+            "brain": args.brain,
             "action": action,
             "control_preview": control_preview,
             "letta_trace": letta_trace,
         }
 
-        status_var.set(
+        _set_status(
             f"action={action}  |  keys={list(keys)}  |  mouse={list(mouse_delta)}  |  "
             f"motion={summary['motion']}  bright={summary['brightness']}  |  {ctrl.status}"
         )
@@ -413,8 +553,9 @@ def main() -> None:
 
         if controller.emergency_stopped:
             body.insert(tk.END, "\n\nEMERGENCY STOP (hold f12). Close overlay or restart.\n")
+            state["loop_running"] = False
             return
-        root.after(dt_ms, tick)
+        state["loop_job"] = root.after(dt_ms, tick)
 
     def on_plus(_e=None):
         set_font(state["font"] + 1)
@@ -433,7 +574,7 @@ def main() -> None:
     root.bind("<KP_Subtract>", on_minus)
     root.bind("<Tab>", on_tab)
 
-    tick()
+    stop_loop()
     root.mainloop()
 
 

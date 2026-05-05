@@ -162,6 +162,9 @@ You can test this on any screen (Cursor, desktop, browser) before trying with Pa
 ```bash
 py -3 scripts/run_paleo_control_loop.py --input-source live --full-screen --mode advice --ticks 20 --snapshot-every 5
 py -3 scripts/run_paleo_control_loop.py --input-source manual --manual-threat 0.8 --mode advice --ticks 5
+py -3 scripts/run_paleo_control_loop.py --input-source manual --brain local-rules --mode advice --ticks 5
+py -3 scripts/run_paleo_control_loop.py --input-source live --brain local-model --classifier-checkpoint results/experiments/default_run/best.pt --mode advice --ticks 5
+py -3 scripts/run_paleo_control_loop.py --input-source live --brain letta-api --letta-agent-id YOUR_AGENT_ID --mode advice --ticks 5
 ```
 
 For guarded keyboard control (still no game API):
@@ -172,12 +175,17 @@ py -3 scripts/run_paleo_control_loop.py --mode control --enable-control --fps 4
 
 Emergency stop key: `f12` (configurable in `src/config.py`).
 
+`--brain` supports `simulate`, `local-rules`, `local-model`, and `letta-api`.  
+For `letta-api` mode, set env vars (do not hardcode keys): `LETTA_BASE_URL`, `LETTA_API_KEY`, and `LETTA_AGENT_ID` (or pass `--letta-agent-id`).
+
 Short **in-game** checklist and next tasks: `TODO.md`.
 
 ### Transparent on-top overlay
 
 ```bash
 py -3 scripts/run_paleo_overlay.py --mode advice
+py -3 scripts/run_paleo_overlay.py --brain local-rules --mode advice
+py -3 scripts/run_paleo_overlay.py --brain letta-api --letta-agent-id YOUR_AGENT_ID --mode advice
 ```
 
 Close overlay with `Esc` or **Close**; drag the **gradient title bar**; **Workflow** explains PALEO.exe vs overlay vs control loop; **A−/A+** and **Detail** mirror `+/−` and `Tab`.
@@ -195,6 +203,7 @@ Output: `dist/PALEO.exe` (live HUD) and `dist/PALEOOverlay.exe` (transparent on-
 
 - `dist/PALEO.exe`: starts local HUD server and opens browser companion HUD.
 - `dist/PALEOOverlay.exe`: transparent always-on-top overlay (bordered UI, gradient header, toolbar buttons, wrapped status text, `+/-` / `Tab` still work).
+- Both launch paths now support offline/local and Letta brain routing through CLI flags (`--brain ...`).
 
 **PALEO Profiles** (creature reference mini-site): use the **Profiles** tab from the main site on **GitHub Pages** — no need to run Python for that. Profiles load JSON + curve text via `fetch()`; avoid raw `file://`. Optionally open `http://127.0.0.1:8765/profiles/index.html` when already running `serve_companion.py` for the Companion HUD. (`serve_companion.py` is for HUD `/api/*`, not required for browsing Profiles.) For planning **distinct visuals per future creature** while sharing the same data model, see `docs/profiles_future_styles.md`.
 
