@@ -207,7 +207,8 @@
         <summary>4-5) AI functions and agentic AI usage</summary>
         <div class="qa-content">
           <ul>
-            <li><strong>ML:</strong> Serengeti predator/non-predator training path with scripts for prepare, train, eval, and sweeps.</li>
+            <li><strong>ML pipeline:</strong> trained ResNet-18 on Snapshot Serengeti predator/non-predator images, then fine-tuned on 300 manually labeled Path of Titans screenshots to reduce domain shift.</li>
+            <li><strong>Model-selection shift:</strong> <code>1e-4</code> was strongest for the nearly 10k-image balanced Serengeti run and still strongest by PoT validation accuracy, but the live-agent goal prioritizes predator recall.</li>
             <li><strong>CV:</strong> live screen capture + frame stats + HUD/overlay visibility.</li>
             <li><strong>Search:</strong> wiki RAG path in <code>src/wiki_rag.py</code>.</li>
             <li><strong>Letta role:</strong> planned main decision/memory layer; current repo has Letta-shaped tools/stubs.</li>
@@ -220,6 +221,10 @@
         <div class="qa-content">
           <ul>
             <li><strong>Primary:</strong> Snapshot Serengeti (Dryad CSV workflow documented in README).</li>
+            <li><strong>Serengeti split:</strong> 6,529 training images and 2,142 validation images from the existing manifest split.</li>
+            <li><strong>Domain adaptation set:</strong> 300 labeled Path of Titans screenshots (<code>predator</code> / <code>non_predator</code>).</li>
+            <li><strong>PoT split:</strong> 240 training screenshots and 60 validation screenshots.</li>
+            <li><strong>Verification holdout:</strong> 10 Path of Titans test images (filename-labeled and manual labels).</li>
             <li><strong>Optional later:</strong> larger Kaggle packs (deferred for size/bandwidth reasons).</li>
             <li><strong>Modality:</strong> image + CSV metadata now; text for RAG; gameplay frames later.</li>
             <li><strong>Preprocessing:</strong> <code>prepare_data</code> -> manifest/splits -> local JPEGs -> train/eval scripts.</li>
@@ -232,6 +237,8 @@
         <div class="qa-content">
           <ul>
             <li><strong>Image metrics:</strong> accuracy, F1 (especially predator class), confusion matrix.</li>
+            <li><strong>Safety goal:</strong> prioritize predator recall (fewer false negatives), even if false positives increase.</li>
+            <li><strong>Thresholding:</strong> use adjustable predator probability threshold instead of fixed 0.50.</li>
             <li><strong>Baselines:</strong> rule/heuristic + no-training majority baseline vs trained runs.</li>
             <li><strong>Agent checks:</strong> loop stability, thought/action alignment, latency, and safe control behavior.</li>
           </ul>
@@ -245,7 +252,11 @@
             <li><strong>Live screen feed:</strong> working via <code>run_paleo_live.py</code>, <code>serve_companion.py</code>, and overlay path.</li>
             <li><strong>Keyboard output:</strong> prototype control path works with <code>--enable-control</code> + emergency stop.</li>
             <li><strong>Agent loop code:</strong> Instinct Agent + Primal Mind + action mapping + scenario simulation exist.</li>
-            <li><strong>Training path:</strong> prepare/download/train/eval/experiment scripts are present; results are local-only when run.</li>
+            <li><strong>Training path:</strong> Serengeti -> PoT fine-tune pipeline is running end-to-end with saved checkpoints and metrics.</li>
+            <li><strong>Latest Serengeti result:</strong> best 15-epoch real-image run is <code>ResNet-18 lr=1e-4 + augmentation</code> with <code>0.9118</code> validation accuracy and <code>0.9206</code> predator recall on the 2,142-image validation split.</li>
+            <li><strong>300-image PoT result:</strong> <code>lr=1e-4</code> is the accuracy pick on the 60-image validation split (<code>0.767</code> accuracy, <code>0.742</code> predator recall).</li>
+            <li><strong>Agent safety result:</strong> class weighting alone did not fix default-threshold false negatives, so the live-agent operating point switched to <code>lr=3e-5</code>, predator class weight <code>3.0</code>, and threshold <code>0.20</code>, moving predator recall on the 10-image holdout from <code>0.571</code> to <code>0.714</code>.</li>
+            <li><strong>Safety controls added:</strong> inference now supports predator threshold tuning and threshold-sweep metrics for recall/precision tradeoffs.</li>
             <li><strong>Main gap:</strong> real Letta session integration in the middle of the live loop.</li>
             <li><strong>Still pending:</strong> full Path of Titans in-game smoke test (focused game window + simple walk control).</li>
           </ul>

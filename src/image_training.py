@@ -162,7 +162,14 @@ def load_classifier(checkpoint_path: str | Path) -> Any:
     ckpt = torch_module.load(checkpoint_path, map_location="cpu")
     model = resnet18_fn(weights=None)
     model.fc = nn_module.Linear(model.fc.in_features, 2)
-    model.load_state_dict(ckpt["model_state"])
+    state = ckpt.get("model_state") if isinstance(ckpt, dict) else None
+    if state is None and isinstance(ckpt, dict):
+        state = ckpt.get("model_state_dict")
+    if state is None:
+        raise KeyError(
+            "Checkpoint missing model weights. Expected key 'model_state' or 'model_state_dict'."
+        )
+    model.load_state_dict(state)
     model.eval()
     return model
 

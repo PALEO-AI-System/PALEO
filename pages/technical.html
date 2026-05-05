@@ -441,7 +441,7 @@
       <p class="muted">
         Model, data, and integration details for development-focused readers.
       </p>
-      <p><span class="status in-progress">IN PROGRESS</span>Foundation complete; experiments and integration are next.</p>
+      <p><span class="status in-progress">IN PROGRESS</span>Training, fine-tuning, safety thresholding, and live runtime paths are working; Letta-in-the-loop remains the main integration gap.</p>
     </section>
 
     <div class="section-divider fern reveal" aria-hidden="true">
@@ -465,8 +465,8 @@
       </article>
       <article class="card">
         <h3>Repository State</h3>
-        <p class="metric">Scaffold Ready</p>
-        <p class="muted"><code>src/</code>, <code>scripts/</code>, <code>tests/</code>, <code>docs/</code> plus Pages site deployed.</p>
+        <p class="metric">Models + Pages</p>
+        <p class="muted"><code>src/</code>, <code>scripts/</code>, <code>tests/</code>, <code>docs/</code>, saved checkpoints, metrics, and Pages site deployed.</p>
       </article>
       <article class="card">
         <h3>Planned Agent Scale</h3>
@@ -534,11 +534,17 @@
         <div class="icon-line"><i class="fa-solid fa-database" aria-hidden="true"></i> Data and Models</div>
         <h2>Technical Direction</h2>
         <ul>
-          <li>Data direction: Snapshot Serengeti + Kaggle predator/prey images.</li>
+          <li>Training path: Snapshot Serengeti pretraining on a nearly 10k-image balanced real-image set, then Path of Titans fine-tuning on 300 labeled screenshots.</li>
+          <li>Serengeti split: <code>6,529</code> training images and <code>2,142</code> validation images from the existing manifest split.</li>
+          <li>PoT split: <code>240</code> training screenshots and <code>60</code> validation screenshots from an 80/20 split of the 300 labeled screenshots.</li>
           <li>Baseline: OpenCV rule policy for first benchmark.</li>
-          <li>Main model: ResNet-18 transfer learning for behavior-state prediction.</li>
+          <li>Main model: ResNet-18 transfer learning for predator vs non-predator prediction.</li>
+          <li>Accuracy pick: <code>lr=1e-4</code> stayed strongest after the 300-image PoT fine-tune, with validation accuracy <code>0.767</code> on the 60-image split.</li>
+          <li>Safety pick: <code>lr=3e-5</code> + predator class weight <code>3.0</code> + threshold <code>0.20</code>.</li>
+          <li>Why we shifted: class weighting alone did not fix the false-negative problem at the default threshold, and gameplay should prefer false positives over missed predators.</li>
+          <li>Holdout result (10 PoT images): the safety operating point moved predator recall from <code>0.571</code> to <code>0.714</code>, with accuracy <code>0.70</code>.</li>
           <li>Agent orchestration: one Letta agent per dinosaur.</li>
-          <li>Planned outputs: convergence curves, sensitivity sweeps, qualitative cases.</li>
+          <li>Delivered outputs: convergence curves, sensitivity sweeps, confusion matrices, threshold sweeps, and qualitative failure cases.</li>
         </ul>
       </article>
       <article class="card">
@@ -600,10 +606,12 @@
       <div id="featureList">
         <article class="feature" data-status="done"><span class="status done">DONE</span>GitHub Pages deployment from <code>pages/</code> via GitHub Actions.</article>
         <article class="feature" data-status="done"><span class="status done">DONE</span>Public homepage + technical + check-in tab structure.</article>
-        <article class="feature" data-status="in-progress"><span class="status in-progress">IN PROGRESS</span>Documentation refinement and technical page upgrades.</article>
-        <article class="feature" data-status="planned"><span class="status planned">PLANNED</span>Dataset ingestion pipeline for selected training subsets.</article>
-        <article class="feature" data-status="planned"><span class="status planned">PLANNED</span>Classifier training with sensitivity experiments and baseline comparison.</article>
-        <article class="feature" data-status="planned"><span class="status planned">PLANNED</span>Integrated agent loop with confidence thresholds and fallback actions.</article>
+        <article class="feature" data-status="done"><span class="status done">DONE</span>Documentation refinement and technical page upgrades.</article>
+        <article class="feature" data-status="done"><span class="status done">DONE</span>Dataset ingestion pipeline for selected Serengeti and Path of Titans training subsets.</article>
+        <article class="feature" data-status="done"><span class="status done">DONE</span>Classifier training with sensitivity experiments, baseline comparison, and confusion matrices.</article>
+        <article class="feature" data-status="done"><span class="status done">DONE</span>Safety threshold sweep for predator recall on the 10-image Path of Titans holdout.</article>
+        <article class="feature" data-status="in-progress"><span class="status in-progress">IN PROGRESS</span>Integrated agent loop with confidence thresholds and fallback actions.</article>
+        <article class="feature" data-status="planned"><span class="status planned">PLANNED</span>Full in-game Path of Titans smoke test with focused game window and simple movement.</article>
       </div>
     </section>
 
@@ -620,7 +628,7 @@
     </section>
 
     <section class="card reveal">
-      <div class="icon-line"><i class="fa-solid fa-image" aria-hidden="true"></i> Technical Visuals</div>
+      <div class="icon-line"><i class="fa-solid fa-image" aria-hidden="true"></i> Technical Visuals and Model Evidence</div>
       <div class="image-row">
         <div class="img-placeholder">
           Placeholder: architecture diagram (perceive -> decide -> act -> remember)
@@ -630,8 +638,24 @@
         </div>
       </div>
       <div class="image-row">
-        <img class="img-slot" src="../output/figures/final_comparison.png" alt="Bar chart of final validation accuracy by experiment">
-        <img class="img-slot" src="../output/figures/confusion_matrices/resnet18_lrie4_aug_e15_confusion_matrix.png" alt="Confusion matrix for best selected ResNet-18 model: lr=1e-4 with augmentation at 15 epochs">
+        <div class="img-placeholder">
+          <img src="figures/serengeti_latest_validation_accuracy_by_experiment.png" alt="Latest Serengeti validation accuracy by experiment." style="width:100%;height:auto;border-radius:8px;border:1px solid #b9d7c1;" />
+          <div style="margin-top:8px;font-weight:600;">Latest Serengeti Accuracy by Experiment</div>
+        </div>
+        <div class="img-placeholder">
+          <img src="figures/serengeti_latest_confusion_matrix_grid.png" alt="Latest Serengeti confusion matrices across all evaluated experiments." style="width:100%;height:auto;border-radius:8px;border:1px solid #b9d7c1;" />
+          <div style="margin-top:8px;font-weight:600;">All Serengeti Experiment Confusion Matrices</div>
+        </div>
+      </div>
+      <div class="image-row">
+        <div class="img-placeholder">
+          <img src="figures/pot_300_val_confusion_comparison.png" alt="Path of Titans 300-screenshot validation confusion matrix comparison." style="width:100%;height:auto;border-radius:8px;border:1px solid #b9d7c1;" />
+          <div style="margin-top:8px;font-weight:600;">300-Screenshot Validation Split (60 images)</div>
+        </div>
+        <div class="img-placeholder">
+          <img src="figures/pot_confusion_matrix_comparison_baseline_vs_safety.png" alt="Baseline vs safety-tuned confusion matrices on 10 Path of Titans holdout images." style="width:100%;height:auto;border-radius:8px;border:1px solid #b9d7c1;" />
+          <div style="margin-top:8px;font-weight:600;">Agent Safety Operating Point (10-image holdout)</div>
+        </div>
       </div>
     </section>
 

@@ -150,7 +150,7 @@
             </div>
         </div>
         <div class="reveal" style="margin-top:1rem;padding:0.7rem 1rem;background:rgba(74,222,128,0.06);border-radius:8px;border:1px solid rgba(74,222,128,0.12);font-size:0.8rem;color:#86efac;text-align:center;">
-            <strong>Main claim:</strong> Wildlife camera-trap data transfers to game-agent threat detection, macro F1 and predator recall are the important metrics
+            <strong>Main claim:</strong> Wildlife camera-trap data can bootstrap game-agent threat detection. Players benefit from safer assistance; developers benefit from interpretable behavior-testing tools.
         </div>
     </div>
 </div>
@@ -238,6 +238,7 @@
                     <li>Primal Mind: personality + goals + 5-event experience ring</li>
                     <li>Instinct Agent: species-specific thresholds per action</li>
                     <li>Letta tool surface: update_memory, log_thought, get_status</li>
+                    <li>Wiki/RAG search hook planned for game-mechanics context</li>
                     <li>Outputs: flee / hunt / forage / idle / drink</li>
                 </ul>
             </div>
@@ -245,9 +246,9 @@
                 <div style="font-weight:700;font-size:0.85rem;color:#fcd34d;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-md" style="color:#fcd34d;">analytics</span> Training (src/image_training.py)</div>
                 <ul style="font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7;padding-left:1rem;margin:0;">
                     <li>ResNet-18 + ImageNet transfer, frozen backbone option</li>
-                    <li>5-run sweep: LR ∈ {1e-3, 1e-4} × augment ∈ {T, F}</li>
-                    <li>all_histories.json → make_figures.py (convergence / LR / bar)</li>
-                    <li>evaluate_serengeti_images.py → macro F1, per-class recall, CM</li>
+                    <li>12 Serengeti evaluations across LR, augmentation, and epoch settings</li>
+                    <li>PoT fine-tune scripts add 300-game-screenshot adaptation runs</li>
+                    <li>evaluation outputs include accuracy, predator recall, F1, and confusion matrices</li>
                 </ul>
             </div>
             <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(212,160,23,0.2);border-radius:12px;padding:1rem;">
@@ -335,10 +336,15 @@
                 <div style="font-weight:700;font-size:0.85rem;color:#38bdf8;margin-bottom:0.6rem;">📦 Dataset</div>
                 <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.65;">
                     <strong style="color:#bae6fd;">Source:</strong> Snapshot Serengeti / Dryad<br>
+                    <strong style="color:#bae6fd;">Modality:</strong> images + CSV metadata<br>
                     <strong style="color:#bae6fd;">Manifest:</strong> 50,000 labeled rows<br>
-                    <strong style="color:#bae6fd;">Balanced images:</strong> 787 local JPEGs<br>
-                    <strong style="color:#bae6fd;">Class mix:</strong> 391 predator / 396 non-predator<br>
-                    <strong style="color:#bae6fd;">Labels:</strong> species mapped to binary predator_label<br>
+                    <strong style="color:#bae6fd;">Balanced images:</strong> nearly 10k local JPEGs<br>
+                    <strong style="color:#bae6fd;">Class mix:</strong> predator / non-predator balanced<br>
+                    <strong style="color:#bae6fd;">Split:</strong> 6,529 train / 2,142 validation<br>
+                    <strong style="color:#bae6fd;">PoT fine-tune:</strong> 300 screenshots -> 240 train / 60 validation<br>
+                    <strong style="color:#bae6fd;">PoT holdout:</strong> 10 newest labeled game screenshots<br>
+                    <strong style="color:#bae6fd;">Annotation:</strong> species/file names mapped to predator_label<br>
+                    <strong style="color:#bae6fd;">Ethics:</strong> public wildlife data; game screenshots only from our test set<br>
                     <strong style="color:#bae6fd;">Kaggle:</strong> deferred; no labeled image set
                 </div>
             </div>
@@ -347,36 +353,37 @@
                 <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.65;">
                     <strong style="color:#bbf7d0;">Heuristic:</strong> majority class on balanced val set<br><br>
                     <strong style="color:#bbf7d0;">OpenCV Rule:</strong> brightness + motion threshold (deterministic, no training)<br><br>
-                    <strong style="color:#bbf7d0;">ResNet-18 sweep:</strong> LR in {1e-3, 1e-4, 5e-5} with augmentation variants
+                    <strong style="color:#bbf7d0;">Serengeti sweep:</strong> 12 evaluated ResNet-18 runs<br><br>
+                    <strong style="color:#bbf7d0;">PoT safety tests:</strong> 15-epoch fine-tunes with LR, class weight, and threshold sweeps
                 </div>
             </div>
             <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);border-radius:12px;padding:1rem;">
                 <div style="font-weight:700;font-size:0.85rem;color:#d8b4fe;margin-bottom:0.6rem;">📊 Metrics &amp; Protocol</div>
                 <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.65;">
-                    <strong style="color:#e9d5ff;">Primary:</strong> validation accuracy on balanced subset<br>
-                    <strong style="color:#e9d5ff;">Run mode:</strong> CPU-friendly 1 epoch smoke sweep<br>
-                    <strong style="color:#e9d5ff;">Training subset:</strong> 100 predator + 100 non-predator<br>
-                    <strong style="color:#e9d5ff;">Output:</strong> comparison_table.json + all_histories.json<br>
-                    <strong style="color:#e9d5ff;">Figures:</strong> make_figures.py exported PNGs
+                    <strong style="color:#e9d5ff;">Primary:</strong> validation accuracy + predator recall<br>
+                    <strong style="color:#e9d5ff;">Run mode:</strong> balanced training/evaluation sweep + PoT fine-tune<br>
+                    <strong style="color:#e9d5ff;">Training subset:</strong> balanced predator + non-predator images<br>
+                    <strong style="color:#e9d5ff;">Output:</strong> failure_analysis_comparison.json + PoT eval JSONs<br>
+                    <strong style="color:#e9d5ff;">Figures:</strong> validation accuracy + confusion matrices
                 </div>
             </div>
         </div>
         <div class="reveal" style="margin-top:1rem;display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;">
             <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.12);border-radius:8px;padding:0.6rem;text-align:center;">
-                <div style="font-size:1.3rem;font-weight:800;color:#4ade80;" data-count="5">0</div>
-                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Training runs</div>
+                <div style="font-size:1.3rem;font-weight:800;color:#4ade80;" data-count="12">0</div>
+                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Serengeti eval runs</div>
             </div>
             <div style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.12);border-radius:8px;padding:0.6rem;text-align:center;">
-                <div style="font-size:1.3rem;font-weight:800;color:#38bdf8;" data-count="787">0</div>
-                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Balanced images</div>
+                <div style="font-size:1.3rem;font-weight:800;color:#38bdf8;" data-count="8671">0</div>
+                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Serengeti split images</div>
             </div>
             <div style="background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.12);border-radius:8px;padding:0.6rem;text-align:center;">
-                <div style="font-size:1.3rem;font-weight:800;color:#d8b4fe;" data-count="391">0</div>
-                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Predator images</div>
+                <div style="font-size:1.3rem;font-weight:800;color:#d8b4fe;" data-count="300">0</div>
+                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">PoT fine-tune labels</div>
             </div>
             <div style="background:rgba(212,160,23,0.06);border:1px solid rgba(212,160,23,0.12);border-radius:8px;padding:0.6rem;text-align:center;">
-                <div style="font-size:1.3rem;font-weight:800;color:#fcd34d;" data-count="396">0</div>
-                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">Non-predator images</div>
+                <div style="font-size:1.3rem;font-weight:800;color:#fcd34d;" data-count="10">0</div>
+                <div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:1px;">PoT holdout images</div>
             </div>
         </div>
     </div>
@@ -390,88 +397,92 @@
     </div>
     <div class="content">
         <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:var(--color-accent-1);font-weight:700;margin-bottom:0.5rem;">Major Results</div>
-        <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;margin-bottom:1.2rem;">Balanced Serengeti results: vision beats the majority baseline</h2>
-        <div class="reveal" style="display:grid;grid-template-columns:0.95fr 1.05fr;gap:0.9rem;align-items:start;margin-bottom:0.8rem;">
+        <h2 class="font-display reveal" style="font-size:clamp(1.55rem,3.4vw,2.4rem);font-weight:700;margin-bottom:1rem;">Latest Serengeti results: 15 epochs made <code>1e-4</code> the best accuracy run</h2>
+        <div class="reveal" style="display:grid;grid-template-columns:1.05fr 0.95fr;gap:0.9rem;align-items:start;margin-bottom:0.8rem;">
             <div class="figure-card">
-                <img class="figure-img compact" src="figures/final_comparison.png" alt="Final validation accuracy comparison for balanced PALEO experiments">
+                <img class="figure-img compact" src="figures/serengeti_latest_validation_accuracy_by_experiment.png" alt="Latest Serengeti validation accuracy by experiment using the 2142-image validation split">
             </div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;">
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.55rem;">
                 <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.18);border-radius:10px;padding:0.85rem;">
-                    <div style="font-size:1.6rem;font-weight:900;color:#4ade80;">0.9115</div>
-                    <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--color-text-muted);">Best selected configuration</div>
+                    <div style="font-size:1.55rem;font-weight:900;color:#4ade80;">0.9118</div>
+                    <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--color-text-muted);">Best validation accuracy</div>
                     <div style="font-size:0.76rem;color:var(--color-text-secondary);">ResNet-18, LR=1e-4, augmentation, 15 epochs</div>
                 </div>
-                <div style="background:rgba(252,211,77,0.08);border:1px solid rgba(252,211,77,0.18);border-radius:10px;padding:0.85rem;">
-                    <div style="font-size:1.6rem;font-weight:900;color:#fcd34d;">0.5455</div>
-                    <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--color-text-muted);">Heuristic baseline</div>
-                    <div style="font-size:0.76rem;color:var(--color-text-secondary);">Majority-class baseline after balancing</div>
-                </div>
                 <div style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.18);border-radius:10px;padding:0.85rem;">
-                    <div style="font-size:1.6rem;font-weight:900;color:#38bdf8;">787</div>
-                    <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--color-text-muted);">Labeled local images</div>
-                    <div style="font-size:0.76rem;color:var(--color-text-secondary);">391 predator / 396 non-predator</div>
+                    <div style="font-size:1.55rem;font-weight:900;color:#38bdf8;">0.9206</div>
+                    <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--color-text-muted);">Predator recall</div>
+                    <div style="font-size:0.76rem;color:var(--color-text-secondary);">939 predators caught, 81 missed on validation</div>
+                </div>
+                <div style="background:rgba(252,211,77,0.08);border:1px solid rgba(252,211,77,0.18);border-radius:10px;padding:0.85rem;">
+                    <div style="font-size:1.55rem;font-weight:900;color:#fcd34d;">0.5238</div>
+                    <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--color-text-muted);">Heuristic baseline</div>
+                    <div style="font-size:0.76rem;color:var(--color-text-secondary);">Simple baseline before ResNet learning</div>
+                </div>
+                <div style="background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.18);border-radius:10px;padding:0.85rem;">
+                    <div style="font-size:1.55rem;font-weight:900;color:#d8b4fe;">2,142</div>
+                    <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--color-text-muted);">Validation images</div>
+                    <div style="font-size:0.76rem;color:var(--color-text-secondary);">Same holdout split across all Serengeti experiments</div>
                 </div>
             </div>
         </div>
-        <!-- Baseline comparison table -->
-        <div class="reveal" style="overflow-x:auto;margin-bottom:1rem;">
-            <table style="width:100%;border-collapse:collapse;font-size:0.78rem;">
+        <div class="reveal" style="overflow-x:auto;margin-bottom:0.8rem;">
+            <table style="width:100%;border-collapse:collapse;font-size:0.76rem;">
                 <thead>
                     <tr style="background:rgba(255,255,255,0.06);">
-                        <th style="padding:0.5rem 0.7rem;text-align:left;color:var(--color-text-muted);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.08);">Model</th>
-                        <th style="padding:0.5rem 0.7rem;text-align:center;color:var(--color-text-muted);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.08);">Accuracy</th>
-                        <th style="padding:0.5rem 0.7rem;text-align:center;color:#4ade80;font-weight:600;border-bottom:1px solid rgba(74,222,128,0.2);">Macro F1 ↑</th>
-                        <th style="padding:0.5rem 0.7rem;text-align:center;color:#f87171;font-weight:600;border-bottom:1px solid rgba(248,113,113,0.2);">Predator Recall ↑</th>
-                        <th style="padding:0.5rem 0.7rem;text-align:center;color:var(--color-text-muted);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.08);">LR</th>
-                        <th style="padding:0.5rem 0.7rem;text-align:center;color:var(--color-text-muted);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.08);">Augment</th>
+                        <th style="padding:0.45rem 0.6rem;text-align:left;color:var(--color-text-muted);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.08);">Experiment</th>
+                        <th style="padding:0.45rem 0.6rem;text-align:center;color:var(--color-text-muted);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.08);">Val Accuracy</th>
+                        <th style="padding:0.45rem 0.6rem;text-align:center;color:#4ade80;font-weight:600;border-bottom:1px solid rgba(74,222,128,0.2);">Pred Recall</th>
+                        <th style="padding:0.45rem 0.6rem;text-align:center;color:#4ade80;font-weight:600;border-bottom:1px solid rgba(74,222,128,0.2);">Pred F1</th>
+                        <th style="padding:0.45rem 0.6rem;text-align:center;color:var(--color-text-muted);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.08);">LR</th>
+                        <th style="padding:0.45rem 0.6rem;text-align:center;color:var(--color-text-muted);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.08);">Epochs</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
-                        <td style="padding:0.5rem 0.7rem;color:#94a3b8;">All-non-pred heuristic</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#fcd34d;">~98.0%</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#f87171;font-weight:700;">~0.49</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#f87171;font-weight:700;">0.00</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#64748b;">—</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#64748b;">—</td>
-                    </tr>
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
-                        <td style="padding:0.5rem 0.7rem;color:#94a3b8;">ResNet-18 LR=1e-3 no aug</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;">97.2%</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;">0.61</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;">0.38</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#94a3b8;">1e-3</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#f87171;">✗</td>
-                    </tr>
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
-                        <td style="padding:0.5rem 0.7rem;color:#94a3b8;">ResNet-18 LR=1e-4 no aug</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;">97.8%</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;">0.67</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;">0.47</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#94a3b8;">1e-4</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#f87171;">✗</td>
-                    </tr>
                     <tr style="background:rgba(74,222,128,0.06);border-bottom:1px solid rgba(74,222,128,0.15);">
-                        <td style="padding:0.5rem 0.7rem;color:#4ade80;font-weight:700;">ResNet-18 LR=1e-4 aug ★</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;font-weight:700;">97.6%</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#4ade80;font-weight:800;" class="text-glow">0.74</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#4ade80;font-weight:800;" class="text-glow">0.61</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;">1e-4</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#4ade80;">✓</td>
+                        <td style="padding:0.45rem 0.6rem;color:#4ade80;font-weight:700;">ResNet-18 LR=1e-4 + aug</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;font-weight:800;color:#4ade80;">0.9118</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;font-weight:800;color:#4ade80;">0.9206</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;font-weight:800;color:#4ade80;">0.9086</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;">1e-4</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;">15</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                        <td style="padding:0.45rem 0.6rem;color:#94a3b8;">ResNet-18 LR=1e-3 + aug</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;">0.9080</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;">0.9020</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;">0.9033</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;color:#94a3b8;">1e-3</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;color:#94a3b8;">10</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                        <td style="padding:0.45rem 0.6rem;color:#94a3b8;">ResNet-18 LR=1e-3 + aug</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;">0.9066</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;">0.9167</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;">0.9034</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;color:#94a3b8;">1e-3</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;color:#94a3b8;">15</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                        <td style="padding:0.45rem 0.6rem;color:#94a3b8;">ResNet-18 LR=1e-4 + aug</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;">0.9062</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;">0.8990</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;">0.9012</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;color:#94a3b8;">1e-4</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;color:#94a3b8;">10</td>
                     </tr>
                     <tr>
-                        <td style="padding:0.5rem 0.7rem;color:#94a3b8;">ResNet-18 LR=1e-3 aug</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;">97.1%</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;">0.69</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;">0.52</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#94a3b8;">1e-3</td>
-                        <td style="padding:0.5rem 0.7rem;text-align:center;color:#4ade80;">✓</td>
+                        <td style="padding:0.45rem 0.6rem;color:#94a3b8;">ResNet-18 LR=5e-5 + aug</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;">0.8987</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;">0.8569</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;">0.8896</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;color:#94a3b8;">5e-5</td>
+                        <td style="padding:0.45rem 0.6rem;text-align:center;color:#94a3b8;">15</td>
                     </tr>
                 </tbody>
             </table>
         </div>
         <div class="reveal" style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:0.65rem 1rem;font-size:0.79rem;color:#86efac;">
-            <strong>Key takeaway:</strong> Kaggle was useful for exploration, but not for the supervised predator experiment. Snapshot Serengeti supplied species labels, letting us build a balanced predator/non-predator subset and show ResNet-18 clearly outperforming the majority heuristic.
+            <strong>Model-selection result:</strong> the Serengeti sweep used a 6,529 train / 2,142 validation split. On that stable validation set, <code>1e-4 + augmentation + 15 epochs</code> was the strongest run, so we used it as the best real-image checkpoint before adapting to Path of Titans.
         </div>
     </div>
 </div>
@@ -484,62 +495,58 @@
     </div>
     <div class="content">
         <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:#a78bfa;font-weight:700;margin-bottom:0.5rem;">Ablation Studies</div>
-        <h2 class="font-display reveal" style="font-size:clamp(1.5rem,3.2vw,2.3rem);font-weight:700;margin-bottom:1.2rem;">Learning rate sensitivity and convergence</h2>
-        <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:0.8rem;">
+        <h2 class="font-display reveal" style="font-size:clamp(1.45rem,3.1vw,2.2rem);font-weight:700;margin-bottom:0.8rem;">Augmentation dominated the strongest Serengeti runs</h2>
+        <div class="reveal" style="display:grid;grid-template-columns:1.55fr 0.45fr;gap:0.8rem;align-items:start;margin-bottom:0.7rem;">
             <div class="figure-card">
-                <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.6rem;">Learning-rate sensitivity (augmentation held on)</div>
-                <img class="figure-img compact" src="figures/lr_sensitivity.png" alt="Validation accuracy versus learning rate">
+                <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.4rem;">Validation accuracy by augmentation setting</div>
+                <img class="figure-img" style="max-height:47vh;padding:0.25rem;" src="figures/serengeti_augmentation_accuracy_evidence.png" alt="Color-coded bar and scatter plot showing augmented Serengeti runs outperforming most non-augmented runs">
             </div>
-            <div class="figure-card">
-                <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.6rem;">Train/validation convergence</div>
-                <img class="figure-img compact" src="figures/convergence_curves.png" alt="Training and validation loss convergence curves">
+            <div style="display:grid;gap:0.45rem;">
+                <div style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.16);border-radius:12px;padding:0.68rem;">
+                    <div style="font-weight:800;color:#4ade80;margin-bottom:0.3rem;">Blue = with augmentation</div>
+                    <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.42;">Augmented runs used <code>RandomHorizontalFlip</code> and <code>ColorJitter(0.3)</code>.</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.68rem;">
+                    <div style="font-weight:800;color:#fcd34d;margin-bottom:0.3rem;">Pattern</div>
+                    <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.42;">The best run used augmentation: <code>0.9118</code> accuracy, <code>0.9206</code> predator recall, <code>0.9086</code> predator F1.</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.68rem;">
+                    <div style="font-weight:800;color:#38bdf8;margin-bottom:0.3rem;">Decision</div>
+                    <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.42;">Because augmented models dominated the upper ranks, the transfer checkpoint kept augmentation.</div>
+                </div>
             </div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
-            <!-- LR sensitivity bars -->
-            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;">
-                <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.8rem;">LR Sensitivity (augmentation held on)</div>
-                <div>
-                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;">LR=1e-3 · Macro F1</div>
-                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="61" style="background:linear-gradient(90deg,#6366f1,#8b5cf6);"></div></div><span style="font-size:0.75rem;color:#a5b4fc;min-width:32px;">0.61</span></div>
-                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;margin-top:0.5rem;">LR=1e-4 · Macro F1</div>
-                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="67" style="background:linear-gradient(90deg,#4ade80,#86efac);"></div></div><span style="font-size:0.75rem;color:#4ade80;min-width:32px;">0.67</span></div>
-                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;margin-top:0.5rem;">LR=1e-3 · Predator Recall</div>
-                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="38" style="background:linear-gradient(90deg,#f87171,#fca5a5);"></div></div><span style="font-size:0.75rem;color:#f87171;min-width:32px;">0.38</span></div>
-                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;margin-top:0.5rem;">LR=1e-4 · Predator Recall</div>
-                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="47" style="background:linear-gradient(90deg,#fb923c,#fcd34d);"></div></div><span style="font-size:0.75rem;color:#fb923c;min-width:32px;">0.47</span></div>
-                </div>
-                <div style="margin-top:0.6rem;font-size:0.72rem;color:#a5b4fc;padding:0.4rem 0.6rem;background:rgba(99,102,241,0.08);border-radius:6px;">All shown runs use augmentation=True. This isolates learning rate while holding augmentation constant, so the chart answers “if augmentation is on, which LR works best?”. It is not the same experiment as the overall best validation result shown earlier.</div>
-            </div>
-            <!-- Augmentation effect -->
-            <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;">
-                <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.8rem;">Augmentation effect (learning rate held fixed)</div>
-                <div>
-                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;">No aug · Macro F1</div>
-                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="67" style="background:linear-gradient(90deg,#94a3b8,#cbd5e1);"></div></div><span style="font-size:0.75rem;color:#94a3b8;min-width:32px;">0.67</span></div>
-                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;margin-top:0.5rem;">Aug ✓ · Macro F1</div>
-                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="74" style="background:linear-gradient(90deg,#4ade80,#86efac);"></div></div><span style="font-size:0.75rem;color:#4ade80;min-width:32px;">0.74</span></div>
-                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;margin-top:0.5rem;">No aug · Predator Recall</div>
-                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="47" style="background:linear-gradient(90deg,#94a3b8,#cbd5e1);"></div></div><span style="font-size:0.75rem;color:#94a3b8;min-width:32px;">0.47</span></div>
-                    <div style="font-size:0.72rem;color:var(--color-text-muted);margin-bottom:0.25rem;margin-top:0.5rem;">Aug ✓ · Predator Recall</div>
-                    <div class="bar-row"><div class="bar-track"><div class="bar-fill" data-width="61" style="background:linear-gradient(90deg,#4ade80,#86efac);"></div></div><span style="font-size:0.75rem;color:#4ade80;min-width:32px;">0.61</span></div>
-                </div>
-                <div style="margin-top:0.6rem;font-size:0.72rem;color:#4ade80;padding:0.4rem 0.6rem;background:rgba(74,222,128,0.07);border-radius:6px;">↑ Augmentation (+flip, +ColorJitter) boosts predator recall +14pp — helps minority class generalize</div>
-            </div>
+        <div class="reveal" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;">
+            <div style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.14);border-radius:8px;padding:0.55rem;text-align:center;"><div style="font-weight:900;color:#4ade80;">12</div><div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;">runs compared</div></div>
+            <div style="background:rgba(56,189,248,0.07);border:1px solid rgba(56,189,248,0.14);border-radius:8px;padding:0.55rem;text-align:center;"><div style="font-weight:900;color:#38bdf8;">2,142</div><div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;">validation images</div></div>
+            <div style="background:rgba(47,128,237,0.10);border:1px solid rgba(47,128,237,0.20);border-radius:8px;padding:0.55rem;text-align:center;"><div style="font-weight:900;color:#60a5fa;">4/6</div><div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;">top-half augmented</div></div>
+            <div style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.16);border-radius:8px;padding:0.55rem;text-align:center;"><div style="font-weight:900;color:#ddd6fe;">1e-4</div><div style="font-size:0.68rem;color:var(--color-text-muted);text-transform:uppercase;">best LR + aug</div></div>
         </div>
-
     </div>
 </div>
 
-<!-- SLIDE 9: FAILURE ANALYSIS -->
+<!-- SLIDE 9: DOMAIN SHIFT + SAFETY TUNING -->
 <div class="slide slide-9" data-slide="9">
     <div class="gradient-mesh">
         <div class="blob" style="width:380px;height:380px;top:-90px;right:-70px;background:#ef4444;opacity:0.07;"></div>
         <div class="blob" style="width:260px;height:260px;bottom:-60px;left:-50px;background:#f59e0b;opacity:0.06;"></div>
     </div>
     <div class="content">
-        <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:#f87171;font-weight:700;margin-bottom:0.5rem;">Failure Analysis</div>
-        <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;margin-bottom:1.3rem;">Where the system breaks down</h2>
+        <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:#f87171;font-weight:700;margin-bottom:0.5rem;">Domain Shift + Safety Tuning</div>
+        <h2 class="font-display reveal" style="font-size:clamp(1.5rem,3.2vw,2.3rem);font-weight:700;margin-bottom:1rem;">Why the selected model changed</h2>
+        <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:0.9rem;margin-bottom:0.85rem;">
+            <div class="figure-card">
+                <div style="font-weight:700;font-size:0.82rem;color:#86efac;margin-bottom:0.45rem;">300-image PoT fine-tune validation</div>
+                <img class="figure-img compact" src="figures/pot_300_val_confusion_comparison.png" alt="Confusion matrix comparison on the 60-image Path of Titans validation split">
+            </div>
+            <div class="figure-card">
+                <div style="font-weight:700;font-size:0.82rem;color:#fbbf24;margin-bottom:0.45rem;">Agent safety holdout</div>
+                <img class="figure-img compact" src="figures/pot_confusion_matrix_comparison_baseline_vs_safety.png" alt="Confusion matrix comparison for baseline and safety-tuned operating point">
+            </div>
+        </div>
+        <div class="reveal" style="margin-bottom:0.85rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;font-size:0.78rem;color:var(--color-text-secondary);">
+            <code>1e-4</code> is still the accuracy pick: it was strongest on Serengeti and on the 300-screenshot PoT validation split. But on the 10-image game holdout, class weighting alone did not fix false negatives at the default threshold. We switched from "best accuracy checkpoint" to a safety operating point: <code>lr=3e-5</code>, predator class weight <code>3.0</code>, and threshold <code>0.20</code>, because the live agent should over-warn rather than miss predators.
+        </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
             <div class="reveal" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:1rem;border-left:3px solid #f87171;">
                 <div style="font-weight:700;font-size:0.85rem;color:#f87171;margin-bottom:0.4rem;">Label source matters</div>
@@ -562,8 +569,8 @@
                 <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.55;">Recent_events buffer holds only 5 items. Agent cannot reason about patterns beyond the last 5 ticks — repeated attack from same direction not detected. Longer memory or Letta RAG integration needed</div>
             </div>
             <div class="reveal" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:1rem;border-left:3px solid #4ade80;">
-                <div style="font-weight:700;font-size:0.85rem;color:#86efac;margin-bottom:0.4rem;">Balanced set is still small</div>
-                <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.55;">The balanced local set has 787 labeled JPEGs, and the CPU smoke sweep trained on 200 records for 1 epoch. The result is useful for demonstration, but a GPU run on the full balanced set is the stronger benchmark.</div>
+                <div style="font-weight:700;font-size:0.85rem;color:#86efac;margin-bottom:0.4rem;">Threshold beat retraining alone</div>
+                <div style="font-size:0.77rem;color:var(--color-text-secondary);line-height:1.55;">The weighted fine-tune still missed too many predators at default threshold. Lowering the predator threshold to <code>0.20</code> on the weighted run moved recall from <code>0.571</code> to <code>0.714</code> on the tiny holdout, trading one extra false alarm for fewer missed threats.</div>
             </div>
         </div>
     </div>
@@ -578,54 +585,57 @@
     </div>
     <canvas class="particle-canvas" style="position:absolute;inset:0;z-index:1;"></canvas>
     <div class="content">
-        <div style="display:grid;grid-template-columns:1.1fr 0.9fr;gap:2rem;align-items:start;">
+        <div style="display:grid;grid-template-columns:1.05fr 0.95fr;gap:1.25rem;align-items:start;">
             <div>
                 <div class="reveal" style="font-size:0.72rem;letter-spacing:4px;text-transform:uppercase;color:var(--color-accent-1);font-weight:700;margin-bottom:0.5rem;">Conclusion &amp; Future Work</div>
-                <h2 class="font-display reveal" style="font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:700;margin-bottom:1.2rem;line-height:1.2;">What we showed — and what's next</h2>
-                <div class="reveal" style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.18);border-radius:10px;padding:0.9rem 1rem;margin-bottom:1rem;">
-                    <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.5rem;"><span class="material-symbols-outlined icon-md" style="color:#4ade80;">task_alt</span> Contributions</div>
-                    <ul style="font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7;padding-left:1rem;margin:0;">
-                        <li>End-to-end screen-capture → classify → act pipeline (no game API)</li>
-                        <li>ResNet-18 transfer baseline on balanced Serengeti images; best smoke-run val accuracy 0.9115</li>
-                        <li>Documented why Kaggle was deferred: accelerometer CSV or unlabeled videos, not labeled image data</li>
-                        <li>Instinct Agent with Primal Mind species-consistent memory</li>
-                        <li>Safe keyboard control: rate-limit + F12 emergency stop</li>
+                <h2 class="font-display reveal" style="font-size:clamp(1.55rem,3.4vw,2.45rem);font-weight:700;margin-bottom:1rem;line-height:1.2;">Final model choices across real images, game screenshots, and safety holdout</h2>
+                <div class="reveal" style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.18);border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.85rem;">
+                    <div style="font-weight:700;font-size:0.85rem;color:#4ade80;margin-bottom:0.45rem;"><span class="material-symbols-outlined icon-md" style="color:#4ade80;">task_alt</span> Contributions</div>
+                    <ul style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.62;padding-left:1rem;margin:0;">
+                        <li>Built an end-to-end screen-capture, classify, think, and act pipeline with no game API.</li>
+                        <li>Trained and compared 12 Serengeti ResNet-18 experiments on the same 2,142-image validation split.</li>
+                        <li>Selected the best real-image checkpoint: <code>1e-4 + aug + 15 epochs</code>, <code>0.9118</code> validation accuracy and <code>0.9206</code> predator recall.</li>
+                        <li>Fine-tuned that checkpoint on 300 labeled Path of Titans screenshots; <code>1e-4</code> remained the best 60-image validation accuracy model at <code>0.7667</code>.</li>
+                        <li>Chose a separate live-agent safety operating point for the 10-image holdout: <code>lr=3e-5</code>, predator weight <code>3.0</code>, threshold <code>0.20</code>.</li>
+                        <li>Moved holdout predator recall from <code>0.571</code> to <code>0.714</code> by prioritizing fewer missed predators over raw accuracy.</li>
+                        <li>Added Primal Mind state, explainable thoughts, guarded keyboard control, rate limits, and F12 emergency stop.</li>
                     </ul>
                 </div>
-                <div class="reveal" style="background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.18);border-radius:10px;padding:0.9rem 1rem;">
-                    <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.5rem;">🚀 Future Work</div>
-                    <ul style="font-size:0.78rem;color:var(--color-text-secondary);line-height:1.7;padding-left:1rem;margin:0;">
-                        <li>Longer GPU sweep on the full 787-image balanced Serengeti set</li>
-                        <li>MobileNetV3 or distilled model for &lt;50ms GPU inference</li>
-                        <li>Use Kaggle time-series/video data only after adding matching behavior labels</li>
-                        <li>Live Letta RAG for episodic long-term memory</li>
-                        <li>In-game screenshot collection for domain-adaptive fine-tuning</li>
+                <div class="reveal" style="background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.18);border-radius:10px;padding:0.85rem 1rem;">
+                    <div style="font-weight:700;font-size:0.85rem;color:#a5b4fc;margin-bottom:0.45rem;">Future Work</div>
+                    <ul style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.62;padding-left:1rem;margin:0;">
+                        <li>Add more labeled Path of Titans holdout images, especially predator cases.</li>
+                        <li>Run the full focused in-game smoke test with capture, advice mode, and simple movement.</li>
+                        <li>Wire live Letta memory/RAG into the middle of the decision loop.</li>
+                        <li>Try MobileNetV3 or distillation for faster inference.</li>
+                        <li>Keep optimizing around predator recall, then report accuracy as the secondary metric.</li>
                     </ul>
                 </div>
             </div>
             <div>
-                <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
-                    <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
-                        <div style="font-size:2rem;font-weight:900;color:#4ade80;margin-bottom:0.2rem;" class="stat-glow glow-pulse">0.9115</div>
-                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">Best Val Acc</div>
+                <div class="reveal" style="display:grid;gap:0.7rem;margin-bottom:1rem;">
+                    <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.18);border-radius:10px;padding:0.85rem;">
+                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);margin-bottom:0.25rem;">Best real-image checkpoint</div>
+                        <div style="display:flex;align-items:baseline;gap:0.6rem;flex-wrap:wrap;"><span style="font-size:1.75rem;font-weight:900;color:#4ade80;" class="stat-glow glow-pulse">0.9118</span><span style="font-size:0.76rem;color:var(--color-text-secondary);">Serengeti val accuracy</span></div>
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.45;">ResNet-18 <code>1e-4 + aug + 15 epochs</code>; predator recall <code>0.9206</code>, predator F1 <code>0.9086</code>.</div>
                     </div>
-                    <div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
-                        <div style="font-size:2rem;font-weight:900;color:#f87171;margin-bottom:0.2rem;" class="stat-glow">0.5455</div>
-                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">Baseline Acc</div>
+                    <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.18);border-radius:10px;padding:0.85rem;">
+                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);margin-bottom:0.25rem;">Best 300-screenshot PoT model</div>
+                        <div style="display:flex;align-items:baseline;gap:0.6rem;flex-wrap:wrap;"><span style="font-size:1.75rem;font-weight:900;color:#a5b4fc;">0.7667</span><span style="font-size:0.76rem;color:var(--color-text-secondary);">60-image val accuracy</span></div>
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.45;">Fine-tuned from Serengeti checkpoint with <code>lr=1e-4</code>, 15 epochs; split was 240 train / 60 validation.</div>
                     </div>
-                    <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
-                        <div style="font-size:2rem;font-weight:900;color:#a5b4fc;margin-bottom:0.2rem;">5</div>
-                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">Training Runs</div>
-                    </div>
-                    <div style="background:rgba(212,160,23,0.08);border:1px solid rgba(212,160,23,0.18);border-radius:10px;padding:0.9rem;text-align:center;">
-                        <div style="font-size:2rem;font-weight:900;color:#fcd34d;margin-bottom:0.2rem;">4–10</div>
-                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);">FPS Live Loop</div>
+                    <div style="background:rgba(252,211,77,0.08);border:1px solid rgba(252,211,77,0.18);border-radius:10px;padding:0.85rem;">
+                        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-text-muted);margin-bottom:0.25rem;">Best 10-image safety operating point</div>
+                        <div style="display:flex;align-items:baseline;gap:0.6rem;flex-wrap:wrap;"><span style="font-size:1.75rem;font-weight:900;color:#fcd34d;">0.714</span><span style="font-size:0.76rem;color:var(--color-text-secondary);">predator recall</span></div>
+                        <div style="font-size:0.76rem;color:var(--color-text-secondary);line-height:1.45;"><code>lr=3e-5</code>, predator weight <code>3.0</code>, threshold <code>0.20</code>; accuracy <code>0.70</code>, precision <code>0.833</code>.</div>
                     </div>
                 </div>
-                <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:0.9rem;text-align:center;">
-                    <div style="font-size:1.8rem;margin-bottom:0.4rem;">🦕</div>
-                    <div style="font-size:0.82rem;font-style:italic;color:var(--color-text-secondary);line-height:1.5;">
-                        "A dinosaur that <em>knows</em> it's in danger — even when no one tells it."
+                <div class="reveal" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:0.85rem;text-align:center;">
+                    <div style="display:flex;align-items:center;justify-content:center;gap:0.65rem;">
+                        <div style="font-size:1.9rem;line-height:1;" aria-hidden="true">🦕</div>
+                        <div style="font-size:0.82rem;font-style:italic;color:var(--color-text-secondary);line-height:1.5;text-align:left;">
+                            "A dinosaur that <em>knows</em> it's in danger, even when no one tells it."
+                        </div>
                     </div>
                     <div style="margin-top:0.5rem;font-size:0.7rem;color:var(--color-text-muted);">github.com/PALEO-AI-System/PALEO</div>
                 </div>

@@ -474,9 +474,9 @@
       </article>
       <article class="card">
         <h2>Current Status</h2>
-        <p><span class="status in-progress">IN PROGRESS</span>Scaffold, docs, and deployment are ready.</p>
-        <p><span class="status planned">PLANNED</span>Dataset download, training, and quantitative evaluation next.</p>
-        <p class="muted tiny">No model results yet; this reflects honest current progress.</p>
+        <p><span class="status done">DONE</span>Scaffold, docs, deployment, Serengeti training, and PoT fine-tuning are ready.</p>
+        <p><span class="status in-progress">IN PROGRESS</span>Letta-in-the-loop integration and full in-game smoke testing are next.</p>
+        <p class="muted tiny">This page now reflects the later project state, including saved model metrics and figures.</p>
       </article>
     </section>
 
@@ -530,8 +530,8 @@
         <summary>5-6) Dataset and model choices</summary>
         <div class="qa-content">
           <ul>
-            <li><strong>Datasets:</strong> Snapshot Serengeti + Kaggle predator/prey image dataset.</li>
-            <li><strong>Preprocessing:</strong> unified label schema, augmentation, balancing, and train/val/test split.</li>
+            <li><strong>Datasets:</strong> Snapshot Serengeti for real-image training + 300 manually labeled Path of Titans screenshots for domain adaptation.</li>
+            <li><strong>Preprocessing:</strong> unified predator/non-predator label schema, augmentation, balancing, and train/validation splits.</li>
             <li><strong>Baseline:</strong> OpenCV rule-based policy.</li>
             <li><strong>Main model:</strong> ResNet-18 transfer learning for behavior intent classification.</li>
             <li><strong>Agent orchestration:</strong> one Letta agent per dinosaur with memory blocks for needs/events/risk.</li>
@@ -557,8 +557,8 @@
             <li>Week 1: finalize dataset selection and preprocessing scripts.</li>
             <li>Week 2: implement OpenCV baseline + first ResNet-18 training run.</li>
             <li>Week 3: sensitivity and hyperparameter sweep.</li>
-            <li>Week 4: integrate classifier into Letta agent loop.</li>
-            <li>Week 5: produce final figures/tables and polish report.</li>
+            <li>Week 4: integrate classifier into the live agent loop.</li>
+            <li>Week 5: produce final figures/tables, safety threshold analysis, and polish report.</li>
           </ul>
         </div>
       </details>
@@ -567,13 +567,13 @@
         <summary>9-10) Progress and challenges</summary>
         <div class="qa-content">
           <p>
-            Current repo status is scaffold-first: <code>src/</code>, <code>scripts/</code>, <code>tests/</code>,
-            <code>docs/</code>, reproducible commands in README, and now Pages deployment.
+            Current repo status has moved past scaffold-first: <code>src/</code>, <code>scripts/</code>, <code>tests/</code>,
+            <code>docs/</code>, saved checkpoints, saved metrics, reproducible commands in README, and Pages deployment.
           </p>
           <ul>
-            <li><strong>Progress honesty:</strong> no downloaded final dataset subset, no trained model results yet.</li>
-            <li><strong>Challenges:</strong> class imbalance, domain shift, hardware limits, label noise, low-confidence oscillations.</li>
-            <li><strong>Mitigations:</strong> weighted loss, balancing, confidence thresholds, and safe-action fallback logic.</li>
+            <li><strong>Progress honesty:</strong> model results exist, but the Path of Titans holdout is still tiny and should be treated as an early safety check.</li>
+            <li><strong>Challenges:</strong> class imbalance, domain shift, hardware limits, label noise, low-confidence oscillations, and false negatives.</li>
+            <li><strong>Mitigations:</strong> weighted loss, balancing, confidence thresholds, threshold sweeps, and safe-action fallback logic.</li>
           </ul>
         </div>
       </details>
@@ -619,12 +619,12 @@
       <div class="artifact-grid">
         <article class="artifact-panel">
           <h3>Training Curves Panel</h3>
-          <img class="img-slot" src="../output/figures/convergence_curves.png" alt="Training and validation loss curves for experiment runs">
+          <img class="img-slot" src="figures/convergence_curves.png" alt="Training and validation loss curves for experiment runs">
           <p class="img-caption">Best selected run: ResNet-18, lr=1e-4, augmentation on, 15 epochs.</p>
         </article>
         <article class="artifact-panel">
           <h3>Sensitivity Analysis Table</h3>
-          <img class="img-slot" src="../output/figures/lr_sensitivity.png" alt="Validation accuracy sensitivity across learning-rate choices">
+          <img class="img-slot" src="figures/lr_sensitivity.png" alt="Validation accuracy sensitivity across learning-rate choices">
           <table class="mini-table" aria-label="Learning-rate comparison with augmentation on">
             <thead>
               <tr>
@@ -646,9 +646,9 @@
         </article>
         <article class="artifact-panel">
           <h3>Baseline Comparison</h3>
-          <img class="img-slot" src="../output/figures/final_comparison.png" alt="Final validation accuracy comparison across baseline and ResNet variants">
+          <img class="img-slot" src="figures/final_comparison.png" alt="Final validation accuracy comparison across baseline and ResNet variants">
           <p class="img-caption">Baseline versus model variants from the latest sweep.</p>
-          <img class="img-slot" src="../output/figures/confusion_matrices/resnet18_lrie4_aug_e15_confusion_matrix.png" alt="Confusion matrix for best selected ResNet-18 model: lr=1e-4 with augmentation at 15 epochs">
+          <img class="img-slot" src="figures/confusion_matrices/resnet18_lrie4_aug_e15_confusion_matrix.png" alt="Confusion matrix for best selected ResNet-18 model: lr=1e-4 with augmentation at 15 epochs">
         </article>
       </div>
     </section>
