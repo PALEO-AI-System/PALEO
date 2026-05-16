@@ -111,6 +111,24 @@
       color: var(--ink); text-decoration: none; font-weight: 700;
     }
     .cta:hover { background: rgba(86, 169, 132, 0.28); }
+    .pkg-btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+    .pkg-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 2.75rem; padding: 10px 18px; border-radius: 12px;
+      border: 1px solid #86c6a3; background: rgba(86, 169, 132, 0.18);
+      color: var(--ink); text-decoration: none; font-weight: 700; font-size: 0.92rem;
+      transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .pkg-btn:hover {
+      background: rgba(86, 169, 132, 0.32);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px var(--shadow);
+    }
+    .pkg-btn--gh {
+      border-color: rgba(99, 102, 241, 0.45);
+      background: rgba(99, 102, 241, 0.14);
+    }
+    .pkg-btn--gh:hover { background: rgba(99, 102, 241, 0.26); }
     .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
     .contrib-card {
       border: 1px solid var(--line); border-radius: 12px; padding: 14px;
@@ -175,21 +193,17 @@
     <section class="card reveal" id="report">
       <h2>1. Project report (IEEE format)</h2>
       <p>Our technical report follows IEEE-style structure and cites PALEO experiments, baselines, and agent design.</p>
-      <ul class="link-list">
-        <li>
-          <a href="https://docs.google.com/document/d/1ros0-XIfhq4ZTuNo2GBY7vyn4I_EMp3I02_ODNxOtLU/edit?usp=sharing" target="_blank" rel="noopener noreferrer">PALEO Final Report (Google Docs)</a>
-        </li>
-      </ul>
+      <div class="pkg-btn-row">
+        <a class="pkg-btn" href="https://docs.google.com/document/d/1ros0-XIfhq4ZTuNo2GBY7vyn4I_EMp3I02_ODNxOtLU/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Open final report (Google Docs)</a>
+      </div>
     </section>
 
     <section class="card reveal" id="source">
       <h2>2. Source code</h2>
       <p>Full PALEO codebase: training scripts, Instinct Agent / Primal Mind, Path of Titans capture and control, overlay, companion HUD, and GitHub Pages site.</p>
-      <ul class="link-list">
-        <li>
-          <a href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">https://github.com/PALEO-AI-System/PALEO</a>
-        </li>
-      </ul>
+      <div class="pkg-btn-row">
+        <a class="pkg-btn pkg-btn--gh" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">Open GitHub repository</a>
+      </div>
       <p class="muted">Clone and run: see <code>README.md</code> for <code>prepare_data</code>, training, <code>run_paleo_control_loop.py</code>, and <code>PALEOOverlay.exe</code> build steps.</p>
     </section>
 
@@ -249,12 +263,10 @@
     <section class="card reveal" id="ai-usage">
       <h2>5. AI usage documentation</h2>
       <p>We log AI-assisted edits (Cursor / agent tools) in the repo for course disclosure. Entries include dates, files touched, and commands run.</p>
-      <ul class="link-list">
-        <li>
-          <a href="https://github.com/PALEO-AI-System/PALEO/blob/main/docs/ai_tool_log.md" target="_blank" rel="noopener noreferrer">docs/ai_tool_log.md</a> (canonical log in repository)
-        </li>
-      </ul>
-      <p class="muted">Summary: AI tools helped with scaffolding, refactors, overlay/HUD features, documentation, and site polish; experiment design, labeled game data, and final report writing remain team-owned.</p>
+      <div class="pkg-btn-row">
+        <a class="pkg-btn" href="https://github.com/PALEO-AI-System/PALEO/blob/main/docs/ai_tool_log.md" target="_blank" rel="noopener noreferrer">Open AI tool log</a>
+      </div>
+      <p class="muted">Summary: AI tools helped with scaffolding, refactors, overlay/HUD features, documentation, site polish, and drafting or editing parts of the final report. Experiment design, labeled game data, and core technical decisions remain team-owned.</p>
     </section>
 
     <section class="card reveal" id="presentation">
