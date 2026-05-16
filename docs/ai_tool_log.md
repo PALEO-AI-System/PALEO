@@ -223,3 +223,7 @@
 - **Slide 14**: demo MP4 in `pages/paleo-presentation/demo/` (`2026-05-05 14-56-27.mp4`).
 - **Slide 8** (after model architecture deck slide): links to **Agent Architecture** + **Agent demo** on the site.
 - **Slide 15** (final): only **Profiles**, **Companion HUD**, **Chroma Strata**; deck is 15 slides.
+
+## 2026-05-15
+- Added `pages/project-submission-package.html` (final course package: IEEE report link, GitHub repo, dataset sources, git-derived contributions, AI tool log link, presentation video placeholder + slide deck link).
+- Added **Submission** nav tab after Check-in 2 on main site pages.

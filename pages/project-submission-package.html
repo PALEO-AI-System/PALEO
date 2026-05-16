@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PALEO | Final Submission Package</title>
+  <meta name="description" content="PALEO final project submission package: IEEE report, source code, datasets, contributions, AI disclosure, and presentation video." />
+  <meta property="og:title" content="PALEO | Final Submission Package" />
+  <meta property="og:url" content="https://paleo-ai-system.github.io/PALEO/project-submission-package.html" />
+  <link rel="canonical" href="https://paleo-ai-system.github.io/PALEO/project-submission-package.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f9f2;
+      --panel: rgba(255, 255, 255, 0.86);
+      --ink: #1f3b31;
+      --ink-soft: #35584b;
+      --line: #c7decd;
+      --accent: #4e9d92;
+      --accent-2: #56a984;
+      --shadow: rgba(30, 62, 50, 0.16);
+      --focus-ring: #1d7f67;
+    }
+    body.dark {
+      --bg: #0f1e1a;
+      --panel: rgba(23, 38, 32, 0.82);
+      --ink: #e5f5eb;
+      --ink-soft: #c6e2d5;
+      --line: #2b4e43;
+      --accent: #6bb9c3;
+      --accent-2: #75cb9f;
+      --shadow: rgba(5, 10, 8, 0.35);
+      --focus-ring: #9eead3;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Urbanist", "Segoe UI", sans-serif;
+      color: var(--ink);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 7% 3%, rgba(86, 169, 132, 0.18), transparent 33%),
+        radial-gradient(circle at 90% 5%, rgba(78, 157, 146, 0.16), transparent 31%),
+        var(--bg);
+    }
+    .skip-link {
+      position: absolute; top: -44px; left: 10px; z-index: 120;
+      padding: 9px 12px; border-radius: 10px; background: #fff; color: #134c3c;
+      border: 2px solid var(--focus-ring); text-decoration: none; font-weight: 700;
+    }
+    .skip-link:focus { top: 8px; }
+    .progress {
+      position: fixed; top: 0; left: 0; width: 0; height: 5px; z-index: 100;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent), #89cf9a);
+    }
+    .nav {
+      position: sticky; top: 0; z-index: 90; backdrop-filter: blur(9px);
+      background: rgba(244, 249, 242, 0.75); border-bottom: 1px solid var(--line);
+    }
+    body.dark .nav { background: rgba(15, 30, 26, 0.75); }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto; padding: 12px 18px;
+      display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    }
+    .brand { font-family: "Fraunces", serif; font-size: 1.3rem; font-weight: 700; }
+    .nav-links { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .btn {
+      text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: 999px;
+      padding: 8px 12px; font-weight: 600; background: rgba(255, 255, 255, 0.45);
+    }
+    .btn.active { background: rgba(86, 169, 132, 0.2); border-color: #86c6a3; }
+    .repo-btn {
+      color: #fff; border: 0;
+      background: linear-gradient(120deg, #63b884, #4e9d92, #8bcf9f, #66b5c4);
+      background-size: 300% 300%; animation: repoFlow 6s ease infinite;
+    }
+    @keyframes repoFlow { 0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;} }
+    .mode-toggle {
+      border: 1px solid var(--line); border-radius: 999px; background: transparent;
+      color: var(--ink); padding: 8px 12px; font-weight: 700; cursor: pointer;
+    }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 22px 18px 56px; }
+    .hero, .card {
+      background: linear-gradient(125deg, var(--panel), rgba(249, 242, 226, 0.72));
+      border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 8px 22px var(--shadow);
+      padding: 18px; margin-bottom: 14px;
+    }
+    h1, h2, h3 { margin: 0 0 11px; }
+    h1, h2 { font-family: "Fraunces", serif; }
+    h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+    h2 { font-size: 1.35rem; color: var(--accent); }
+    h3 { font-size: 1.03rem; color: var(--accent); }
+    .muted { color: var(--ink-soft); }
+    p { margin: 0 0 10px; max-width: 75ch; line-height: 1.6; }
+    ul { margin: 0; padding-left: 18px; }
+    li { margin-bottom: 7px; line-height: 1.54; }
+    .link-list { list-style: none; padding: 0; margin: 0; }
+    .link-list li { margin-bottom: 10px; }
+    .link-list a {
+      color: var(--accent);
+      font-weight: 600;
+      word-break: break-word;
+    }
+    .cta {
+      display: inline-block; margin-top: 4px; padding: 8px 14px; border-radius: 999px;
+      background: rgba(86, 169, 132, 0.15); border: 1px solid #86c6a3;
+      color: var(--ink); text-decoration: none; font-weight: 700;
+    }
+    .cta:hover { background: rgba(86, 169, 132, 0.28); }
+    .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .contrib-card {
+      border: 1px solid var(--line); border-radius: 12px; padding: 14px;
+      background: rgba(252, 255, 251, 0.76);
+    }
+    body.dark .contrib-card { background: rgba(20, 35, 30, 0.5); }
+    .contrib-meta { font-size: 0.82rem; color: var(--ink-soft); margin-bottom: 8px; }
+    .video-wrap {
+      position: relative; width: 100%; max-width: 800px; margin-top: 12px;
+      aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--line); background: #0a1410;
+    }
+    .video-wrap iframe { width: 100%; height: 100%; border: 0; }
+    .video-placeholder {
+      display: flex; align-items: center; justify-content: center; height: 100%;
+      padding: 1rem; text-align: center; font-size: 0.9rem; color: var(--ink-soft);
+    }
+    code {
+      background: rgba(0,0,0,0.06); padding: 0.1rem 0.35rem; border-radius: 5px;
+      font-size: 0.88em;
+    }
+    body.dark code { background: rgba(255,255,255,0.08); }
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
+  <div class="progress" id="scrollProgress" aria-hidden="true"></div>
+  <nav class="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <div class="brand">PALEO</div>
+      <div class="nav-links">
+        <a class="btn" href="index.html">Home</a>
+        <a class="btn" href="profiles/index.html">Profiles</a>
+        <a class="btn" href="technical.html">Technical</a>
+        <a class="btn" href="agent-visual.html">Agent Visual</a>
+        <a class="btn" href="agent-architecture.html">Agent Architecture</a>
+        <a class="btn" href="gallery.html">Gallery</a>
+        <a class="btn" href="agent-demo.html">Agent demo</a>
+        <a class="btn" href="companion-hud.html" title="Requires python scripts/serve_companion.py for live API">Companion HUD</a>
+        <a class="btn" href="project-checkin-1.html">Check-in 1</a>
+        <a class="btn" href="project-checkin-2.html">Check-in 2</a>
+        <a class="btn active" href="project-submission-package.html" aria-current="page">Submission</a>
+        <a class="btn repo-btn" href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        <button class="mode-toggle" id="modeToggle" aria-label="Toggle color mode" aria-pressed="false">Dark Mode</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="wrap" id="mainContent">
+    <section class="hero reveal">
+      <h1>Final submission package</h1>
+      <p class="muted">Team <strong>World's Finest</strong> — Laura Wetherhold, Alexus Aguirre Arias. One package for the course final assignment.</p>
+      <p>Required items: IEEE-style report, source code, dataset access, statement of contributions, and AI usage documentation.</p>
+    </section>
+
+    <section class="card reveal" id="report">
+      <h2>1. Project report (IEEE format)</h2>
+      <p>Our technical report follows IEEE-style structure and cites PALEO experiments, baselines, and agent design.</p>
+      <ul class="link-list">
+        <li>
+          <a href="https://docs.google.com/document/d/1ros0-XIfhq4ZTuNo2GBY7vyn4I_EMp3I02_ODNxOtLU/edit?usp=sharing" target="_blank" rel="noopener noreferrer">PALEO Final Report (Google Docs)</a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card reveal" id="source">
+      <h2>2. Source code</h2>
+      <p>Full PALEO codebase: training scripts, Instinct Agent / Primal Mind, Path of Titans capture and control, overlay, companion HUD, and GitHub Pages site.</p>
+      <ul class="link-list">
+        <li>
+          <a href="https://github.com/PALEO-AI-System/PALEO" target="_blank" rel="noopener noreferrer">https://github.com/PALEO-AI-System/PALEO</a>
+        </li>
+      </ul>
+      <p class="muted">Clone and run: see <code>README.md</code> for <code>prepare_data</code>, training, <code>run_paleo_control_loop.py</code>, and <code>PALEOOverlay.exe</code> build steps.</p>
+    </section>
+
+    <section class="card reveal" id="datasets">
+      <h2>3. Datasets</h2>
+      <p>Large raw files are <strong>not</strong> committed to GitHub (see <code>.gitignore</code>). We document sources, manifests, and how to reproduce local copies.</p>
+      <h3>Primary — Snapshot Serengeti (supervised training)</h3>
+      <ul>
+        <li><strong>Source:</strong> <a href="https://datadryad.org/dataset/doi:10.5061/dryad.5pt92" target="_blank" rel="noopener noreferrer">Dryad — Snapshot Serengeti</a> (<code>consensus_data.csv</code>, <code>all_images.csv</code>).</li>
+        <li><strong>Scale:</strong> millions of camera-trap images in the full archive; our manifest uses a labeled subset (see <code>data/manifests/serengeti_manifest.jsonl</code>).</li>
+        <li><strong>Repo split used in experiments:</strong> 6,529 train / 2,142 validation images (balanced predator vs non-predator workflow).</li>
+        <li><strong>Local JPEGs:</strong> download via <code>scripts/download_serengeti_images.py</code> → <code>data/processed/serengeti_images/</code> (gitignored).</li>
+      </ul>
+      <h3>Domain adaptation — Path of Titans screenshots</h3>
+      <ul>
+        <li><strong>Custom labels:</strong> 300 in-game screenshots labeled <code>predator</code> / <code>non_predator</code> for fine-tuning (240 train / 60 val).</li>
+        <li><strong>Holdout:</strong> 10 labeled game screenshots for safety/threshold checks.</li>
+        <li><strong>Location:</strong> team-collected assets under <code>data/processed/</code> (not uploaded to GitHub due to size).</li>
+      </ul>
+      <h3>Secondary / deferred</h3>
+      <ul>
+        <li><strong>Kaggle — Dinosaur Tactical Action Dataset</strong> (tactic CSV, optional): <a href="https://www.kaggle.com/datasets/canozensoy/dinosaur-tactical-action-dataset" target="_blank" rel="noopener noreferrer">Kaggle link</a></li>
+        <li><strong>Kaggle — animal-behaviour / animal-behavior-prediction:</strong> deferred large downloads — <a href="https://github.com/PALEO-AI-System/PALEO/blob/main/docs/deferred_large_datasets.md" target="_blank" rel="noopener noreferrer">docs/deferred_large_datasets.md</a></li>
+      </ul>
+    </section>
+
+    <section class="card reveal" id="contributions">
+      <h2>4. Statement of contributions</h2>
+      <p class="muted">Based on full <code>git log</code> history through May 2026 (~163 commits). GitHub usernames <code>Laura Wetherhold</code> and <code>Usahana-lexus</code> / <code>usahanA-lexus</code> map to the team members below.</p>
+      <div class="grid">
+        <article class="contrib-card">
+          <h3>Laura Wetherhold</h3>
+          <p class="contrib-meta">~139 commits — repo foundation, integration, site, and PoT runtime</p>
+          <ul>
+            <li>Initial PALEO scaffold: <code>src/</code> pipeline, data manifests, Instinct Agent, Primal Mind, Letta tool stubs, tests, README.</li>
+            <li>Serengeti manifest join (Dryad CSVs), Kaggle ingest helpers, image download/training scripts.</li>
+            <li>Path of Titans: screen capture, safe control loop, action mapping, <strong>PALEOOverlay.exe</strong>, companion HUD server.</li>
+            <li>HUD parser (<code>parse_pot_hud</code>), calibration script, brain routing (<code>decide_with_brain</code>), wiki RAG (<code>src/wiki_rag.py</code>), Letta API wiring.</li>
+            <li>GitHub Pages: home, technical, check-ins, agent visual/architecture, gallery, presentation deck, profiles, Chroma Strata skin lab.</li>
+            <li>Project docs: brief, check-in responses, lexicon, vision workflow, AI tool log maintenance.</li>
+          </ul>
+        </article>
+        <article class="contrib-card">
+          <h3>Alexus Aguirre Arias</h3>
+          <p class="contrib-meta">~24 commits — experiments, metrics, classifier integration, presentation figures</p>
+          <ul>
+            <li>Experiment sweep infrastructure (<code>run_experiments.py</code> PR) and balanced Serengeti training runs.</li>
+            <li>ResNet-18 training/evaluation: validation metrics, confusion matrices, augmentation and LR ablations.</li>
+            <li>PoT fine-tune evaluation and safety operating-point documentation (threshold / class weight).</li>
+            <li>Wired classifier into live observation path; updated README and site figures under <code>pages/figures/</code>.</li>
+            <li>Presentation slides: metrics corrections, augmentation evidence, convergence plots, rubric alignment.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="card reveal" id="ai-usage">
+      <h2>5. AI usage documentation</h2>
+      <p>We log AI-assisted edits (Cursor / agent tools) in the repo for course disclosure. Entries include dates, files touched, and commands run.</p>
+      <ul class="link-list">
+        <li>
+          <a href="https://github.com/PALEO-AI-System/PALEO/blob/main/docs/ai_tool_log.md" target="_blank" rel="noopener noreferrer">docs/ai_tool_log.md</a> (canonical log in repository)
+        </li>
+      </ul>
+      <p class="muted">Summary: AI tools helped with scaffolding, refactors, overlay/HUD features, documentation, and site polish; experiment design, labeled game data, and final report writing remain team-owned.</p>
+    </section>
+
+    <section class="card reveal" id="presentation">
+      <h2>6. Presentation video</h2>
+      <p>Recorded walkthrough of the PALEO system (YouTube embed — replace placeholder ID when the upload is ready).</p>
+      <p><a class="cta" href="paleo-presentation.html">Open static slide deck (PALEO presentation)</a></p>
+      <!-- Replace YOUTUBE_VIDEO_ID below with your upload -->
+      <div class="video-wrap" id="videoWrap">
+        <iframe
+          id="presentationVideo"
+          title="PALEO project presentation video"
+          hidden
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+          loading="lazy"
+        ></iframe>
+        <div class="video-placeholder" id="videoPlaceholder">
+          Presentation video will be embedded here. Until then, use the slide deck link above.
+        </div>
+      </div>
+      <p class="muted" style="margin-top:10px;">Placeholder: set <code>src</code> to <code>https://www.youtube.com/embed/&lt;your-id&gt;</code> in this page source.</p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var bar = document.getElementById("scrollProgress");
+      var body = document.body;
+      var toggle = document.getElementById("modeToggle");
+      var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      function setMode(dark) {
+        body.classList.toggle("dark", dark);
+        toggle.textContent = dark ? "Light Mode" : "Dark Mode";
+        toggle.setAttribute("aria-pressed", dark ? "true" : "false");
+        try { localStorage.setItem("paleo-color-mode", dark ? "dark" : "light"); } catch (e) {}
+      }
+      try {
+        var saved = localStorage.getItem("paleo-color-mode");
+        if (saved === "dark") setMode(true);
+      } catch (e) {}
+      toggle.addEventListener("click", function () {
+        setMode(!body.classList.contains("dark"));
+      });
+
+      var scrollTicking = false;
+      function updateScrollProgress() {
+        var top = window.scrollY;
+        var height = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (height <= 0 ? 0 : (top / height) * 100) + "%";
+        scrollTicking = false;
+      }
+      window.addEventListener("scroll", function () {
+        if (!scrollTicking) {
+          scrollTicking = true;
+          window.requestAnimationFrame(updateScrollProgress);
+        }
+      }, { passive: true });
+      updateScrollProgress();
+
+      var revealEls = document.querySelectorAll(".reveal");
+      if (reduceMotion) {
+        revealEls.forEach(function (el) { el.classList.add("in"); });
+      } else {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) entry.target.classList.add("in");
+          });
+        }, { threshold: 0.15 });
+        revealEls.forEach(function (el) { observer.observe(el); });
+      }
+    })();
+  </script>
+</body>
+</html>
