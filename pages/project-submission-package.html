@@ -136,6 +136,23 @@
     }
     body.dark .contrib-card { background: rgba(20, 35, 30, 0.5); }
     .contrib-meta { font-size: 0.82rem; color: var(--ink-soft); margin-bottom: 8px; }
+    .ai-highlight-grid {
+      display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      margin-top: 14px;
+    }
+    .ai-highlight-card {
+      border: 1px solid var(--line); border-radius: 12px; padding: 14px;
+      background: rgba(252, 255, 251, 0.76);
+    }
+    body.dark .ai-highlight-card { background: rgba(20, 35, 30, 0.5); }
+    .ai-highlight-card h3 { font-size: 0.95rem; margin-bottom: 8px; }
+    .ai-highlight-card ul { font-size: 0.84rem; margin: 0; padding-left: 16px; }
+    .ai-highlight-card li { margin-bottom: 5px; }
+    .ai-owned-note {
+      margin-top: 14px; padding: 12px 14px; border-radius: 12px;
+      border: 1px solid rgba(74, 222, 128, 0.25); background: rgba(74, 222, 128, 0.08);
+      font-size: 0.86rem; line-height: 1.55;
+    }
     .video-wrap {
       position: relative; width: 100%; max-width: 800px; margin-top: 12px;
       aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden;
@@ -146,6 +163,11 @@
       display: flex; align-items: center; justify-content: center; height: 100%;
       padding: 1rem; text-align: center; font-size: 0.9rem; color: var(--ink-soft);
     }
+    .video-caption {
+      margin-top: 10px; max-width: 800px; font-size: 0.86rem; color: var(--ink-soft);
+      line-height: 1.55; text-align: center;
+    }
+    .video-caption a { color: var(--accent); font-weight: 600; }
     code {
       background: rgba(0,0,0,0.06); padding: 0.1rem 0.35rem; border-radius: 5px;
       font-size: 0.88em;
@@ -262,11 +284,51 @@
 
     <section class="card reveal" id="ai-usage">
       <h2>5. AI usage documentation</h2>
-      <p>We log AI-assisted edits (Cursor / agent tools) in the repo for course disclosure. Entries include dates, files touched, and commands run.</p>
+      <p>
+        We used <strong>Cursor</strong> and related coding agents during PALEO development. The full dated log lives in the repo;
+        this section is our course disclosure summary.
+      </p>
       <div class="pkg-btn-row">
         <a class="pkg-btn" href="https://github.com/PALEO-AI-System/PALEO/blob/main/docs/ai_tool_log.md" target="_blank" rel="noopener noreferrer">Open AI tool log</a>
       </div>
-      <p class="muted">Summary: AI tools helped with scaffolding, refactors, overlay/HUD features, documentation, site polish, and drafting or editing parts of the final report. Experiment design, labeled game data, and core technical decisions remain team-owned.</p>
+
+      <div class="ai-highlight-grid">
+        <article class="ai-highlight-card">
+          <h3>Repo &amp; ML pipeline</h3>
+          <ul>
+            <li>Early scaffold: <code>src/</code>, tests, README, pipeline stubs</li>
+            <li>Data manifests, Serengeti CSV join, Kaggle inventory helpers</li>
+            <li>ResNet-18 training/eval scripts and component tests</li>
+            <li>Instinct Agent, Primal Mind, Letta tool stubs, lexicon</li>
+          </ul>
+        </article>
+        <article class="ai-highlight-card">
+          <h3>Path of Titans runtime</h3>
+          <ul>
+            <li>Screen capture, safe control loop, overlay HUD</li>
+            <li>HUD parser (<code>parse_pot_hud</code>) and calibration tooling</li>
+            <li>Offline brains + optional Letta API wiring</li>
+            <li>Wiki RAG index build and PoT wiki ingest scripts</li>
+            <li>PyInstaller builds for <code>PALEO.exe</code> / <code>PALEOOverlay.exe</code></li>
+          </ul>
+        </article>
+        <article class="ai-highlight-card">
+          <h3>Site &amp; deliverables</h3>
+          <ul>
+            <li>GitHub Pages site: home, technical, check-ins, agent tabs</li>
+            <li>Presentation deck, gallery, agent demo, submission package page</li>
+            <li>Profiles, Chroma Strata skin lab, companion HUD polish</li>
+            <li>Check-in docs, project brief, and README run commands</li>
+            <li>Drafting and editing support on parts of the final report</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="ai-owned-note">
+        <strong>Team-owned work:</strong> experiment design and runs, labeled Path of Titans screenshots,
+        in-game testing, core technical decisions, presentation recording, and final integration choices.
+        AI outputs were reviewed and edited by the team before commit or submission.
+      </div>
     </section>
 
     <section class="card reveal" id="presentation">
@@ -286,6 +348,11 @@
           loading="lazy"
         ></iframe>
       </div>
+      <p class="video-caption">
+        Team presentation recording for PALEO (Spring 2026).
+        <a href="https://youtu.be/e6woBimvg_s" target="_blank" rel="noopener noreferrer">Open on YouTube</a>
+        if the embed does not load.
+      </p>
     </section>
   </main>
 
